@@ -1,5 +1,5 @@
 module Pseudopotentials
 
-# Write your package code here.
+include("UPF.jl")
 
 end
