@@ -6,7 +6,7 @@ using Parameters: @with_kw
     info::UpfInfo
     header::UpfHeader
     mesh
-    nlcc = nothing
+    nlcc::UpfNlcc = nothing
     local::Vector
     nonlocal
     semilocal = nothing
@@ -48,4 +48,12 @@ struct UpfHeader
     mesh_size::Int
     number_of_wfc::Int
     number_of_proj::Int
+end
+
+struct UpfNlcc{T<:AbstractVector}
+    rho_atc::T
+end
+
+struct UpfSemilocal
+    
 end
