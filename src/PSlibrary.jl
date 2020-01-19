@@ -5,8 +5,6 @@ import JSON
 
 export list_elements, list_potentials
 
-const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
-const UPF_ROOT = "https://www.quantum-espresso.org/upf_files/"
 const AVAILABLE_ELEMENTS = (
     "h",
     "he",
