@@ -156,9 +156,9 @@ function download_potential(element::AbstractString)
     end
     return paths
 end # function download_potential
-function list_potentials(i::Integer)
+function download_potential(i::Integer)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return download_potential(AVAILABLE_ELEMENTS[i])
-end # function list_potentials
+end # function download_potential
 
 end # module PSlibrary
