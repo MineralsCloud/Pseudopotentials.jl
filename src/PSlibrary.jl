@@ -102,6 +102,7 @@ const AVAILABLE_ELEMENTS = (
     "pu",
 )
 
+"List all elements that has pseudopotentials available in PSlibrary."
 function list_elements()
     s = raw"""
     H                                                  He
@@ -118,6 +119,12 @@ function list_elements()
     println(s)
 end # function list_elements
 
+"""
+    list_potentials(element::AbstractString)
+    list_potentials(i::Integer)
+
+List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
+"""
 function list_potentials(element::AbstractString)
     @assert lowercase(element) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
@@ -134,6 +141,12 @@ function list_potentials(i::Integer)
     return list_potentials(AVAILABLE_ELEMENTS[i])
 end # function list_potentials
 
+"""
+    download_potential(element::AbstractString)
+    download_potential(i::Integer)
+
+Download one or multiple pseudopotentials from PSlibrary for a specific element.
+"""
 function download_potential(element::AbstractString)
     df = list_potentials(element)
     println(df)
