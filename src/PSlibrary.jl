@@ -26,7 +26,14 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export list_elements, list_potentials, download_potential, save_potential
+export PseudopotentialFile,
+    list_elements, list_potential, download_potential, save_potential
+
+struct PseudopotentialFile
+    name::String
+    source::String
+    info::String
+end
 
 const AVAILABLE_ELEMENTS = (
     "H",
@@ -205,20 +212,26 @@ function list_elements()
 end # function list_elements
 
 """
-    list_potentials(element::AbstractString[, verbose::Bool = false])
-    list_potentials(i::Integer[, verbose::Bool = false])
+    list_potential(element[, verbose, db])
 
-List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
+List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or index).
 
-The `verbose` argument is to show the detailed information inferred from the
-pseudopotential's name according to the [standard naming
-convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
+# Arguments
+- `element::Union{AbstractString,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
+- `verbose::Bool=false`: to show the detailed information inferred from the pseudopotential's name according to the [standard naming convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
+- `db::AbstractString="\$element.jld2"`: the path to the database file.
+
+See also: [`save_potential`](@ref)
 """
-function list_potentials(element::AbstractString, verbose::Bool = false)
+function list_potential(
+    element::AbstractString,
+    verbose::Bool = false,
+    db::AbstractString = "$element.jld2",
+)
     element = uppercasefirst(lowercase(element))
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
-    if isfile("$element.jld2")
-        @load "$element.jld2" df
+    if isfile(db)
+        @load db df
     else
         dir = joinpath(@__DIR__, "../data/")
         file = dir * lowercase(element) * ".json"
@@ -247,20 +260,24 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
     end
     @save "$element.jld2" df
     return df
-end # function list_potentials
-function list_potentials(i::Integer, verbose::Bool = false)
+end # function list_potential
+function list_potential(
+    i::Integer,
+    verbose::Bool = false,
+    db::AbstractString = "$element.jld2",
+)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return list_potentials(AVAILABLE_ELEMENTS[i], verbose)
-end # function list_potentials
+    return list_potential(AVAILABLE_ELEMENTS[i], verbose, db)
+end # function list_potential
 
 """
     download_potential(element::AbstractString)
     download_potential(i::Integer)
 
-Download one or multiple pseudopotentials from PSlibrary for a specific element.
+Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
 function download_potential(element::AbstractString)
-    df = list_potentials(element)
+    df = list_potential(element)
     println(df)
     paths = String[]
     while true
@@ -284,10 +301,10 @@ end # function download_potential
 """
     download_potential(element::AbstractString, root::AbstractString)
 
-Download one or multiple pseudopotentials from PSlibrary for a specific element under the same `root`.
+Download one or multiple pseudopotentials from `PSlibrary` for a specific element under the same `root`.
 """
 function download_potential(element::AbstractString, root::AbstractString)
-    df = list_potentials(element)
+    df = list_potential(element)
     println(df)
     paths = String[]
     while true
@@ -307,17 +324,36 @@ function download_potential(i::Integer)
     return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
 
+"""
+    save_potential(element, file::PseudopotentialFile[, db])
+
+Save a `PseudopotentialFile` to the `element`'s list.
+
+# Arguments
+- `element::Union{AbstractString,Integer}`: the element to save pseudopotentials with. The integer corresponding to the element's atomic index.
+- `file::PseudopotentialFile`: the object that stores the information of that file.
+- `db::AbstractString="\$element.jld2"`: the path to the database file.
+
+See also: [`list_potential`](@ref)
+"""
 function save_potential(
     element::AbstractString,
-    filename::AbstractString,
-    path::AbstractString,
-    meta::AbstractString = "",
+    file::PseudopotentialFile,
+    db::AbstractString = "$element.jld2",
 )
-    df = list_potentials(element, true)
-    inferred = analyse_pp_name(filename)
-    push!(df, [filename, path, inferred..., meta])
-    @save "$element.jld2" df
+    df = list_potential(element, true)
+    inferred = analyse_pp_name(file.name)
+    push!(df, [file.name, file.source, inferred..., file.info])
+    @save db df
     return df
+end # function save_potential
+function save_potential(
+    i::Integer,
+    file::PseudopotentialFile,
+    db::AbstractString = "$element.jld2",
+)
+    1 <= i <= 94 || error("You can only access element 1 to 94!")
+    return save_potential(AVAILABLE_ELEMENTS[i], file, db)
 end # function save_potential
 
 end # module PSlibrary
