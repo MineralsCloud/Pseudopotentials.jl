@@ -3,6 +3,29 @@ module PSlibrary
 using DataFrames: DataFrame
 import JSON
 
+using Pseudopotentials:
+    FunctionalType,
+    PzExchCorr,
+    VwnExchCorr,
+    PbeExchCorr,
+    BlypExchCorr,
+    Pw91GradientCorrected,
+    TpssMetaGGA,
+    Coulomb,
+    PseudizationType,
+    AllElectron,
+    MartinsTroullier,
+    BacheletHamannSchlueter,
+    VonBarthCar,
+    VanderbiltUltrasoft,
+    RrkjNormConserving,
+    RrkjusUltrasoft,
+    Kjpaw,
+    Bpaw,
+    NlState,
+    OneCoreHole,
+    HalfCoreHole
+
 export list_elements, list_potentials, download_potential
 
 const AVAILABLE_ELEMENTS = (
@@ -101,7 +124,62 @@ const AVAILABLE_ELEMENTS = (
     "np",
     "pu",
 )
+const NL_STATE = Dict("starnl" => OneCoreHole, "starhnl" => HalfCoreHole)
+const FUNCTIONAL_TYPE = Dict(
+    "pz" => PzExchCorr,
+    "vwn" => VwnExchCorr,
+    "pbe" => PbeExchCorr,
+    "blyp" => BlypExchCorr,
+    "pw91" => Pw91GradientCorrected,
+    "tpss" => TpssMetaGGA,
+    "coulomb" => Coulomb,
+)
+const PSEUDIZATION_TYPE = Dict(
+    "ae" => AllElectron,
+    "mt" => MartinsTroullier,
+    "bhs" => BacheletHamannSchlueter,
+    "vbc" => VonBarthCar,
+    "van" => VanderbiltUltrasoft,
+    "rrkj" => RrkjNormConserving,
+    "rrkjus" => RrkjusUltrasoft,
+    "kjpaw" => Kjpaw,
+    "bpaw" => Bpaw,
+)
+const Maybe{T} = Union{Nothing,T}
 
+function parse_standardname(name::AbstractString)
+    prefix = lowercase(splitext(name)[1])
+    element, middle = split(prefix, "."; limit = 2)
+    fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
+    @assert 1 <= length(fields) <= 5
+    v = Vector{Any}(nothing, 5)
+    v[1] = occursin("rel", fields[1]) ? "true" : "false"
+    for (i, x) in enumerate(fields)
+        i >= 2 && break
+        m = match(r"(starnl|starhnl)", x)
+        if !isnothing(m)
+            v[2] = NL_STATE[m[1]]()
+            break
+        end
+    end
+    i3 = 0
+    for (i, x) in enumerate(fields)
+        i >= 3 && break
+        m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
+        if !isnothing(m)
+            i3, v[3] = i, FUNCTIONAL_TYPE[m[1]]()
+            break
+        end
+    end
+    if i3 != 0 && length(fields) - i3 == 2
+        v[4] = fields[i3+1]
+    end
+    m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
+    v[5] = !isnothing(m) ? PSEUDIZATION_TYPE[m[1]]() : ""
+    return v
+end # function parse_standardname
+
+"List all elements that has pseudopotentials available in PSlibrary."
 function list_elements()
     s = raw"""
     H                                                  He
@@ -118,34 +196,77 @@ function list_elements()
     println(s)
 end # function list_elements
 
-function list_potentials(element::AbstractString)
+"""
+    list_potentials(element::AbstractString)
+    list_potentials(i::Integer)
+
+List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
+"""
+function list_potentials(element::AbstractString, verbose = false)
     @assert lowercase(element) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
-    df = DataFrame(name = [], source = [], summary = [])
-    d = JSON.parsefile(file)
-    for (k, v) in d
-        push!(df, [k, v["href"], v["meta"]])
+    if verbose
+        df = DataFrame(
+            name = String[],
+            source = String[],
+            rel = String[],
+            Nl_state = Maybe{NlState}[],
+            functional = Maybe{FunctionalType}[],
+            orbit = Maybe{String}[],
+            pseudo = Maybe{PseudizationType}[],
+            summary = Maybe{String}[],
+        )
+        d = JSON.parsefile(file)
+        for (k, v) in d
+            push!(df, [k, v["href"], parse_standardname(k)..., v["meta"]])
+        end
+    else
+        df = DataFrame(name = String[], source = String[], summary = String[])
+        d = JSON.parsefile(file)
+        for (k, v) in d
+            println(v["meta"])
+            push!(df, [k, v["href"], v["meta"]])
+        end
     end
     return df
 end # function list_potentials
+function list_potentials(i::Integer)
+    1 <= i <= 94 || error("You can only access element 1 to 94!")
+    return list_potentials(AVAILABLE_ELEMENTS[i])
+end # function list_potentials
 
+"""
+    download_potential(element::AbstractString)
+    download_potential(i::Integer)
+
+Download one or multiple pseudopotentials from PSlibrary for a specific element.
+"""
 function download_potential(element::AbstractString)
     df = list_potentials(element)
     println(df)
-    println("Enter the index (integer) for the potential that you want to download: ")
-    i = parse(Int, readline())
-    println("Enter the path you want to save the file: ")
-    path = readline()
-    return isempty(path) ? download(df[i, :].source) :
-           download(df[i, :].source, expanduser(path))
-end # function download_potential
-function download_potential(elements::AbstractString...)
     paths = String[]
-    for element in elements
-        push!(paths, download_potential(element))
+    while true
+        println("Enter the index (integer) for the potential that you want to download: ")
+        i = parse(Int, readline())
+        println("Enter the path you want to save the file: ")
+        path = readline()
+        push!(paths, if isempty(path)
+            download(df[i, :].source)
+        else
+            download(df[i, :].source, expanduser(path))
+        end)
+        println("Finished? [t/f]: ")
+        if strip(readline()) == "t"
+            break
+        end
+        continue
     end
     return paths
+end # function download_potential
+function download_potential(i::Integer)
+    1 <= i <= 94 || error("You can only access element 1 to 94!")
+    return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
 
 end # module PSlibrary
