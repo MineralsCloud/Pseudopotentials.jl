@@ -333,5 +333,13 @@ function save_potential(
     @save db df
     return df
 end # function save_potential
+function save_potential(
+    i::Integer,
+    file::PseudopotentialFile,
+    db::AbstractString = "$element.jld2",
+)
+    1 <= i <= 94 || error("You can only access element 1 to 94!")
+    return save_potential(AVAILABLE_ELEMENTS[i], file, db)
+end # function save_potential
 
 end # module PSlibrary
