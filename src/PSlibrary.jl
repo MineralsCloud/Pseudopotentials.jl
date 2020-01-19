@@ -1,7 +1,7 @@
 module PSlibrary
 
 using DataFrames: DataFrame
-import JLD2: save, @save, @load
+import JLD2: @save, @load
 import JSON
 
 using Pseudopotentials:
@@ -26,17 +26,7 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-import JLD2
-
 export list_elements, list_potentials, download_potential, save_potential
-
-struct PseudopotentialDataset{T}
-    data::DataFrame
-end
-
-function JLD2.save(x::PseudopotentialDataset{T}, output::AbstractString = "$T.jld2") where {T}
-    @save output x
-end # function save
 
 const AVAILABLE_ELEMENTS = (
     "H",
@@ -228,9 +218,7 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
     element = uppercasefirst(lowercase(element))
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
     if isfile("$element.jld2")
-        x = nothing
-        @load "$element.jld2" x
-        df = x.data
+        @load "$element.jld2" df
     else
         dir = joinpath(@__DIR__, "../data/")
         file = dir * lowercase(element) * ".json"
@@ -257,7 +245,7 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
             end
         end
     end
-    save(PseudopotentialDataset{Symbol(element)}(df), "$element.jld2")
+    @save "$element.jld2" df
     return df
 end # function list_potentials
 function list_potentials(i::Integer, verbose::Bool = false)
@@ -328,7 +316,7 @@ function save_potential(
     df = list_potentials(element, true)
     inferred = analyse_pp_name(filename)
     push!(df, [filename, path, inferred..., meta])
-    save(PseudopotentialDataset{Symbol(element)}(df), "$element.jld2")
+    @save "$element.jld2" df
     return df
 end # function save_potential
 
