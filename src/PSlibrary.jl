@@ -317,14 +317,13 @@ end # function download_potential
 
 function save_potential(
     element::AbstractString,
-    filename::AbstractString,
-    path::AbstractString,
-    meta::AbstractString = "",
+    file::PseudopotentialFile,
+    db::AbstractString = "$element.jld2",
 )
     df = list_potentials(element, true)
-    inferred = analyse_pp_name(filename)
-    push!(df, [filename, path, inferred..., meta])
-    @save "$element.jld2" df
+    inferred = analyse_pp_name(file.name)
+    push!(df, [file.name, file.source, inferred..., file.info])
+    @save db df
     return df
 end # function save_potential
 
