@@ -214,11 +214,15 @@ The `verbose` argument is to show the detailed information inferred from the
 pseudopotential's name according to the [standard naming
 convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 """
-function list_potentials(element::AbstractString, verbose::Bool = false)
+function list_potentials(
+    element::AbstractString,
+    verbose::Bool = false,
+    db::AbstractString = "$element.jld2",
+)
     element = uppercasefirst(lowercase(element))
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
-    if isfile("$element.jld2")
-        @load "$element.jld2" df
+    if isfile(db)
+        @load db df
     else
         dir = joinpath(@__DIR__, "../data/")
         file = dir * lowercase(element) * ".json"
@@ -248,9 +252,13 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
     @save "$element.jld2" df
     return df
 end # function list_potentials
-function list_potentials(i::Integer, verbose::Bool = false)
+function list_potentials(
+    i::Integer,
+    verbose::Bool = false,
+    db::AbstractString = "$element.jld2",
+)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return list_potentials(AVAILABLE_ELEMENTS[i], verbose)
+    return list_potentials(AVAILABLE_ELEMENTS[i], verbose, db)
 end # function list_potentials
 
 """
