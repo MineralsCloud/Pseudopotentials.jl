@@ -1,6 +1,7 @@
 module PSlibrary
 
 using DataFrames: DataFrame
+import JLD2: @save
 import JSON
 
 using Pseudopotentials:
@@ -25,7 +26,17 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
+import JLD2
+
 export list_elements, list_potentials, download_potential, save_potential
+
+struct PseudopotentialDataset{T}
+    data::DataFrame
+end
+
+function JLD2.save(x::PseudopotentialDataset{T}, output::AbstractString = "$T.jld2") where {T}
+    @save output x
+end # function save
 
 const AVAILABLE_ELEMENTS = (
     "H",
