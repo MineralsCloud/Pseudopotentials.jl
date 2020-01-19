@@ -3,7 +3,7 @@ module PSlibrary
 using DataFrames
 import JSON
 
-export list_potentials
+export list_elements, list_potentials
 
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org/upf_files/"
@@ -103,6 +103,22 @@ const AVAILABLE_ELEMENTS = (
     "np",
     "pu",
 )
+
+function list_elements()
+    s = raw"""
+    H                                                  He
+    Li Be                               B  C  N  O  F  Ne
+    Na Mg                               Al Si P  S  Cl Ar
+    K  Ca Sc Ti V  Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr
+    Rb Sr Y  Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I  Xe
+    Cs Ba    Hf Ta W  Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn
+    Fr Ra    Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og
+    Uue
+          La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
+          Ac Th Pa U  Np Pu
+    """
+    println(s)
+end # function list_elements
 
 function list_potentials(element::AbstractString)
     @assert element ∈ AVAILABLE_ELEMENTS
