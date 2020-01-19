@@ -153,7 +153,7 @@ function parse_standardname(name::AbstractString)
     fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
     @assert 1 <= length(fields) <= 5
     v = Vector{Any}(nothing, 5)
-    v[1] = occursin("rel", fields[1]) ? "true" : "false"
+    v[1] = occursin("rel", fields[1]) ? true : false
     for (i, x) in enumerate(fields)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
@@ -218,19 +218,19 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
         df = DataFrame(
             name = String[],
             source = String[],
-            rel = String[],
+            rel = Bool[],
             Nl_state = Maybe{NlState}[],
             functional = Maybe{FunctionalType}[],
             orbit = Maybe{String}[],
             pseudo = Maybe{PseudizationType}[],
-            summary = Maybe{String}[],
+            info = Maybe{String}[],
         )
         d = JSON.parsefile(file)
         for (k, v) in d
             push!(df, [k, v["href"], parse_standardname(k)..., v["meta"]])
         end
     else
-        df = DataFrame(name = String[], source = String[], summary = String[])
+        df = DataFrame(name = String[], source = String[], info = String[])
         d = JSON.parsefile(file)
         for (k, v) in d
             push!(df, [k, v["href"], v["meta"]])
