@@ -179,7 +179,11 @@ function parse_standardname(name::AbstractString)
     return v
 end # function parse_standardname
 
-"List all elements that has pseudopotentials available in PSlibrary."
+"""
+    list_elements()
+
+List all elements that has pseudopotentials available in `PSlibrary`.
+"""
 function list_elements()
     s = raw"""
     H                                                  He
