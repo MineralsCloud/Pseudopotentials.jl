@@ -1,6 +1,7 @@
 module PSlibrary
 
 using DataFrames: DataFrame
+import JLD2: @save, @load
 import JSON
 
 using Pseudopotentials:
@@ -25,7 +26,7 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export list_elements, list_potentials, download_potential, upload_potential
+export list_elements, list_potentials, download_potential, save_potential
 
 const AVAILABLE_ELEMENTS = (
     "H",
@@ -146,12 +147,16 @@ const PSEUDIZATION_TYPE = Dict(
 )
 const Maybe{T} = Union{Nothing,T}
 
-function parse_standardname(name::AbstractString)
+function analyse_pp_name(name::AbstractString)
+    v = Vector{Any}(nothing, 5)
     prefix = lowercase(splitext(name)[1])
-    element, middle = split(prefix, "."; limit = 2)
+    if length(split(prefix, "."; limit = 2)) >= 2
+        element, middle = split(prefix, "."; limit = 2)
+    else
+        return v
+    end
     fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
     @assert 1 <= length(fields) <= 5
-    v = Vector{Any}(nothing, 5)
     v[1] = occursin("rel", fields[1]) ? true : false
     for (i, x) in enumerate(fields)
         i >= 2 && break
@@ -176,7 +181,7 @@ function parse_standardname(name::AbstractString)
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
     v[5] = !isnothing(m) ? PSEUDIZATION_TYPE[m[1]]() : ""
     return v
-end # function parse_standardname
+end # function analyse_pp_name
 
 """
     list_elements()
@@ -210,31 +215,37 @@ pseudopotential's name according to the [standard naming
 convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 """
 function list_potentials(element::AbstractString, verbose::Bool = false)
-    @assert uppercasefirst(lowercase(element)) ∈ AVAILABLE_ELEMENTS
-    dir = joinpath(@__DIR__, "../data/")
-    file = dir * lowercase(element) * ".json"
-    if verbose
-        df = DataFrame(
-            name = String[],
-            source = String[],
-            rel = Bool[],
-            Nl_state = Maybe{NlState}[],
-            functional = Maybe{FunctionalType}[],
-            orbit = Maybe{String}[],
-            pseudo = Maybe{Pseudization}[],
-            info = Maybe{String}[],
-        )
-        d = JSON.parsefile(file)
-        for (k, v) in d
-            push!(df, [k, v["href"], parse_standardname(k)..., v["meta"]])
-        end
+    element = uppercasefirst(lowercase(element))
+    @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
+    if isfile("$element.jld2")
+        @load "$element.jld2" df
     else
-        df = DataFrame(name = String[], source = String[], info = String[])
-        d = JSON.parsefile(file)
-        for (k, v) in d
-            push!(df, [k, v["href"], v["meta"]])
+        dir = joinpath(@__DIR__, "../data/")
+        file = dir * lowercase(element) * ".json"
+        if verbose
+            df = DataFrame(
+                name = String[],
+                source = String[],
+                rel = Maybe{Bool}[],
+                Nl_state = Maybe{NlState}[],
+                functional = Maybe{FunctionalType}[],
+                orbit = Maybe{String}[],
+                pseudo = Maybe{Pseudization}[],
+                info = Maybe{String}[],
+            )
+            d = JSON.parsefile(file)
+            for (k, v) in d
+                push!(df, [k, v["href"], analyse_pp_name(k)..., v["meta"]])
+            end
+        else
+            df = DataFrame(name = String[], source = String[], info = String[])
+            d = JSON.parsefile(file)
+            for (k, v) in d
+                push!(df, [k, v["href"], v["meta"]])
+            end
         end
     end
+    @save "$element.jld2" df
     return df
 end # function list_potentials
 function list_potentials(i::Integer, verbose::Bool = false)
@@ -296,16 +307,17 @@ function download_potential(i::Integer)
     return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
 
-function upload_potential(
+function save_potential(
     element::AbstractString,
     filename::AbstractString,
     path::AbstractString,
     meta::AbstractString = "",
 )
     df = list_potentials(element, true)
-    inferred = parse_standardname(filename)
+    inferred = analyse_pp_name(filename)
     push!(df, [filename, path, inferred..., meta])
+    @save "$element.jld2" df
     return df
-end # function upload_potential
+end # function save_potential
 
 end # module PSlibrary
