@@ -268,6 +268,27 @@ function download_potential(element::AbstractString)
     end
     return paths
 end # function download_potential
+"""
+    download_potential(element::AbstractString, root::AbstractString)
+
+Download one or multiple pseudopotentials from PSlibrary for a specific element under the same `root`.
+"""
+function download_potential(element::AbstractString, root::AbstractString)
+    df = list_potentials(element)
+    println(df)
+    paths = String[]
+    while true
+        println("Enter the index (integer) for the potential that you want to download: ")
+        i = parse(Int, readline())
+        push!(paths, download(df[i, :].source, expanduser(root)))
+        println("Finished? [t/f]: ")
+        if strip(readline()) == "t"
+            break
+        end
+        continue
+    end
+    return paths
+end # function download_potential
 function download_potential(i::Integer)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return download_potential(AVAILABLE_ELEMENTS[i])
