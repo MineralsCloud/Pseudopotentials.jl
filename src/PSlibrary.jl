@@ -129,6 +129,10 @@ function list_potentials(element::AbstractString)
     end
     return df
 end # function list_potentials
+function list_potentials(i::Integer)
+    1 <= i <= 94 || error("You can only access element 1 to 94!")
+    return list_potentials(AVAILABLE_ELEMENTS[i])
+end # function list_potentials
 
 function download_potential(element::AbstractString)
     df = list_potentials(element)
