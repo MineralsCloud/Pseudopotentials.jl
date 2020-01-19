@@ -82,6 +82,15 @@ struct RappeRabeKaxirasJoannopoulos{T} <: Pseudization end
 struct KresseJoubert <: Pseudization end
 struct Bloechl <: Pseudization end
 
+Base.show(io::IO, ::AllElectron) = print(io, "AE")
+Base.show(io::IO, ::MartinsTroullier) = print(io, "MT")
+Base.show(io::IO, ::BacheletHamannSchlueter) = print(io, "BHS")
+Base.show(io::IO, ::VonBarthCar) = print(io, "VBC")
+Base.show(io::IO, ::RappeRabeKaxirasJoannopoulos{:NC}) = print(io, "RRKJ")
+Base.show(io::IO, ::RappeRabeKaxirasJoannopoulos{:US}) = print(io, "RRKJ US")
+Base.show(io::IO, ::KresseJoubert) = print(io, "KJ PAW")
+Base.show(io::IO, ::Bloechl) = print(io, "B PAW")
+
 abstract type NlState end
 struct OneCoreHole <: NlState end
 struct HalfCoreHole <: NlState end
