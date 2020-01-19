@@ -102,6 +102,40 @@ const AVAILABLE_ELEMENTS = (
     "pu",
 )
 
+function parse_standardname(name::AbstractString)
+    prefix = lowercase(splitext(name)[1])
+    element, middle = split(prefix, "."; limit = 2)
+    fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
+    @assert 1 <= length(fields) <= 5
+    v = fill("", 5)
+    v[1] = occursin("rel", fields[1]) ? "true" : "false"
+    if length(fields) >= 2
+        for x in fields[1:2]
+            m = match(r"(starnl|starhnl)", x)
+            if !isnothing(m)
+                v[2] = m[1]
+                break
+            end
+        end
+    end
+    i3 = 0
+    if length(fields) >= 3
+        for (i, x) in enumerate(fields[1:3])
+            m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
+            if !isnothing(m)
+                i3, v[3] = i, m[1]
+                break
+            end
+        end
+    end
+    if i3 != 0 && length(fields) - i3 == 2
+        v[4] = fields[i3+1]
+    end
+    m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
+    v[5] = !isnothing(m) ? m[1] : ""
+    return v
+end # function parse_standardname
+
 "List all elements that has pseudopotentials available in PSlibrary."
 function list_elements()
     s = raw"""
