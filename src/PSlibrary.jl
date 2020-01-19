@@ -159,14 +159,32 @@ end # function list_elements
 
 List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
 """
-function list_potentials(element::AbstractString)
+function list_potentials(element::AbstractString, verbose = false)
     @assert lowercase(element) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
-    df = DataFrame(name = [], source = [], summary = [])
-    d = JSON.parsefile(file)
-    for (k, v) in d
-        push!(df, [k, v["href"], v["meta"]])
+    if verbose
+        df = DataFrame(
+            name = String[],
+            source = String[],
+            relativistic = [],
+            Nl_state = [],
+            functional_type = [],
+            orbit = [],
+            pseudization_type = [],
+            summary = String[],
+        )
+        d = JSON.parsefile(file)
+        for (k, v) in d
+            push!(df, [k, v["href"], parse_standardname(k)..., v["meta"]])
+        end
+    else
+        df = DataFrame(name = String[], source = String[], summary = String[])
+        d = JSON.parsefile(file)
+        for (k, v) in d
+            println(v["meta"])
+            push!(df, [k, v["href"], v["meta"]])
+        end
     end
     return df
 end # function list_potentials
