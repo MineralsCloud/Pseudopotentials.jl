@@ -27,7 +27,7 @@ using Pseudopotentials:
     HalfCoreHole
 
 export PseudopotentialFile,
-    list_elements, list_potentials, download_potential, save_potential
+    list_elements, list_potential, download_potential, save_potential
 
 struct PseudopotentialFile
     name::String
@@ -212,7 +212,7 @@ function list_elements()
 end # function list_elements
 
 """
-    list_potentials(element[, verbose, db])
+    list_potential(element[, verbose, db])
 
 List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
 
@@ -223,7 +223,7 @@ List all pseudopotentials in PSlibrary for a specific element (abbreviation or i
 
 See also: [`save_potential`](@ref)
 """
-function list_potentials(
+function list_potential(
     element::AbstractString,
     verbose::Bool = false,
     db::AbstractString = "$element.jld2",
@@ -260,15 +260,15 @@ function list_potentials(
     end
     @save "$element.jld2" df
     return df
-end # function list_potentials
-function list_potentials(
+end # function list_potential
+function list_potential(
     i::Integer,
     verbose::Bool = false,
     db::AbstractString = "$element.jld2",
 )
     1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return list_potentials(AVAILABLE_ELEMENTS[i], verbose, db)
-end # function list_potentials
+    return list_potential(AVAILABLE_ELEMENTS[i], verbose, db)
+end # function list_potential
 
 """
     download_potential(element::AbstractString)
@@ -277,7 +277,7 @@ end # function list_potentials
 Download one or multiple pseudopotentials from PSlibrary for a specific element.
 """
 function download_potential(element::AbstractString)
-    df = list_potentials(element)
+    df = list_potential(element)
     println(df)
     paths = String[]
     while true
@@ -304,7 +304,7 @@ end # function download_potential
 Download one or multiple pseudopotentials from PSlibrary for a specific element under the same `root`.
 """
 function download_potential(element::AbstractString, root::AbstractString)
-    df = list_potentials(element)
+    df = list_potential(element)
     println(df)
     paths = String[]
     while true
@@ -334,14 +334,14 @@ Save a `PseudopotentialFile` to `element`'s list.
 - `file::PseudopotentialFile`: the object that stores the information of that file.
 - `db::AbstractString="\$element.jld2"`: the path to the database file.
 
-See also: [`list_potentials`](@ref)
+See also: [`list_potential`](@ref)
 """
 function save_potential(
     element::AbstractString,
     file::PseudopotentialFile,
     db::AbstractString = "$element.jld2",
 )
-    df = list_potentials(element, true)
+    df = list_potential(element, true)
     inferred = analyse_pp_name(file.name)
     push!(df, [file.name, file.source, inferred..., file.info])
     @save db df
