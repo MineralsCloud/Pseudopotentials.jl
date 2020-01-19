@@ -1,7 +1,7 @@
 module PSlibrary
 
 using DataFrames: DataFrame
-import JLD2: @save
+import JLD2: save, @save, @load
 import JSON
 
 using Pseudopotentials:
@@ -227,31 +227,38 @@ convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention)
 function list_potentials(element::AbstractString, verbose::Bool = false)
     element = uppercasefirst(lowercase(element))
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
-    dir = joinpath(@__DIR__, "../data/")
-    file = dir * lowercase(element) * ".json"
-    if verbose
-        df = DataFrame(
-            name = String[],
-            source = String[],
-            rel = Bool[],
-            Nl_state = Maybe{NlState}[],
-            functional = Maybe{FunctionalType}[],
-            orbit = Maybe{String}[],
-            pseudo = Maybe{Pseudization}[],
-            info = Maybe{String}[],
-        )
-        d = JSON.parsefile(file)
-        for (k, v) in d
-            push!(df, [k, v["href"], analyse_pp_name(k)..., v["meta"]])
-        end
+    if isfile("$element.jld2")
+        x = nothing
+        @load "$element.jld2" x
+        df = x.data
     else
-        df = DataFrame(name = String[], source = String[], info = String[])
-        d = JSON.parsefile(file)
-        for (k, v) in d
-            push!(df, [k, v["href"], v["meta"]])
+        dir = joinpath(@__DIR__, "../data/")
+        file = dir * lowercase(element) * ".json"
+        if verbose
+            df = DataFrame(
+                name = String[],
+                source = String[],
+                rel = Maybe{Bool}[],
+                Nl_state = Maybe{NlState}[],
+                functional = Maybe{FunctionalType}[],
+                orbit = Maybe{String}[],
+                pseudo = Maybe{Pseudization}[],
+                info = Maybe{String}[],
+            )
+            d = JSON.parsefile(file)
+            for (k, v) in d
+                push!(df, [k, v["href"], analyse_pp_name(k)..., v["meta"]])
+            end
+        else
+            df = DataFrame(name = String[], source = String[], info = String[])
+            d = JSON.parsefile(file)
+            for (k, v) in d
+                push!(df, [k, v["href"], v["meta"]])
+            end
         end
     end
-    return PseudopotentialDataset{Symbol(element)}(df)
+    save(PseudopotentialDataset{Symbol(element)}(df), "$element.jld2")
+    return df
 end # function list_potentials
 function list_potentials(i::Integer, verbose::Bool = false)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
@@ -265,7 +272,7 @@ end # function list_potentials
 Download one or multiple pseudopotentials from PSlibrary for a specific element.
 """
 function download_potential(element::AbstractString)
-    df = list_potentials(element).data
+    df = list_potentials(element)
     println(df)
     paths = String[]
     while true
@@ -292,7 +299,7 @@ end # function download_potential
 Download one or multiple pseudopotentials from PSlibrary for a specific element under the same `root`.
 """
 function download_potential(element::AbstractString, root::AbstractString)
-    df = list_potentials(element).data
+    df = list_potentials(element)
     println(df)
     paths = String[]
     while true
@@ -321,6 +328,7 @@ function save_potential(
     df = list_potentials(element, true)
     inferred = analyse_pp_name(filename)
     push!(df, [filename, path, inferred..., meta])
+    save(PseudopotentialDataset{Symbol(element)}(df), "$element.jld2")
     return df
 end # function save_potential
 
