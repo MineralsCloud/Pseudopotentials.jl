@@ -137,12 +137,24 @@ end # function list_potentials
 function download_potential(element::AbstractString)
     df = list_potentials(element)
     println(df)
-    println("Enter the index (integer) for the potential that you want to download: ")
-    i = parse(Int, readline())
-    println("Enter the path you want to save the file: ")
-    path = readline()
-    return isempty(path) ? download(df[i, :].source) :
-           download(df[i, :].source, expanduser(path))
+    paths = String[]
+    while true
+        println("Enter the index (integer) for the potential that you want to download: ")
+        i = parse(Int, readline())
+        println("Enter the path you want to save the file: ")
+        path = readline()
+        push!(paths, if isempty(path)
+            download(df[i, :].source)
+        else
+            download(df[i, :].source, expanduser(path))
+        end)
+        println("Finished? [t/f]: ")
+        if strip(readline()) == "t"
+            break
+        end
+        continue
+    end
+    return paths
 end # function download_potential
 function list_potentials(i::Integer)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
