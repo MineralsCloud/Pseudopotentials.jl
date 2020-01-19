@@ -210,11 +210,11 @@ function list_potentials(element::AbstractString, verbose = false)
         df = DataFrame(
             name = String[],
             source = String[],
-            relativistic = String[],
+            rel = String[],
             Nl_state = Maybe{NlState}[],
-            functional_type = Maybe{FunctionalType}[],
+            functional = Maybe{FunctionalType}[],
             orbit = Maybe{String}[],
-            pseudization_type = Maybe{PseudizationType}[],
+            pseudo = Maybe{PseudizationType}[],
             summary = Maybe{String}[],
         )
         d = JSON.parsefile(file)
