@@ -13,6 +13,13 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Manual" => Any[
+            "Installation" => "install.md",
+        ],
+        "API by modules" => Any[
+            "`Pseudopotentials` module" => "api/api.md",
+            "`Pseudopotentials.PSlibrary` module" => "api/PSlibrary.md",
+        ],
     ],
 )
 
