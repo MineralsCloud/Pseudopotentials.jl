@@ -26,7 +26,14 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export list_elements, list_potentials, download_potential, save_potential
+export PseudopotentialFile,
+    list_elements, list_potentials, download_potential, save_potential
+
+struct PseudopotentialFile
+    name::String
+    source::String
+    info::String
+end
 
 const AVAILABLE_ELEMENTS = (
     "H",
