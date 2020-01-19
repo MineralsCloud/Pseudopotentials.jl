@@ -325,7 +325,7 @@ function download_potential(i::Integer)
 end # function download_potential
 
 """
-    save_potential(element, file::PseudopotentialFile[, db])
+    save_potential(element, file[, db])
 
 Save a `PseudopotentialFile` to the `element`'s list.
 
