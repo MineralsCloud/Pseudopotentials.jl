@@ -1,6 +1,6 @@
 module PSlibrary
 
-using DataFrames
+using DataFrames: DataFrame
 import JSON
 
 export list_elements, list_potentials
@@ -119,10 +119,10 @@ function list_elements()
 end # function list_elements
 
 function list_potentials(element::AbstractString)
-    @assert element ∈ AVAILABLE_ELEMENTS
+    @assert lowercase(element) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
-    df = DataFrame(name = [], source = [], description = [])
+    df = DataFrame(name = [], source = [], summary = [])
     d = JSON.parsefile(file)
     for (k, v) in d
         push!(df, [k, v["href"], v["meta"]])
