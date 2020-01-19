@@ -25,7 +25,7 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export list_elements, list_potentials, download_potential, upload_potential
+export list_elements, list_potentials, download_potential, save_potential
 
 const AVAILABLE_ELEMENTS = (
     "H",
@@ -296,7 +296,7 @@ function download_potential(i::Integer)
     return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
 
-function upload_potential(
+function save_potential(
     element::AbstractString,
     filename::AbstractString,
     path::AbstractString,
@@ -306,6 +306,6 @@ function upload_potential(
     inferred = analyse_pp_name(filename)
     push!(df, [filename, path, inferred..., meta])
     return df
-end # function upload_potential
+end # function save_potential
 
 end # module PSlibrary
