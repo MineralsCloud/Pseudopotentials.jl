@@ -26,7 +26,7 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export list_elements, list_potentials, download_potential
+export list_elements, list_potentials, download_potential, upload_potential
 
 const AVAILABLE_ELEMENTS = (
     "h",
@@ -272,5 +272,12 @@ function download_potential(i::Integer)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
+
+function upload_potential(element::AbstractString, filename::AbstractString, path::AbstractString, meta::AbstractString = "")
+    df = list_potentials(element, true)
+    inferred = parse_standardname(filename)
+    push!(df, [filename, path, inferred..., meta])
+    return df
+end # function upload_potential
 
 end # module PSlibrary
