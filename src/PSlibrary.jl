@@ -158,11 +158,15 @@ const PSEUDIZATION_TYPE = Dict(
 const Maybe{T} = Union{Nothing,T}
 
 function analyse_pp_name(name::AbstractString)
+    v = Vector{Any}(nothing, 5)
     prefix = lowercase(splitext(name)[1])
-    element, middle = split(prefix, "."; limit = 2)
+    if length(split(prefix, "."; limit = 2)) >= 2
+        element, middle = split(prefix, "."; limit = 2)
+    else
+        return v
+    end
     fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
     @assert 1 <= length(fields) <= 5
-    v = Vector{Any}(nothing, 5)
     v[1] = occursin("rel", fields[1]) ? true : false
     for (i, x) in enumerate(fields)
         i >= 2 && break
