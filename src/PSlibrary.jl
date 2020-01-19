@@ -194,6 +194,7 @@ function list_elements()
           Ac Th Pa U  Np Pu
     """
     println(s)
+    return pairs(AVAILABLE_ELEMENTS)
 end # function list_elements
 
 """
