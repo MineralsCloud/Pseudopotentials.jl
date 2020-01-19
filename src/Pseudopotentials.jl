@@ -1,7 +1,7 @@
 module Pseudopotentials
 
-export UnifiedPseudopotentialFormat,
-    VanderbiltUltraSoft, AndreaDalCorso, OldNormConserving, pseudopot_format
+export UnifiedPseudopotentialFormat, VanderbiltUltraSoft, AndreaDalCorso, OldNormConserving
+export pseudopot_format, islda, isgga
 
 """
     PseudopotentialFormat
@@ -64,6 +64,13 @@ struct BLYPexchCorr <: FunctionalType end
 struct PW91GradientCorrected <: FunctionalType end
 struct TPSSmetaGGA <: FunctionalType end
 struct Coulomb <: FunctionalType end
+
+islda(::FunctionalType) = false
+islda(::PZexchCorr) = true
+islda(::VWNexchCorr) = true
+
+isgga(::FunctionalType) = false
+isgga(::PBEexchCorr) = true
 # include("UPF.jl")
 include("PSlibrary.jl")
 
