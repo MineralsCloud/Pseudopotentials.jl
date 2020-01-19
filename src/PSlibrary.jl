@@ -3,6 +3,29 @@ module PSlibrary
 using DataFrames: DataFrame
 import JSON
 
+using Pseudopotentials:
+    FunctionalType,
+    PzExchCorr,
+    VwnExchCorr,
+    PbeExchCorr,
+    BlypExchCorr,
+    Pw91GradientCorrected,
+    TpssMetaGGA,
+    Coulomb,
+    PseudizationType,
+    AllElectron,
+    MartinsTroullier,
+    BacheletHamannSchlueter,
+    VonBarthCar,
+    VanderbiltUltrasoft,
+    RrkjNormConserving,
+    RrkjusUltrasoft,
+    Kjpaw,
+    Bpaw,
+    NlState,
+    OneCoreHole,
+    HalfCoreHole
+
 export list_elements, list_potentials, download_potential
 
 const AVAILABLE_ELEMENTS = (
@@ -101,19 +124,41 @@ const AVAILABLE_ELEMENTS = (
     "np",
     "pu",
 )
+const NL_STATE = Dict("starnl" => OneCoreHole, "starhnl" => HalfCoreHole)
+const FUNCTIONAL_TYPE = Dict(
+    "pz" => PzExchCorr,
+    "vwn" => VwnExchCorr,
+    "pbe" => PbeExchCorr,
+    "blyp" => BlypExchCorr,
+    "pw91" => Pw91GradientCorrected,
+    "tpss" => TpssMetaGGA,
+    "coulomb" => Coulomb,
+)
+const PSEUDIZATION_TYPE = Dict(
+    "ae" => AllElectron,
+    "mt" => MartinsTroullier,
+    "bhs" => BacheletHamannSchlueter,
+    "vbc" => VonBarthCar,
+    "van" => VanderbiltUltrasoft,
+    "rrkj" => RrkjNormConserving,
+    "rrkjus" => RrkjusUltrasoft,
+    "kjpaw" => Kjpaw,
+    "bpaw" => Bpaw,
+)
+const Maybe{T} = Union{Nothing,T}
 
 function parse_standardname(name::AbstractString)
     prefix = lowercase(splitext(name)[1])
     element, middle = split(prefix, "."; limit = 2)
     fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
     @assert 1 <= length(fields) <= 5
-    v = fill("", 5)
+    v = Vector{Any}(nothing, 5)
     v[1] = occursin("rel", fields[1]) ? "true" : "false"
     for (i, x) in enumerate(fields)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
         if !isnothing(m)
-            v[2] = m[1]
+            v[2] = NL_STATE[m[1]]()
             break
         end
     end
@@ -122,7 +167,7 @@ function parse_standardname(name::AbstractString)
         i >= 3 && break
         m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
         if !isnothing(m)
-            i3, v[3] = i, m[1]
+            i3, v[3] = i, FUNCTIONAL_TYPE[m[1]]()
             break
         end
     end
@@ -130,7 +175,7 @@ function parse_standardname(name::AbstractString)
         v[4] = fields[i3+1]
     end
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
-    v[5] = !isnothing(m) ? m[1] : ""
+    v[5] = !isnothing(m) ? PSEUDIZATION_TYPE[m[1]]() : ""
     return v
 end # function parse_standardname
 
@@ -165,12 +210,12 @@ function list_potentials(element::AbstractString, verbose = false)
         df = DataFrame(
             name = String[],
             source = String[],
-            relativistic = [],
-            Nl_state = [],
-            functional_type = [],
-            orbit = [],
-            pseudization_type = [],
-            summary = String[],
+            relativistic = String[],
+            Nl_state = Maybe{NlState}[],
+            functional_type = Maybe{FunctionalType}[],
+            orbit = Maybe{String}[],
+            pseudization_type = Maybe{PseudizationType}[],
+            summary = Maybe{String}[],
         )
         d = JSON.parsefile(file)
         for (k, v) in d
