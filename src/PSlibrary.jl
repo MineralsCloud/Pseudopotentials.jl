@@ -214,7 +214,7 @@ end # function list_elements
 """
     list_potential(element[, verbose, db])
 
-List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
+List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or index).
 
 # Arguments
 - `element::Union{AbstractString,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
@@ -274,7 +274,7 @@ end # function list_potential
     download_potential(element::AbstractString)
     download_potential(i::Integer)
 
-Download one or multiple pseudopotentials from PSlibrary for a specific element.
+Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
 function download_potential(element::AbstractString)
     df = list_potential(element)
@@ -301,7 +301,7 @@ end # function download_potential
 """
     download_potential(element::AbstractString, root::AbstractString)
 
-Download one or multiple pseudopotentials from PSlibrary for a specific element under the same `root`.
+Download one or multiple pseudopotentials from `PSlibrary` for a specific element under the same `root`.
 """
 function download_potential(element::AbstractString, root::AbstractString)
     df = list_potential(element)
@@ -327,7 +327,7 @@ end # function download_potential
 """
     save_potential(element, file::PseudopotentialFile[, db])
 
-Save a `PseudopotentialFile` to `element`'s list.
+Save a `PseudopotentialFile` to the `element`'s list.
 
 # Arguments
 - `element::Union{AbstractString,Integer}`: the element to save pseudopotentials with. The integer corresponding to the element's atomic index.
