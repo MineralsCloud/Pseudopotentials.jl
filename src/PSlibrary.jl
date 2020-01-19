@@ -219,7 +219,9 @@ List all pseudopotentials in PSlibrary for a specific element (abbreviation or i
 # Arguments
 - `element::Union{AbstractString,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
 - `verbose::Bool=false`: to show the detailed information inferred from the pseudopotential's name according to the [standard naming convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
-- `db::AbstractString="\$element.jld2"`: The path to save the database file.
+- `db::AbstractString="\$element.jld2"`: the path to the database file.
+
+See also: [`save_potential`](@ref)
 """
 function list_potentials(
     element::AbstractString,
@@ -322,6 +324,18 @@ function download_potential(i::Integer)
     return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
 
+"""
+    save_potential(element, file::PseudopotentialFile[, db])
+
+Save a `PseudopotentialFile` to `element`'s list.
+
+# Arguments
+- `element::Union{AbstractString,Integer}`: the element to save pseudopotentials with. The integer corresponding to the element's atomic index.
+- `file::PseudopotentialFile`: the object that stores the information of that file.
+- `db::AbstractString="\$element.jld2"`: the path to the database file.
+
+See also: [`list_potentials`](@ref)
+"""
 function save_potential(
     element::AbstractString,
     file::PseudopotentialFile,
