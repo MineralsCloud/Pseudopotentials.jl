@@ -1,5 +1,6 @@
 module Pseudopotentials
 
-include("UPF.jl")
+# include("UPF.jl")
+include("PSlibrary.jl")
 
 end
