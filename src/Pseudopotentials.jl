@@ -72,16 +72,16 @@ islda(::VwnExchCorr) = true
 isgga(::FunctionalType) = false
 isgga(::PbeExchCorr) = true
 
-abstract type PseudizationType end
-struct AllElectron <: PseudizationType end
-struct MartinsTroullier <: PseudizationType end
-struct BacheletHamannSchlueter <: PseudizationType end
-struct VonBarthCar <: PseudizationType end
-struct VanderbiltUltrasoft <: PseudizationType end
-struct RrkjNormConserving <: PseudizationType end
-struct RrkjusUltrasoft <: PseudizationType end
-struct Kjpaw <: PseudizationType end
-struct Bpaw <: PseudizationType end
+abstract type Pseudization end
+struct AllElectron <: Pseudization end
+struct MartinsTroullier <: Pseudization end
+struct BacheletHamannSchlueter <: Pseudization end
+struct VonBarthCar <: Pseudization end
+struct VanderbiltUltrasoft <: Pseudization end
+struct RrkjNormConserving <: Pseudization end
+struct RrkjusUltrasoft <: Pseudization end
+struct Kjpaw <: Pseudization end
+struct Bpaw <: Pseudization end
 
 abstract type NlState end
 struct OneCoreHole <: NlState end

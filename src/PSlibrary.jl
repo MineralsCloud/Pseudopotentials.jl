@@ -12,7 +12,7 @@ using Pseudopotentials:
     Pw91GradientCorrected,
     TpssMetaGGA,
     Coulomb,
-    PseudizationType,
+    Pseudization,
     AllElectron,
     MartinsTroullier,
     BacheletHamannSchlueter,
@@ -222,7 +222,7 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
             Nl_state = Maybe{NlState}[],
             functional = Maybe{FunctionalType}[],
             orbit = Maybe{String}[],
-            pseudo = Maybe{PseudizationType}[],
+            pseudo = Maybe{Pseudization}[],
             info = Maybe{String}[],
         )
         d = JSON.parsefile(file)
