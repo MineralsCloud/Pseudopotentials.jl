@@ -57,20 +57,20 @@ function pseudopot_format(data::AbstractString)
 end
 
 abstract type FunctionalType end
-struct PZexchCorr <: FunctionalType end
-struct VWNexchCorr <: FunctionalType end
-struct PBEexchCorr <: FunctionalType end
-struct BLYPexchCorr <: FunctionalType end
-struct PW91GradientCorrected <: FunctionalType end
-struct TPSSmetaGGA <: FunctionalType end
+struct PzExchCorr <: FunctionalType end
+struct VwnExchCorr <: FunctionalType end
+struct PbeExchCorr <: FunctionalType end
+struct BlypExchCorr <: FunctionalType end
+struct Pw91GradientCorrected <: FunctionalType end
+struct TpssMetaGGA <: FunctionalType end
 struct Coulomb <: FunctionalType end
 
 islda(::FunctionalType) = false
-islda(::PZexchCorr) = true
-islda(::VWNexchCorr) = true
+islda(::PzExchCorr) = true
+islda(::VwnExchCorr) = true
 
 isgga(::FunctionalType) = false
-isgga(::PBEexchCorr) = true
+isgga(::PbeExchCorr) = true
 
 abstract type PseudizationType end
 struct AllElectron <: PseudizationType end
