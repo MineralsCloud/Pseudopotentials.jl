@@ -72,6 +72,14 @@ islda(::VoskoWilkNusair) = true
 isgga(::FunctionalType) = false
 isgga(::PerdewBurkeErnzerhof) = true
 
+Base.show(io::IO, ::PerdewZunger) = print(io, "PZ")
+Base.show(io::IO, ::VoskoWilkNusair) = print(io, "VWN")
+Base.show(io::IO, ::PerdewBurkeErnzerhof) = print(io, "PBE")
+Base.show(io::IO, ::BeckeLeeYangParr) = print(io, "BLYP")
+Base.show(io::IO, ::PerdewWang91) = print(io, "PW91")
+Base.show(io::IO, ::TaoPerdewStaroverovScuseria) = print(io, "TPSS")
+Base.show(io::IO, ::Coulomb) = print(io, "Coulomb")
+
 abstract type Pseudization end
 struct AllElectron <: Pseudization end
 struct MartinsTroullier <: Pseudization end
