@@ -146,7 +146,7 @@ const PSEUDIZATION_TYPE = Dict(
 )
 const Maybe{T} = Union{Nothing,T}
 
-function parse_standardname(name::AbstractString)
+function analyse_pp_name(name::AbstractString)
     prefix = lowercase(splitext(name)[1])
     element, middle = split(prefix, "."; limit = 2)
     fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
@@ -176,7 +176,7 @@ function parse_standardname(name::AbstractString)
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
     v[5] = !isnothing(m) ? PSEUDIZATION_TYPE[m[1]]() : ""
     return v
-end # function parse_standardname
+end # function analyse_pp_name
 
 """
     list_elements()
@@ -226,7 +226,7 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
         )
         d = JSON.parsefile(file)
         for (k, v) in d
-            push!(df, [k, v["href"], parse_standardname(k)..., v["meta"]])
+            push!(df, [k, v["href"], analyse_pp_name(k)..., v["meta"]])
         end
     else
         df = DataFrame(name = String[], source = String[], info = String[])
@@ -303,7 +303,7 @@ function upload_potential(
     meta::AbstractString = "",
 )
     df = list_potentials(element, true)
-    inferred = parse_standardname(filename)
+    inferred = analyse_pp_name(filename)
     push!(df, [filename, path, inferred..., meta])
     return df
 end # function upload_potential
