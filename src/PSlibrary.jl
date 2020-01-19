@@ -205,14 +205,14 @@ function list_elements()
 end # function list_elements
 
 """
-    list_potentials(element::AbstractString[, verbose::Bool = false])
-    list_potentials(i::Integer[, verbose::Bool = false])
+    list_potentials(element[, verbose, db])
 
 List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
 
-The `verbose` argument is to show the detailed information inferred from the
-pseudopotential's name according to the [standard naming
-convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
+# Arguments
+- `element::Union{AbstractString,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
+- `verbose::Bool=false`: to show the detailed information inferred from the pseudopotential's name according to the [standard naming convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
+- `db::AbstractString="\$element.jld2"`: The path to save the database file.
 """
 function list_potentials(
     element::AbstractString,
