@@ -56,6 +56,14 @@ function pseudopot_format(data::AbstractString)
     end
 end
 
+abstract type FunctionalType end
+struct PZexchCorr <: FunctionalType end
+struct VWNexchCorr <: FunctionalType end
+struct PBEexchCorr <: FunctionalType end
+struct BLYPexchCorr <: FunctionalType end
+struct PW91GradientCorrected <: FunctionalType end
+struct TPSSmetaGGA <: FunctionalType end
+struct Coulomb <: FunctionalType end
 # include("UPF.jl")
 include("PSlibrary.jl")
 
