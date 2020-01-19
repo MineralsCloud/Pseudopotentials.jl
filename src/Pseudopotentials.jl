@@ -71,6 +71,17 @@ islda(::VWNexchCorr) = true
 
 isgga(::FunctionalType) = false
 isgga(::PBEexchCorr) = true
+
+abstract type PseudizationType end
+struct AllElectron <: PseudizationType end
+struct MartinsTroullier <: PseudizationType end
+struct BacheletHamannSchlueter <: PseudizationType end
+struct VonBarthCar <: PseudizationType end
+struct VanderbiltUltrasoft <: PseudizationType end
+struct RrkjNormConserving <: PseudizationType end
+struct RrkjusUltrasoft <: PseudizationType end
+struct Kjpaw <: PseudizationType end
+struct Bpaw <: PseudizationType end
 # include("UPF.jl")
 include("PSlibrary.jl")
 
