@@ -82,6 +82,11 @@ struct RrkjNormConserving <: PseudizationType end
 struct RrkjusUltrasoft <: PseudizationType end
 struct Kjpaw <: PseudizationType end
 struct Bpaw <: PseudizationType end
+
+abstract type NlState end
+struct OneCoreHole <: NlState end
+struct HalfCoreHole <: NlState end
+
 # include("UPF.jl")
 include("PSlibrary.jl")
 
