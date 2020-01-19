@@ -221,7 +221,8 @@ pseudopotential's name according to the [standard naming
 convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 """
 function list_potentials(element::AbstractString, verbose::Bool = false)
-    @assert uppercasefirst(lowercase(element)) ∈ AVAILABLE_ELEMENTS
+    element = uppercasefirst(lowercase(element))
+    @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
     if verbose
@@ -246,7 +247,7 @@ function list_potentials(element::AbstractString, verbose::Bool = false)
             push!(df, [k, v["href"], v["meta"]])
         end
     end
-    return df
+    return PseudopotentialDataset{Symbol(element)}(df)
 end # function list_potentials
 function list_potentials(i::Integer, verbose::Bool = false)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
@@ -260,7 +261,7 @@ end # function list_potentials
 Download one or multiple pseudopotentials from PSlibrary for a specific element.
 """
 function download_potential(element::AbstractString)
-    df = list_potentials(element)
+    df = list_potentials(element).data
     println(df)
     paths = String[]
     while true
@@ -287,7 +288,7 @@ end # function download_potential
 Download one or multiple pseudopotentials from PSlibrary for a specific element under the same `root`.
 """
 function download_potential(element::AbstractString, root::AbstractString)
-    df = list_potentials(element)
+    df = list_potentials(element).data
     println(df)
     paths = String[]
     while true
