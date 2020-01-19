@@ -3,7 +3,7 @@ module PSlibrary
 using DataFrames: DataFrame
 import JSON
 
-export list_elements, list_potentials
+export list_elements, list_potentials, download_potential
 
 const AVAILABLE_ELEMENTS = (
     "h",
@@ -129,5 +129,16 @@ function list_potentials(element::AbstractString)
     end
     return df
 end # function list_potentials
+
+function download_potential(element::AbstractString)
+    df = list_potentials(element)
+    println(df)
+    println("Enter the index (integer) for the potential that you want to download: ")
+    i = parse(Int, readline())
+    println("Enter the path you want to save the file: ")
+    path = readline()
+    return isempty(path) ? download(df[i, :].source) :
+           download(df[i, :].source, expanduser(path))
+end # function download_potential
 
 end # module PSlibrary
