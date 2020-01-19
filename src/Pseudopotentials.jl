@@ -57,31 +57,30 @@ function pseudopot_format(data::AbstractString)
 end
 
 abstract type FunctionalType end
-struct PzExchCorr <: FunctionalType end
-struct VwnExchCorr <: FunctionalType end
-struct PbeExchCorr <: FunctionalType end
-struct BlypExchCorr <: FunctionalType end
-struct Pw91GradientCorrected <: FunctionalType end
-struct TpssMetaGGA <: FunctionalType end
+struct PerdewZunger <: FunctionalType end
+struct VoskoWilkNusair <: FunctionalType end
+struct PerdewBurkeErnzerhof <: FunctionalType end
+struct BeckeLeeYangParr <: FunctionalType end
+struct PerdewWang91 <: FunctionalType end
+struct TaoPerdewStaroverovScuseria <: FunctionalType end
 struct Coulomb <: FunctionalType end
 
 islda(::FunctionalType) = false
-islda(::PzExchCorr) = true
-islda(::VwnExchCorr) = true
+islda(::PerdewZunger) = true
+islda(::VoskoWilkNusair) = true
 
 isgga(::FunctionalType) = false
-isgga(::PbeExchCorr) = true
+isgga(::PerdewBurkeErnzerhof) = true
 
 abstract type Pseudization end
 struct AllElectron <: Pseudization end
 struct MartinsTroullier <: Pseudization end
 struct BacheletHamannSchlueter <: Pseudization end
 struct VonBarthCar <: Pseudization end
-struct VanderbiltUltrasoft <: Pseudization end
-struct RrkjNormConserving <: Pseudization end
-struct RrkjusUltrasoft <: Pseudization end
-struct Kjpaw <: Pseudization end
-struct Bpaw <: Pseudization end
+struct Vanderbilt <: Pseudization end
+struct RappeRabeKaxirasJoannopoulos{T} <: Pseudization end
+struct KresseJoubert <: Pseudization end
+struct Bloechl <: Pseudization end
 
 abstract type NlState end
 struct OneCoreHole <: NlState end

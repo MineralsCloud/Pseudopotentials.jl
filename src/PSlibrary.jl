@@ -5,23 +5,22 @@ import JSON
 
 using Pseudopotentials:
     FunctionalType,
-    PzExchCorr,
-    VwnExchCorr,
-    PbeExchCorr,
-    BlypExchCorr,
-    Pw91GradientCorrected,
-    TpssMetaGGA,
+    PerdewZunger,
+    VoskoWilkNusair,
+    PerdewBurkeErnzerhof,
+    BeckeLeeYangParr,
+    PerdewWang91,
+    TaoPerdewStaroverovScuseria,
     Coulomb,
     Pseudization,
     AllElectron,
     MartinsTroullier,
     BacheletHamannSchlueter,
     VonBarthCar,
-    VanderbiltUltrasoft,
-    RrkjNormConserving,
-    RrkjusUltrasoft,
-    Kjpaw,
-    Bpaw,
+    Vanderbilt,
+    RappeRabeKaxirasJoannopoulos,
+    KresseJoubert,
+    Bloechl,
     NlState,
     OneCoreHole,
     HalfCoreHole
@@ -126,12 +125,12 @@ const AVAILABLE_ELEMENTS = (
 )
 const NL_STATE = Dict("starnl" => OneCoreHole, "starhnl" => HalfCoreHole)
 const FUNCTIONAL_TYPE = Dict(
-    "pz" => PzExchCorr,
-    "vwn" => VwnExchCorr,
-    "pbe" => PbeExchCorr,
-    "blyp" => BlypExchCorr,
-    "pw91" => Pw91GradientCorrected,
-    "tpss" => TpssMetaGGA,
+    "pz" => PerdewZunger,
+    "vwn" => VoskoWilkNusair,
+    "pbe" => PerdewBurkeErnzerhof,
+    "blyp" => BeckeLeeYangParr,
+    "pw91" => PerdewWang91,
+    "tpss" => TaoPerdewStaroverovScuseria,
     "coulomb" => Coulomb,
 )
 const PSEUDIZATION_TYPE = Dict(
@@ -139,11 +138,11 @@ const PSEUDIZATION_TYPE = Dict(
     "mt" => MartinsTroullier,
     "bhs" => BacheletHamannSchlueter,
     "vbc" => VonBarthCar,
-    "van" => VanderbiltUltrasoft,
-    "rrkj" => RrkjNormConserving,
-    "rrkjus" => RrkjusUltrasoft,
-    "kjpaw" => Kjpaw,
-    "bpaw" => Bpaw,
+    "van" => Vanderbilt,
+    "rrkj" => RappeRabeKaxirasJoannopoulos{:NC},
+    "rrkjus" => RappeRabeKaxirasJoannopoulos{:US},
+    "kjpaw" => KresseJoubert,
+    "bpaw" => Bloechl,
 )
 const Maybe{T} = Union{Nothing,T}
 
