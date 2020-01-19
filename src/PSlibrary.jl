@@ -231,9 +231,9 @@ function list_potentials(element::AbstractString, verbose = false)
     end
     return df
 end # function list_potentials
-function list_potentials(i::Integer)
+function list_potentials(i::Integer, verbose::Bool = false)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return list_potentials(AVAILABLE_ELEMENTS[i])
+    return list_potentials(AVAILABLE_ELEMENTS[i], verbose)
 end # function list_potentials
 
 """
