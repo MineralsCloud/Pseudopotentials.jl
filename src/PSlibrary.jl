@@ -197,12 +197,16 @@ function list_elements()
 end # function list_elements
 
 """
-    list_potentials(element::AbstractString)
-    list_potentials(i::Integer)
+    list_potentials(element::AbstractString[, verbose::Bool = false])
+    list_potentials(i::Integer[, verbose::Bool = false])
 
 List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
+
+The `verbose` argument is to show the detailed information inferred from the
+pseudopotential's name according to the [standard naming
+convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 """
-function list_potentials(element::AbstractString, verbose = false)
+function list_potentials(element::AbstractString, verbose::Bool = false)
     @assert lowercase(element) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
