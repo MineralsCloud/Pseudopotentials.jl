@@ -26,7 +26,7 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export list_elements, list_potentials, download_potential
+export list_elements, list_potentials, download_potential, upload_potential
 
 const AVAILABLE_ELEMENTS = (
     "h",
@@ -197,12 +197,16 @@ function list_elements()
 end # function list_elements
 
 """
-    list_potentials(element::AbstractString)
-    list_potentials(i::Integer)
+    list_potentials(element::AbstractString[, verbose::Bool = false])
+    list_potentials(i::Integer[, verbose::Bool = false])
 
 List all pseudopotentials in PSlibrary for a specific element (abbreviation or index).
+
+The `verbose` argument is to show the detailed information inferred from the
+pseudopotential's name according to the [standard naming
+convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 """
-function list_potentials(element::AbstractString, verbose = false)
+function list_potentials(element::AbstractString, verbose::Bool = false)
     @assert lowercase(element) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
@@ -231,9 +235,9 @@ function list_potentials(element::AbstractString, verbose = false)
     end
     return df
 end # function list_potentials
-function list_potentials(i::Integer)
+function list_potentials(i::Integer, verbose::Bool = false)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return list_potentials(AVAILABLE_ELEMENTS[i])
+    return list_potentials(AVAILABLE_ELEMENTS[i], verbose)
 end # function list_potentials
 
 """
@@ -268,5 +272,12 @@ function download_potential(i::Integer)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
+
+function upload_potential(element::AbstractString, filename::AbstractString, path::AbstractString, meta::AbstractString = "")
+    df = list_potentials(element, true)
+    inferred = parse_standardname(filename)
+    push!(df, [filename, path, inferred..., meta])
+    return df
+end # function upload_potential
 
 end # module PSlibrary
