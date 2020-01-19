@@ -144,13 +144,6 @@ function download_potential(element::AbstractString)
     return isempty(path) ? download(df[i, :].source) :
            download(df[i, :].source, expanduser(path))
 end # function download_potential
-function download_potential(elements::AbstractString...)
-    paths = String[]
-    for element in elements
-        push!(paths, download_potential(element))
-    end
-    return paths
-end # function download_potential
 function list_potentials(i::Integer)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return download_potential(AVAILABLE_ELEMENTS[i])
