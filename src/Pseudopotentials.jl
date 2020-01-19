@@ -57,31 +57,47 @@ function pseudopot_format(data::AbstractString)
 end
 
 abstract type FunctionalType end
-struct PzExchCorr <: FunctionalType end
-struct VwnExchCorr <: FunctionalType end
-struct PbeExchCorr <: FunctionalType end
-struct BlypExchCorr <: FunctionalType end
-struct Pw91GradientCorrected <: FunctionalType end
-struct TpssMetaGGA <: FunctionalType end
+struct PerdewZunger <: FunctionalType end
+struct VoskoWilkNusair <: FunctionalType end
+struct PerdewBurkeErnzerhof <: FunctionalType end
+struct BeckeLeeYangParr <: FunctionalType end
+struct PerdewWang91 <: FunctionalType end
+struct TaoPerdewStaroverovScuseria <: FunctionalType end
 struct Coulomb <: FunctionalType end
 
 islda(::FunctionalType) = false
-islda(::PzExchCorr) = true
-islda(::VwnExchCorr) = true
+islda(::PerdewZunger) = true
+islda(::VoskoWilkNusair) = true
 
 isgga(::FunctionalType) = false
-isgga(::PbeExchCorr) = true
+isgga(::PerdewBurkeErnzerhof) = true
 
-abstract type PseudizationType end
-struct AllElectron <: PseudizationType end
-struct MartinsTroullier <: PseudizationType end
-struct BacheletHamannSchlueter <: PseudizationType end
-struct VonBarthCar <: PseudizationType end
-struct VanderbiltUltrasoft <: PseudizationType end
-struct RrkjNormConserving <: PseudizationType end
-struct RrkjusUltrasoft <: PseudizationType end
-struct Kjpaw <: PseudizationType end
-struct Bpaw <: PseudizationType end
+Base.show(io::IO, ::PerdewZunger) = print(io, "PZ")
+Base.show(io::IO, ::VoskoWilkNusair) = print(io, "VWN")
+Base.show(io::IO, ::PerdewBurkeErnzerhof) = print(io, "PBE")
+Base.show(io::IO, ::BeckeLeeYangParr) = print(io, "BLYP")
+Base.show(io::IO, ::PerdewWang91) = print(io, "PW91")
+Base.show(io::IO, ::TaoPerdewStaroverovScuseria) = print(io, "TPSS")
+Base.show(io::IO, ::Coulomb) = print(io, "Coulomb")
+
+abstract type Pseudization end
+struct AllElectron <: Pseudization end
+struct MartinsTroullier <: Pseudization end
+struct BacheletHamannSchlueter <: Pseudization end
+struct VonBarthCar <: Pseudization end
+struct Vanderbilt <: Pseudization end
+struct RappeRabeKaxirasJoannopoulos{T} <: Pseudization end
+struct KresseJoubert <: Pseudization end
+struct Bloechl <: Pseudization end
+
+Base.show(io::IO, ::AllElectron) = print(io, "AE")
+Base.show(io::IO, ::MartinsTroullier) = print(io, "MT")
+Base.show(io::IO, ::BacheletHamannSchlueter) = print(io, "BHS")
+Base.show(io::IO, ::VonBarthCar) = print(io, "VBC")
+Base.show(io::IO, ::RappeRabeKaxirasJoannopoulos{:NC}) = print(io, "RRKJ")
+Base.show(io::IO, ::RappeRabeKaxirasJoannopoulos{:US}) = print(io, "RRKJ US")
+Base.show(io::IO, ::KresseJoubert) = print(io, "KJ PAW")
+Base.show(io::IO, ::Bloechl) = print(io, "B PAW")
 
 abstract type NlState end
 struct OneCoreHole <: NlState end

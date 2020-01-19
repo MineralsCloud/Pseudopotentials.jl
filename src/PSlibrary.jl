@@ -5,23 +5,22 @@ import JSON
 
 using Pseudopotentials:
     FunctionalType,
-    PzExchCorr,
-    VwnExchCorr,
-    PbeExchCorr,
-    BlypExchCorr,
-    Pw91GradientCorrected,
-    TpssMetaGGA,
+    PerdewZunger,
+    VoskoWilkNusair,
+    PerdewBurkeErnzerhof,
+    BeckeLeeYangParr,
+    PerdewWang91,
+    TaoPerdewStaroverovScuseria,
     Coulomb,
-    PseudizationType,
+    Pseudization,
     AllElectron,
     MartinsTroullier,
     BacheletHamannSchlueter,
     VonBarthCar,
-    VanderbiltUltrasoft,
-    RrkjNormConserving,
-    RrkjusUltrasoft,
-    Kjpaw,
-    Bpaw,
+    Vanderbilt,
+    RappeRabeKaxirasJoannopoulos,
+    KresseJoubert,
+    Bloechl,
     NlState,
     OneCoreHole,
     HalfCoreHole
@@ -29,109 +28,109 @@ using Pseudopotentials:
 export list_elements, list_potentials, download_potential, upload_potential
 
 const AVAILABLE_ELEMENTS = (
-    "h",
-    "he",
-    "li",
-    "be",
-    "b",
-    "c",
-    "n",
-    "o",
-    "f",
-    "ne",
-    "na",
-    "mg",
-    "al",
-    "si",
-    "p",
-    "s",
-    "cl",
-    "ar",
-    "k",
-    "ca",
-    "sc",
-    "ti",
-    "v",
-    "cr",
-    "mn",
-    "fe",
-    "co",
-    "ni",
-    "cu",
-    "zn",
-    "ga",
-    "ge",
-    "as",
-    "se",
-    "br",
-    "kr",
-    "rb",
-    "sr",
-    "y",
-    "zr",
-    "nb",
-    "mo",
-    "tc",
-    "ru",
-    "rh",
-    "pd",
-    "ag",
-    "cd",
-    "in",
-    "sn",
-    "sb",
-    "te",
-    "i",
-    "xe",
-    "cs",
-    "ba",
-    "la",
-    "ce",
-    "pr",
-    "nd",
-    "pm",
-    "sm",
-    "eu",
-    "gd",
-    "tb",
-    "dy",
-    "ho",
-    "er",
-    "tm",
-    "yb",
-    "lu",
-    "hf",
-    "ta",
-    "w",
-    "re",
-    "os",
-    "ir",
-    "pt",
-    "au",
-    "hg",
-    "tl",
-    "pb",
-    "bi",
-    "po",
-    "at",
-    "rn",
-    "fr",
-    "ra",
-    "ac",
-    "th",
-    "pa",
-    "u",
-    "np",
-    "pu",
+    "H",
+    "He",
+    "Li",
+    "Be",
+    "B",
+    "C",
+    "N",
+    "O",
+    "F",
+    "Ne",
+    "Na",
+    "Mg",
+    "Al",
+    "Si",
+    "P",
+    "S",
+    "Cl",
+    "Ar",
+    "K",
+    "Ca",
+    "Sc",
+    "Ti",
+    "V",
+    "Cr",
+    "Mn",
+    "Fe",
+    "Co",
+    "Ni",
+    "Cu",
+    "Zn",
+    "Ga",
+    "Ge",
+    "As",
+    "Se",
+    "Br",
+    "Kr",
+    "Rb",
+    "Sr",
+    "Y",
+    "Zr",
+    "Nb",
+    "Mo",
+    "Tc",
+    "Ru",
+    "Rh",
+    "Pd",
+    "Ag",
+    "Cd",
+    "In",
+    "Sn",
+    "Sb",
+    "Te",
+    "I",
+    "Xe",
+    "Cs",
+    "Ba",
+    "La",
+    "Ce",
+    "Pr",
+    "Nd",
+    "Pm",
+    "Sm",
+    "Eu",
+    "Gd",
+    "Tb",
+    "Dy",
+    "Ho",
+    "Er",
+    "Tm",
+    "Yb",
+    "Lu",
+    "Hf",
+    "Ta",
+    "W",
+    "Re",
+    "Os",
+    "Ir",
+    "Pt",
+    "Au",
+    "Hg",
+    "Tl",
+    "Pb",
+    "Bi",
+    "Po",
+    "At",
+    "Rn",
+    "Fr",
+    "Ra",
+    "Ac",
+    "Th",
+    "Pa",
+    "U",
+    "Np",
+    "Pu",
 )
 const NL_STATE = Dict("starnl" => OneCoreHole, "starhnl" => HalfCoreHole)
 const FUNCTIONAL_TYPE = Dict(
-    "pz" => PzExchCorr,
-    "vwn" => VwnExchCorr,
-    "pbe" => PbeExchCorr,
-    "blyp" => BlypExchCorr,
-    "pw91" => Pw91GradientCorrected,
-    "tpss" => TpssMetaGGA,
+    "pz" => PerdewZunger,
+    "vwn" => VoskoWilkNusair,
+    "pbe" => PerdewBurkeErnzerhof,
+    "blyp" => BeckeLeeYangParr,
+    "pw91" => PerdewWang91,
+    "tpss" => TaoPerdewStaroverovScuseria,
     "coulomb" => Coulomb,
 )
 const PSEUDIZATION_TYPE = Dict(
@@ -139,11 +138,11 @@ const PSEUDIZATION_TYPE = Dict(
     "mt" => MartinsTroullier,
     "bhs" => BacheletHamannSchlueter,
     "vbc" => VonBarthCar,
-    "van" => VanderbiltUltrasoft,
-    "rrkj" => RrkjNormConserving,
-    "rrkjus" => RrkjusUltrasoft,
-    "kjpaw" => Kjpaw,
-    "bpaw" => Bpaw,
+    "van" => Vanderbilt,
+    "rrkj" => RappeRabeKaxirasJoannopoulos{:NC},
+    "rrkjus" => RappeRabeKaxirasJoannopoulos{:US},
+    "kjpaw" => KresseJoubert,
+    "bpaw" => Bloechl,
 )
 const Maybe{T} = Union{Nothing,T}
 
@@ -153,7 +152,7 @@ function parse_standardname(name::AbstractString)
     fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
     @assert 1 <= length(fields) <= 5
     v = Vector{Any}(nothing, 5)
-    v[1] = occursin("rel", fields[1]) ? "true" : "false"
+    v[1] = occursin("rel", fields[1]) ? true : false
     for (i, x) in enumerate(fields)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
@@ -179,7 +178,11 @@ function parse_standardname(name::AbstractString)
     return v
 end # function parse_standardname
 
-"List all elements that has pseudopotentials available in PSlibrary."
+"""
+    list_elements()
+
+List all elements that has pseudopotentials available in `PSlibrary`.
+"""
 function list_elements()
     s = raw"""
     H                                                  He
@@ -188,12 +191,12 @@ function list_elements()
     K  Ca Sc Ti V  Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr
     Rb Sr Y  Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I  Xe
     Cs Ba    Hf Ta W  Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn
-    Fr Ra    Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og
-    Uue
+    Fr Ra
           La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
           Ac Th Pa U  Np Pu
     """
     println(s)
+    return pairs(AVAILABLE_ELEMENTS)
 end # function list_elements
 
 """
@@ -207,29 +210,28 @@ pseudopotential's name according to the [standard naming
 convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 """
 function list_potentials(element::AbstractString, verbose::Bool = false)
-    @assert lowercase(element) ∈ AVAILABLE_ELEMENTS
+    @assert uppercasefirst(lowercase(element)) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
     if verbose
         df = DataFrame(
             name = String[],
             source = String[],
-            rel = String[],
+            rel = Bool[],
             Nl_state = Maybe{NlState}[],
             functional = Maybe{FunctionalType}[],
             orbit = Maybe{String}[],
-            pseudo = Maybe{PseudizationType}[],
-            summary = Maybe{String}[],
+            pseudo = Maybe{Pseudization}[],
+            info = Maybe{String}[],
         )
         d = JSON.parsefile(file)
         for (k, v) in d
             push!(df, [k, v["href"], parse_standardname(k)..., v["meta"]])
         end
     else
-        df = DataFrame(name = String[], source = String[], summary = String[])
+        df = DataFrame(name = String[], source = String[], info = String[])
         d = JSON.parsefile(file)
         for (k, v) in d
-            println(v["meta"])
             push!(df, [k, v["href"], v["meta"]])
         end
     end
@@ -268,12 +270,38 @@ function download_potential(element::AbstractString)
     end
     return paths
 end # function download_potential
+"""
+    download_potential(element::AbstractString, root::AbstractString)
+
+Download one or multiple pseudopotentials from PSlibrary for a specific element under the same `root`.
+"""
+function download_potential(element::AbstractString, root::AbstractString)
+    df = list_potentials(element)
+    println(df)
+    paths = String[]
+    while true
+        println("Enter the index (integer) for the potential that you want to download: ")
+        i = parse(Int, readline())
+        push!(paths, download(df[i, :].source, expanduser(root)))
+        println("Finished? [t/f]: ")
+        if strip(readline()) == "t"
+            break
+        end
+        continue
+    end
+    return paths
+end # function download_potential
 function download_potential(i::Integer)
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return download_potential(AVAILABLE_ELEMENTS[i])
 end # function download_potential
 
-function upload_potential(element::AbstractString, filename::AbstractString, path::AbstractString, meta::AbstractString = "")
+function upload_potential(
+    element::AbstractString,
+    filename::AbstractString,
+    path::AbstractString,
+    meta::AbstractString = "",
+)
     df = list_potentials(element, true)
     inferred = parse_standardname(filename)
     push!(df, [filename, path, inferred..., meta])
