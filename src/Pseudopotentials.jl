@@ -32,8 +32,10 @@ A singleton representing the old PWscf norm-conserving format.
 struct OldNormConserving <: PseudopotentialFormat end
 
 """
-    pseudopot_format(data::AtomicSpecies)::String
+    pseudopot_format(data::AbstractString)
+
 Return the pseudopotential format.
+
 The pseudopotential file is assumed to be in the new UPF format.
 If it doesn't work, the pseudopotential format is determined by
 the file name:
@@ -41,8 +43,8 @@ the file name:
 - "*.RRKJ3": Andrea Dal Corso's code (old format)
 - none of the above: old PWscf norm-conserving format
 """
-function pseudopot_format(data::AtomicSpecies)::PseudopotentialFormat
-    ext = uppercase(splitext(data.pseudopot)[2])
+function pseudopot_format(data::AbstractString)
+    ext = uppercase(splitext(data)[2])
     return if ext == ".UPF"
         UnifiedPseudopotentialFormat()
     elseif ext ∈ (".VDB", ".VAN")
