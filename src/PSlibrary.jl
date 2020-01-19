@@ -109,23 +109,21 @@ function parse_standardname(name::AbstractString)
     @assert 1 <= length(fields) <= 5
     v = fill("", 5)
     v[1] = occursin("rel", fields[1]) ? "true" : "false"
-    if length(fields) >= 2
-        for x in fields[1:2]
-            m = match(r"(starnl|starhnl)", x)
-            if !isnothing(m)
-                v[2] = m[1]
-                break
-            end
+    for (i, x) in enumerate(fields)
+        i >= 2 && break
+        m = match(r"(starnl|starhnl)", x)
+        if !isnothing(m)
+            v[2] = m[1]
+            break
         end
     end
     i3 = 0
-    if length(fields) >= 3
-        for (i, x) in enumerate(fields[1:3])
-            m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
-            if !isnothing(m)
-                i3, v[3] = i, m[1]
-                break
-            end
+    for (i, x) in enumerate(fields)
+        i >= 3 && break
+        m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
+        if !isnothing(m)
+            i3, v[3] = i, m[1]
+            break
         end
     end
     if i3 != 0 && length(fields) - i3 == 2
