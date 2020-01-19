@@ -210,7 +210,7 @@ pseudopotential's name according to the [standard naming
 convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 """
 function list_potentials(element::AbstractString, verbose::Bool = false)
-    @assert uppercasefirst(element) ∈ AVAILABLE_ELEMENTS
+    @assert uppercasefirst(lowercase(element)) ∈ AVAILABLE_ELEMENTS
     dir = joinpath(@__DIR__, "../data/")
     file = dir * lowercase(element) * ".json"
     if verbose
