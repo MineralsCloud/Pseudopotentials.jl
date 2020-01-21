@@ -311,14 +311,18 @@ Download one or multiple pseudopotentials from `PSlibrary` for a specific elemen
 """
 function download_potential(element::AbstractString, root::AbstractString)
     df = list_potential(element)
-    println(df)
+    display(df)
     paths = String[]
     while true
-        println("Enter the index (integer) for the potential that you want to download: ")
+        print("Enter the index (integer) for the potential that you want to download: ")
         i = parse(Int, readline())
-        push!(paths, download(df[i, :].source, expanduser(root)))
-        println("Finished? [t/f]: ")
-        if strip(readline()) == "t"
+        row = df[i, :]
+        push!(paths, download(row.source, expanduser(joinpath(root, row.name))))
+        finished = pairs((true, false))[request(
+            "Finished?",
+            RadioMenu(["yes", "no"]),
+        )]
+        if finished
             break
         end
         continue
