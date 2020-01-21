@@ -215,20 +215,18 @@ function list_elements()
 end # function list_elements
 
 """
-    list_potential(element[, verbose, db])
+    list_potential(element[, db])
 
 List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or index).
 
 # Arguments
 - `element::Union{AbstractString,AbstractChar,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
-- `verbose::Bool=false`: to show the detailed information inferred from the pseudopotential's name according to the [standard naming convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 - `db::AbstractString="\$element.jld2"`: the path to the database file.
 
 See also: [`save_potential`](@ref)
 """
 function list_potential(
     element::Union{AbstractString,AbstractChar},
-    verbose::Bool = false,
     db::AbstractString = "$element.jld2",
 )
     element = (uppercasefirst ∘ lowercase ∘ string)(element)
@@ -238,39 +236,27 @@ function list_potential(
     else
         dir = joinpath(@__DIR__, "../data/")
         file = dir * lowercase(element) * ".json"
-        if verbose
-            df = DataFrame(
-                name = String[],
-                source = String[],
-                rel = Maybe{Bool}[],
-                Nl_state = Maybe{NlState}[],
-                functional = Maybe{FunctionalType}[],
-                orbit = Maybe{String}[],
-                pseudo = Maybe{Pseudization}[],
-                info = Maybe{String}[],
-            )
-            d = JSON.parsefile(file)
-            for (k, v) in d
-                push!(df, [k, v["href"], analyse_pp_name(k)..., v["meta"]])
-            end
-        else
-            df = DataFrame(name = String[], source = String[], info = String[])
-            d = JSON.parsefile(file)
-            for (k, v) in d
-                push!(df, [k, v["href"], v["meta"]])
-            end
+        df = DataFrame(
+            name = String[],
+            source = String[],
+            rel = Maybe{Bool}[],
+            Nl_state = Maybe{NlState}[],
+            functional = Maybe{FunctionalType}[],
+            orbit = Maybe{String}[],
+            pseudo = Maybe{Pseudization}[],
+            info = Maybe{String}[],
+        )
+        d = JSON.parsefile(file)
+        for (k, v) in d
+            push!(df, [k, v["href"], analyse_pp_name(k)..., v["meta"]])
         end
     end
     @save db df
     return df
 end # function list_potential
-function list_potential(
-    i::Integer,
-    verbose::Bool = false,
-    db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2",
-)
+function list_potential(i::Integer, db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2")
     1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return list_potential(AVAILABLE_ELEMENTS[i], verbose, db)
+    return list_potential(AVAILABLE_ELEMENTS[i], db)
 end # function list_potential
 
 """
@@ -293,10 +279,7 @@ function download_potential(element::AbstractString)
         else
             download(df[i, :].source, expanduser(path))
         end)
-        finished = pairs((true, false))[request(
-            "Finished?",
-            RadioMenu(["yes", "no"]),
-        )]
+        finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
         if finished
             break
         end
@@ -318,10 +301,7 @@ function download_potential(element::AbstractString, root::AbstractString)
         i = parse(Int, readline())
         row = df[i, :]
         push!(paths, download(row.source, expanduser(joinpath(root, row.name))))
-        finished = pairs((true, false))[request(
-            "Finished?",
-            RadioMenu(["yes", "no"]),
-        )]
+        finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
         if finished
             break
         end
@@ -351,7 +331,7 @@ function save_potential(
     file::PseudopotentialFile,
     db::AbstractString = "$element.jld2",
 )
-    df = list_potential(element, true)
+    df = list_potential(element)
     inferred = analyse_pp_name(file.name)
     push!(df, [file.name, file.source, inferred..., file.info])
     @save db df
