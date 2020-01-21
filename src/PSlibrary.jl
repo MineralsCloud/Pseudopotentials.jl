@@ -1,5 +1,8 @@
 module PSlibrary
 
+using REPL.Terminals: TTYTerminal
+using REPL.TerminalMenus: RadioMenu, request
+
 using DataFrames: DataFrame
 import JLD2: @save, @load
 import JSON
@@ -290,8 +293,11 @@ function download_potential(element::AbstractString)
         else
             download(df[i, :].source, expanduser(path))
         end)
-        print("Finished? [t/f]: ")
-        if strip(readline()) == "t"
+        finished = pairs((true, false))[request(
+            "Finished?",
+            RadioMenu(["yes", "no"]),
+        )]
+        if finished
             break
         end
         continue
