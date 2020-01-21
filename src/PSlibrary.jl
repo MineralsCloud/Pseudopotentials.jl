@@ -217,21 +217,21 @@ end # function list_elements
 List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or index).
 
 # Arguments
-- `element::Union{AbstractString,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
+- `element::Union{AbstractString,AbstractChar,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
 - `verbose::Bool=false`: to show the detailed information inferred from the pseudopotential's name according to the [standard naming convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 - `db::AbstractString="\$element.jld2"`: the path to the database file.
 
 See also: [`save_potential`](@ref)
 """
 function list_potential(
-    element::AbstractString,
+    element::Union{AbstractString,AbstractChar},
     verbose::Bool = false,
     db::AbstractString = "$element.jld2",
 )
-    element = uppercasefirst(lowercase(element))
+    element = (uppercasefirst ∘ lowercase ∘ string)(element)
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
     if isfile(db)
-        @load db df
+        @load db df  # Load database `db` to variable `df`
     else
         dir = joinpath(@__DIR__, "../data/")
         file = dir * lowercase(element) * ".json"
@@ -258,13 +258,13 @@ function list_potential(
             end
         end
     end
-    @save "$element.jld2" df
+    @save db df
     return df
 end # function list_potential
 function list_potential(
     i::Integer,
     verbose::Bool = false,
-    db::AbstractString = "$element.jld2",
+    db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2",
 )
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return list_potential(AVAILABLE_ELEMENTS[i], verbose, db)
@@ -350,7 +350,7 @@ end # function save_potential
 function save_potential(
     i::Integer,
     file::PseudopotentialFile,
-    db::AbstractString = "$element.jld2",
+    db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2",
 )
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return save_potential(AVAILABLE_ELEMENTS[i], file, db)
