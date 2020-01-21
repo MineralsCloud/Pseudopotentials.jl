@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="./docs/src/assets/logo.png" height="200"><br>
+</div>
+
 # Pseudopotentials
 
 [![Build Status](https://github.com/MineralsCloud/Pseudopotentials.jl/workflows/CI/badge.svg)](https://github.com/MineralsCloud/Pseudopotentials.jl/actions)
