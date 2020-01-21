@@ -217,18 +217,18 @@ end # function list_elements
 List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or index).
 
 # Arguments
-- `element::Union{AbstractString,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
+- `element::Union{AbstractString,AbstractChar,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
 - `verbose::Bool=false`: to show the detailed information inferred from the pseudopotential's name according to the [standard naming convention](https://www.quantum-espresso.org/pseudopotentials/naming-convention).
 - `db::AbstractString="\$element.jld2"`: the path to the database file.
 
 See also: [`save_potential`](@ref)
 """
 function list_potential(
-    element::AbstractString,
+    element::Union{AbstractString,AbstractChar},
     verbose::Bool = false,
     db::AbstractString = "$element.jld2",
 )
-    element = uppercasefirst(lowercase(element))
+    element = (uppercasefirst ∘ lowercase ∘ string)(element)
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
     if isfile(db)
         @load db df
