@@ -264,7 +264,7 @@ end # function list_potential
 function list_potential(
     i::Integer,
     verbose::Bool = false,
-    db::AbstractString = "$element.jld2",
+    db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2",
 )
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return list_potential(AVAILABLE_ELEMENTS[i], verbose, db)
@@ -350,7 +350,7 @@ end # function save_potential
 function save_potential(
     i::Integer,
     file::PseudopotentialFile,
-    db::AbstractString = "$element.jld2",
+    db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2",
 )
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return save_potential(AVAILABLE_ELEMENTS[i], file, db)
