@@ -231,7 +231,7 @@ function list_potential(
     element = (uppercasefirst ∘ lowercase ∘ string)(element)
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
     if isfile(db)
-        @load db df
+        @load db df  # Load database `db` to variable `df`
     else
         dir = joinpath(@__DIR__, "../data/")
         file = dir * lowercase(element) * ".json"
@@ -258,7 +258,7 @@ function list_potential(
             end
         end
     end
-    @save "$element.jld2" df
+    @save db df
     return df
 end # function list_potential
 function list_potential(
