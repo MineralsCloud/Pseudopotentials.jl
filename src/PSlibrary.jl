@@ -202,7 +202,11 @@ function _parsehtml(element)
     primates = root(doc)
     anchors = findall("//table//a", primates)
     return map(findall("//table//a", primates)) do anchor
-        (name = strip(nodecontent(anchor)), source = UPF_ROOT * anchor["href"], metadata = nodecontent(nextelement(anchor)))
+        (
+            name = strip(nodecontent(anchor)),
+            source = UPF_ROOT * anchor["href"],
+            metadata = nodecontent(nextelement(anchor)),
+        )
     end
 end # function _parsehtml
 
@@ -278,20 +282,22 @@ Download one or multiple pseudopotentials from `PSlibrary` for a specific elemen
 function download_potential(element::AbstractString)
     df = list_potential(element)
     display(df)
-    paths = String[]
-    finished = false
+    paths, finished = String[], false
     while !finished
-        print("Enter the index (integer) for the potential that you want to download: ")
+        printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
-        print("Enter the path you want to save the file: ")
-        pp = urldownload(df[i, :].source, true; parser = String)
-        path = readline()
+        printstyled(
+            "Enter the file path to save the potential (press enter to skip): ";
+            color = :green,
+        )
+        potential = urldownload(df.source[i], true; parser = String)
+        path = strip(readline())
         if isempty(path)
             path, io = mktemp()
-            write(io, pp)
+            write(io, potential)
         else
             open(expanduser(path), "w") do io
-                write(io, pp)
+                write(io, potential)
             end
         end
         push!(paths, path)
