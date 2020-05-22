@@ -3,7 +3,6 @@ module PSlibrary
 using DataFrames: DataFrame
 using EzXML: parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
-import JSON
 using REPL.Terminals: TTYTerminal
 using REPL.TerminalMenus: RadioMenu, request
 using UrlDownload: urldownload
