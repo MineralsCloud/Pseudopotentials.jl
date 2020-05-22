@@ -310,20 +310,16 @@ end # function download_potential
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element under the same `root`.
 """
-function download_potential(element::AbstractString, root::AbstractString)
+function download_potential(element::AbstractString, filedir::AbstractString)
     df = list_potential(element)
     display(df)
-    paths = String[]
-    while true
-        print("Enter the index (integer) for the potential that you want to download: ")
+    paths, finished = String[], false
+    while !finished
+        printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
         row = df[i, :]
-        push!(paths, download(row.source, expanduser(joinpath(root, row.name))))
+        push!(paths, download(row.source, expanduser(joinpath(filedir, row.name))))
         finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
-        if finished
-            break
-        end
-        continue
     end
     return paths
 end # function download_potential
