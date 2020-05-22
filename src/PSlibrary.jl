@@ -273,24 +273,28 @@ function list_potential(i::Integer, db::AbstractString = "$(AVAILABLE_ELEMENTS[i
 end # function list_potential
 
 """
-    download_potential(element::AbstractString)
-    download_potential(i::Integer)
+    download_potential(element::AbstractString, filedir::AbstractString = "")
+    download_potential(i::Integer, filedir::AbstractString = "")
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
-function download_potential(element::AbstractString)
+function download_potential(element::AbstractString, filedir::AbstractString = "")
     df = list_potential(element)
     display(df)
     paths, finished = String[], false
     while !finished
         printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
-        printstyled(
-            "Enter the file path to save the potential (press enter to skip): ";
-            color = :green,
-        )
         potential = urldownload(df.source[i], true; parser = String)
-        path = strip(readline())
+        if isempty(filedir)
+            printstyled(
+                "Enter the file path to save the potential (press enter to skip): ";
+                color = :green,
+            )
+            path = strip(readline())
+        else
+            path = expanduser(joinpath(filedir, df.name[i]))
+        end
         if isempty(path)
             path, io = mktemp()
             write(io, potential)
@@ -304,32 +308,7 @@ function download_potential(element::AbstractString)
     end
     return paths
 end # function download_potential
-"""
-    download_potential(element::AbstractString, root::AbstractString)
-
-Download one or multiple pseudopotentials from `PSlibrary` for a specific element under the same `root`.
-"""
-function download_potential(element::AbstractString, filedir::AbstractString)
-    df = list_potential(element)
-    display(df)
-    paths, finished = String[], false
-    while !finished
-        printstyled("Enter its index (integer) to download a potential: "; color = :green)
-        i = parse(Int, readline())
-        potential = urldownload(df.source[i], true; parser = String)
-        path = expanduser(joinpath(filedir, df.name[i]))
-        open(path, "w") do io
-            write(io, potential)
-        end
-        push!(paths, path)
-        finished = (true, false)[request("Finished?", RadioMenu(["yes", "no"]))]
-    end
-    return paths
-end # function download_potential
-function download_potential(i::Integer)
-    1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return download_potential(AVAILABLE_ELEMENTS[i])
-end # function download_potential
+download_potential(i::Integer, args...) = download_potential(AVAILABLE_ELEMENTS[i], args...)
 
 """
     save_potential(element, file[, db])
