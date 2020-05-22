@@ -3,7 +3,6 @@ module PSlibrary
 using DataFrames: DataFrame
 using EzXML: parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
-using REPL.Terminals: TTYTerminal
 using REPL.TerminalMenus: RadioMenu, request
 using UrlDownload: urldownload
 
@@ -301,7 +300,7 @@ function download_potential(element::AbstractString)
             end
         end
         push!(paths, path)
-        finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
+        finished = (true, false)[request("Finished?", RadioMenu(["yes", "no"]))]
     end
     return paths
 end # function download_potential
@@ -317,9 +316,13 @@ function download_potential(element::AbstractString, filedir::AbstractString)
     while !finished
         printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
-        row = df[i, :]
-        push!(paths, download(row.source, expanduser(joinpath(filedir, row.name))))
-        finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
+        potential = urldownload(df.source[i], true; parser = String)
+        path = expanduser(joinpath(filedir, df.name[i]))
+        open(path, "w") do io
+            write(io, potential)
+        end
+        push!(paths, path)
+        finished = (true, false)[request("Finished?", RadioMenu(["yes", "no"]))]
     end
     return paths
 end # function download_potential
