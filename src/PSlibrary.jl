@@ -284,11 +284,16 @@ function download_potential(element::AbstractString)
         i = parse(Int, readline())
         print("Enter the path you want to save the file: ")
         path = readline()
-        push!(paths, if isempty(path)
-            download(df[i, :].source)
+        pp = urldownload(df[i, :].source, true; parser = String)
+        if isempty(path)
+            path, io = mktemp()
+            write(io, pp)
         else
-            download(df[i, :].source, expanduser(path))
-        end)
+            open(expanduser(path), "w") do io
+                write(io, pp)
+            end
+        end
+        push!(paths, path)
         finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
         if finished
             break
