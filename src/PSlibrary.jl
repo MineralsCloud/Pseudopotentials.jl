@@ -279,12 +279,13 @@ function download_potential(element::AbstractString)
     df = list_potential(element)
     display(df)
     paths = String[]
-    while true
+    finished = false
+    while !finished
         print("Enter the index (integer) for the potential that you want to download: ")
         i = parse(Int, readline())
         print("Enter the path you want to save the file: ")
-        path = readline()
         pp = urldownload(df[i, :].source, true; parser = String)
+        path = readline()
         if isempty(path)
             path, io = mktemp()
             write(io, pp)
@@ -295,10 +296,6 @@ function download_potential(element::AbstractString)
         end
         push!(paths, path)
         finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
-        if finished
-            break
-        end
-        continue
     end
     return paths
 end # function download_potential
