@@ -1,11 +1,12 @@
 module PSlibrary
 
-using REPL.Terminals: TTYTerminal
-using REPL.TerminalMenus: RadioMenu, request
-
 using DataFrames: DataFrame
+using EzXML: parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 import JSON
+using REPL.Terminals: TTYTerminal
+using REPL.TerminalMenus: RadioMenu, request
+using UrlDownload: urldownload
 
 using Pseudopotentials:
     FunctionalType,
@@ -38,6 +39,8 @@ struct PseudopotentialFile
     info::String
 end
 
+const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
+const UPF_ROOT = "https://www.quantum-espresso.org"
 const AVAILABLE_ELEMENTS = (
     "H",
     "He",
@@ -193,6 +196,17 @@ function analyse_pp_name(name::AbstractString)
     return v
 end # function analyse_pp_name
 
+function _parsehtml(element)
+    url = LIBRARY_ROOT * element
+    str = urldownload(url, true; parser = String)
+    doc = parsehtml(str)
+    primates = root(doc)
+    anchors = findall("//table//a", primates)
+    return map(findall("//table//a", primates)) do anchor
+        (name = strip(nodecontent(anchor)), source = UPF_ROOT * anchor["href"], metadata = nodecontent(nextelement(anchor)))
+    end
+end # function _parsehtml
+
 """
     list_elements()
 
@@ -234,21 +248,18 @@ function list_potential(
     if isfile(db)
         @load db df  # Load database `db` to variable `df`
     else
-        dir = joinpath(@__DIR__, "../data/")
-        file = dir * lowercase(element) * ".json"
         df = DataFrame(
             name = String[],
             source = String[],
-            rel = Maybe{Bool}[],
-            Nl_state = Maybe{NlState}[],
-            functional = Maybe{FunctionalType}[],
-            orbit = Maybe{String}[],
-            pseudo = Maybe{Pseudization}[],
+            # rel = Maybe{Bool}[],
+            # Nl_state = Maybe{NlState}[],
+            # functional = Maybe{FunctionalType}[],
+            # orbit = Maybe{String}[],
+            # pseudo = Maybe{Pseudization}[],
             info = Maybe{String}[],
         )
-        d = JSON.parsefile(file)
-        for (k, v) in d
-            push!(df, [k, v["href"], analyse_pp_name(k)..., v["meta"]])
+        map(_parsehtml(lowercase(element))) do meta
+            push!(df, [meta.name, meta.source, meta.metadata])
         end
     end
     @save db df
