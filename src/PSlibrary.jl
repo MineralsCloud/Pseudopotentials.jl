@@ -134,26 +134,26 @@ const AVAILABLE_ELEMENTS = (
     "Np",
     "Pu",
 )
-const NL_STATE = Dict("starnl" => OneCoreHole, "starhnl" => HalfCoreHole)
-const FUNCTIONAL_TYPE = Dict(
-    "pz" => PerdewZunger,
-    "vwn" => VoskoWilkNusair,
-    "pbe" => PerdewBurkeErnzerhof,
-    "blyp" => BeckeLeeYangParr,
-    "pw91" => PerdewWang91,
-    "tpss" => TaoPerdewStaroverovScuseria,
-    "coulomb" => Coulomb,
+const NL_STATE = (starnl = OneCoreHole, starhnl = HalfCoreHole)
+const FUNCTIONAL_TYPE = (
+    pz = PerdewZunger,
+    vwn = VoskoWilkNusair,
+    pbe = PerdewBurkeErnzerhof,
+    blyp = BeckeLeeYangParr,
+    pw91 = PerdewWang91,
+    tpss = TaoPerdewStaroverovScuseria,
+    coulomb = Coulomb,
 )
-const PSEUDIZATION_TYPE = Dict(
-    "ae" => AllElectron,
-    "mt" => MartinsTroullier,
-    "bhs" => BacheletHamannSchlueter,
-    "vbc" => VonBarthCar,
-    "van" => Vanderbilt,
-    "rrkj" => RappeRabeKaxirasJoannopoulos{:NC},
-    "rrkjus" => RappeRabeKaxirasJoannopoulos{:US},
-    "kjpaw" => KresseJoubert,
-    "bpaw" => Bloechl,
+const PSEUDIZATION_TYPE = (
+    ae = AllElectron,
+    mt = MartinsTroullier,
+    bhs = BacheletHamannSchlueter,
+    vbc = VonBarthCar,
+    van = Vanderbilt,
+    rrkj = RappeRabeKaxirasJoannopoulos{:NC},
+    rrkjus = RappeRabeKaxirasJoannopoulos{:US},
+    kjpaw = KresseJoubert,
+    bpaw = Bloechl,
 )
 const Maybe{T} = Union{Nothing,T}
 
