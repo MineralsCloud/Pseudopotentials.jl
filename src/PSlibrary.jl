@@ -3,7 +3,6 @@ module PSlibrary
 using DataFrames: DataFrame
 using EzXML: parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
-using REPL.Terminals: TTYTerminal
 using REPL.TerminalMenus: RadioMenu, request
 using UrlDownload: urldownload
 
@@ -202,7 +201,11 @@ function _parsehtml(element)
     primates = root(doc)
     anchors = findall("//table//a", primates)
     return map(findall("//table//a", primates)) do anchor
-        (name = strip(nodecontent(anchor)), source = UPF_ROOT * anchor["href"], metadata = nodecontent(nextelement(anchor)))
+        (
+            name = strip(nodecontent(anchor)),
+            source = UPF_ROOT * anchor["href"],
+            metadata = nodecontent(nextelement(anchor)),
+        )
     end
 end # function _parsehtml
 
@@ -270,59 +273,42 @@ function list_potential(i::Integer, db::AbstractString = "$(AVAILABLE_ELEMENTS[i
 end # function list_potential
 
 """
-    download_potential(element::AbstractString)
-    download_potential(i::Integer)
+    download_potential(element::AbstractString, filedir::AbstractString = "")
+    download_potential(i::Integer, filedir::AbstractString = "")
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
-function download_potential(element::AbstractString)
+function download_potential(element::AbstractString, filedir::AbstractString = "")
     df = list_potential(element)
     display(df)
-    paths = String[]
-    while true
-        print("Enter the index (integer) for the potential that you want to download: ")
+    paths, finished = String[], false
+    while !finished
+        printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
-        print("Enter the path you want to save the file: ")
-        path = readline()
-        push!(paths, if isempty(path)
-            download(df[i, :].source)
+        potential = urldownload(df.source[i], true; parser = String)
+        if isempty(filedir)
+            printstyled(
+                "Enter the file path to save the potential (press enter to skip): ";
+                color = :green,
+            )
+            path = strip(readline())
         else
-            download(df[i, :].source, expanduser(path))
-        end)
-        finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
-        if finished
-            break
+            path = expanduser(joinpath(filedir, df.name[i]))
         end
-        continue
+        if isempty(path)
+            path, io = mktemp()
+            write(io, potential)
+        else
+            open(expanduser(path), "w") do io
+                write(io, potential)
+            end
+        end
+        push!(paths, path)
+        finished = (true, false)[request("Finished?", RadioMenu(["yes", "no"]))]
     end
     return paths
 end # function download_potential
-"""
-    download_potential(element::AbstractString, root::AbstractString)
-
-Download one or multiple pseudopotentials from `PSlibrary` for a specific element under the same `root`.
-"""
-function download_potential(element::AbstractString, root::AbstractString)
-    df = list_potential(element)
-    display(df)
-    paths = String[]
-    while true
-        print("Enter the index (integer) for the potential that you want to download: ")
-        i = parse(Int, readline())
-        row = df[i, :]
-        push!(paths, download(row.source, expanduser(joinpath(root, row.name))))
-        finished = pairs((true, false))[request("Finished?", RadioMenu(["yes", "no"]))]
-        if finished
-            break
-        end
-        continue
-    end
-    return paths
-end # function download_potential
-function download_potential(i::Integer)
-    1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return download_potential(AVAILABLE_ELEMENTS[i])
-end # function download_potential
+download_potential(i::Integer, args...) = download_potential(AVAILABLE_ELEMENTS[i], args...)
 
 """
     save_potential(element, file[, db])
