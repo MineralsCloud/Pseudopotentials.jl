@@ -172,7 +172,7 @@ function analyse_pp_name(name::AbstractString)
     for (i, x) in enumerate(fields)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
-        if !isnothing(m)
+        if m !== nothing
             v[2] = NL_STATE[m[1]]()
             break
         end
@@ -181,7 +181,7 @@ function analyse_pp_name(name::AbstractString)
     for (i, x) in enumerate(fields)
         i >= 3 && break
         m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
-        if !isnothing(m)
+        if m !== nothing
             i3, v[3] = i, FUNCTIONAL_TYPE[m[1]]()
             break
         end
@@ -190,7 +190,7 @@ function analyse_pp_name(name::AbstractString)
         v[4] = fields[i3+1]
     end
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
-    v[5] = !isnothing(m) ? PSEUDIZATION_TYPE[m[1]]() : ""
+    v[5] = m !== nothing ? PSEUDIZATION_TYPE[m[1]]() : ""
     return v
 end # function analyse_pp_name
 
