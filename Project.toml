@@ -15,6 +15,7 @@ UrlDownload = "856ac37a-3032-4c1c-9122-f86d88358c8b"
 DataFrames = "0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21"
 JLD2 = "0.1"
 Parameters = "0.12"
+UrlDownload = "0.2"
 julia = "1"
 
 [extras]
