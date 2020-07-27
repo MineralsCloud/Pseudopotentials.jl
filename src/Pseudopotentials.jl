@@ -1,7 +1,7 @@
 module Pseudopotentials
 
 export UnifiedPseudopotentialFormat, VanderbiltUltraSoft, AndreaDalCorso, OldNormConserving
-export pseudopot_format, islda, isgga
+export pseudoformat, islda, isgga
 
 """
     PseudopotentialFormat
@@ -32,7 +32,7 @@ A singleton representing the old PWscf norm-conserving format.
 struct OldNormConserving <: PseudopotentialFormat end
 
 """
-    pseudopot_format(data::AbstractString)
+    pseudoformat(data::AbstractString)
 
 Return the pseudopotential format.
 
@@ -43,7 +43,7 @@ the file name:
 - "*.RRKJ3": Andrea Dal Corso's code (old format)
 - none of the above: old PWscf norm-conserving format
 """
-function pseudopot_format(data::AbstractString)
+function pseudoformat(data::AbstractString)
     ext = uppercase(splitext(data)[2])
     return if ext == ".UPF"
         UnifiedPseudopotentialFormat()
