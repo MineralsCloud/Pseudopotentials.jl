@@ -12,9 +12,9 @@ REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 UrlDownload = "856ac37a-3032-4c1c-9122-f86d88358c8b"
 
 [compat]
-DataFrames = "0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21"
+DataFrames = "0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22"
 EzXML = "0.9, 1.0"
-JLD2 = "0.1, 0.2"
+JLD2 = "0.1, 0.2, 0.3"
 Parameters = "0.10, 0.11, 0.12"
 UrlDownload = "0.1, 0.2, 0.3"
 julia = "1"
