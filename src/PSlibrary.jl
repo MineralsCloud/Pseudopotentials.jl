@@ -158,7 +158,7 @@ const PSEUDIZATION_TYPE = (
 )
 const Maybe{T} = Union{Nothing,T}
 
-function analyse_pp_name(name::AbstractString)
+function analyse_pp_name(name)
     v = Vector{Any}(nothing, 5)
     prefix = lowercase(splitext(name)[1])
     if length(split(prefix, "."; limit = 2)) >= 2
