@@ -192,7 +192,7 @@ function analyse_pp_name(name)
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
     v[5] = m !== nothing ? PSEUDIZATION_TYPE[m[1]]() : ""
     return v
-end # function analyse_pp_name
+end
 
 function _parsehtml(element)
     url = LIBRARY_ROOT * element
@@ -245,7 +245,7 @@ function list_potential(
     element::Union{AbstractString,AbstractChar},
     db::AbstractString = "$element.jld2",
 )
-    element = (uppercasefirst ∘ lowercase ∘ string)(element)
+    element = element |> string |> lowercase |> uppercasefirst
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
     if isfile(db)
         @load db df  # Load database `db` to variable `df`
