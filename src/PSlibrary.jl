@@ -158,7 +158,7 @@ const PSEUDIZATION_TYPE = (
 )
 const Maybe{T} = Union{Nothing,T}
 
-function analyse_pp_name(name::AbstractString)
+function analyse_pp_name(name)
     v = Vector{Any}(nothing, 5)
     prefix = lowercase(splitext(name)[1])
     if length(split(prefix, "."; limit = 2)) >= 2
@@ -192,7 +192,7 @@ function analyse_pp_name(name::AbstractString)
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
     v[5] = m !== nothing ? PSEUDIZATION_TYPE[m[1]]() : ""
     return v
-end # function analyse_pp_name
+end
 
 function _parsehtml(element)
     url = LIBRARY_ROOT * element
@@ -207,7 +207,7 @@ function _parsehtml(element)
             metadata = nodecontent(nextelement(anchor)),
         )
     end
-end # function _parsehtml
+end
 
 """
     list_elements()
@@ -228,7 +228,7 @@ function list_elements()
     """
     println(s)
     return pairs(AVAILABLE_ELEMENTS)
-end # function list_elements
+end
 
 """
     list_potential(element[, db])
@@ -245,7 +245,7 @@ function list_potential(
     element::Union{AbstractString,AbstractChar},
     db::AbstractString = "$element.jld2",
 )
-    element = (uppercasefirst ∘ lowercase ∘ string)(element)
+    element = element |> string |> lowercase |> uppercasefirst
     @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
     if isfile(db)
         @load db df  # Load database `db` to variable `df`
@@ -266,11 +266,11 @@ function list_potential(
     end
     @save db df
     return df
-end # function list_potential
+end
 function list_potential(i::Integer, db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2")
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return list_potential(AVAILABLE_ELEMENTS[i], db)
-end # function list_potential
+end
 
 """
     download_potential(element::AbstractString, filedir::AbstractString = "")
@@ -307,7 +307,7 @@ function download_potential(element::AbstractString, filedir::AbstractString = "
         finished = (true, false)[request("Finished?", RadioMenu(["yes", "no"]))]
     end
     return paths
-end # function download_potential
+end
 download_potential(i::Integer, args...) = download_potential(AVAILABLE_ELEMENTS[i], args...)
 
 """
@@ -332,7 +332,7 @@ function save_potential(
     push!(df, [file.name, file.source, inferred..., file.info])
     @save db df
     return df
-end # function save_potential
+end
 function save_potential(
     i::Integer,
     file::PseudopotentialFile,
@@ -340,6 +340,6 @@ function save_potential(
 )
     1 <= i <= 94 || error("You can only access element 1 to 94!")
     return save_potential(AVAILABLE_ELEMENTS[i], file, db)
-end # function save_potential
+end
 
-end # module PSlibrary
+end
