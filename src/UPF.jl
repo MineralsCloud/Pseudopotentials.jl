@@ -1,6 +1,6 @@
 using AcuteML
 
-export UPF, PpInfo, PpHeader
+export UPF
 
 istrue(str) = occursin(r"t(rue)?"i, str)
 
@@ -12,12 +12,12 @@ function parsevec(str)
     return vec
 end
 
-@aml struct PpInfo "PP_INFO"
+@aml struct Info "PP_INFO"
     content::String, txt""
     inputfile::UN{String}, "PP_INPUTFILE"
 end
 
-@aml struct PpHeader "PP_HEADER"
+@aml struct Header "PP_HEADER"
     generated::String, att"generated"
     author::String, att"author"
     date::String, att"date"
@@ -56,7 +56,7 @@ end
     number_of_proj::UInt, att"number_of_proj"
 end
 
-@aml struct PpMesh "PP_MESH"
+@aml struct Mesh "PP_MESH"
     dx::UN{Float64}, att"dx"
     mesh::UN{Int}, att"mesh"
     xmin::UN{Float64}, att"xmin"
@@ -72,9 +72,9 @@ end
 
 @aml struct UPF doc"UPF"
     version::VersionNumber, att"version"
-    info::PpInfo, "PP_INFO"
-    header::PpHeader, "PP_HEADER"
-    mesh::PpMesh, "PP_MESH"
+    info::Info, "PP_INFO"
+    header::Header, "PP_HEADER"
+    mesh::Mesh, "PP_MESH"
     # nlcc::UN{PpNlcc}, "PP_NLCC"
     # pp_local::Vector, "PP_LOCAL"
     # nonlocal, "PP_NONLOCAL"
