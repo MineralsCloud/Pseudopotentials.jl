@@ -2,6 +2,16 @@ using AcuteML
 
 export UPF, PpInfo, PpHeader
 
+istrue(str) = occursin(r"t(rue)?"i, str)
+
+function parsevec(str)
+    vec = Float64[]
+    for line in split(str, r"\R"; keepempty = false)
+        append!(vec, map(x -> parse(Float64, x), split(line, r"[ \t]"; keepempty = false)))
+    end
+    return vec
+end
+
 @aml struct PpInfo "PP_INFO"
     content::String, txt""
     inputfile::UN{String}, "PP_INPUTFILE"
@@ -15,14 +25,24 @@ end
     element::String, att"element"
     pseudo_type::String, att"pseudo_type"
     relativistic::String, att"relativistic"
-    is_ultrasoft::String, att"is_ultrasoft"
-    is_paw::String, att"is_paw"
-    is_coulomb::String, att"is_coulomb"
-    has_so::String, att"has_so"
-    has_wfc::String, att"has_wfc"
-    has_gipaw::String, att"has_gipaw"
-    paw_as_gipaw::String, att"paw_as_gipaw"
-    core_correction::String, att"core_correction"
+    is_ultrasoft, att"is_ultrasoft"
+    is_paw, att"is_paw"
+    is_coulomb = false, att"is_coulomb"
+    has_so = false, att"has_so"
+    has_wfc, att"has_wfc"
+    has_gipaw = false, att"has_gipaw"
+    paw_as_gipaw, att"paw_as_gipaw"
+    core_correction, att"core_correction"
+    @extractor begin
+        is_ultrasoft = istrue(is_ultrasoft)
+        is_paw = istrue(is_paw)
+        is_coulomb = istrue(is_coulomb)
+        has_so = istrue(has_so)
+        has_wfc = istrue(has_wfc)
+        has_gipaw = istrue(has_gipaw)
+        paw_as_gipaw = istrue(paw_as_gipaw)
+        core_correction = istrue(core_correction)
+    end
     functional::String, att"functional"
     z_valence::Float64, att"z_valence"
     total_psenergy::Float64 = 0, att"total_psenergy"
@@ -42,8 +62,12 @@ end
     xmin::UN{Float64}, att"xmin"
     rmax::Float64, att"rmax"
     zmesh::UN{Float64}, att"zmesh"
-    r::String, "PP_R"
-    rab::String, "PP_RAB"
+    r, "PP_R"
+    rab, "PP_RAB"
+    @extractor begin
+        r = parsevec(r)
+        rab = parsevec(rab)
+    end
 end
 
 @aml struct UPF doc"UPF"
