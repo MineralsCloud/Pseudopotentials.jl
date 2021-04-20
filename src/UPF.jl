@@ -74,7 +74,7 @@ end
     version::VersionNumber, att"version"
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
-    mesh::Mesh, "PP_MESH"
+    mesh::Mesh, "PP_MESH", checkmesh
     # nlcc::UN{PpNlcc}, "PP_NLCC"
     # pp_local::Vector, "PP_LOCAL"
     # nonlocal, "PP_NONLOCAL"
@@ -83,6 +83,10 @@ end
     # full_wfc::UN, "PP_FULL_WFC"
     # rhoatom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
+end
+
+function checkmesh(x)
+    return x.mesh == length(x.r) == length(x.rab) && size(x.r) == size(x.rab)
 end
 
 Base.read(io::IO, ::Type{UPF}) = read(io, String) |> parsexml |> UPF
