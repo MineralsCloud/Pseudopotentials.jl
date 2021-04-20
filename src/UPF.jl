@@ -76,13 +76,17 @@ end
     header::Header, "PP_HEADER"
     mesh::Mesh, "PP_MESH", checkmesh
     # nlcc::UN{PpNlcc}, "PP_NLCC"
-    # pp_local::Vector, "PP_LOCAL"
+    local_, "PP_LOCAL"
     # nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
     # pswfc = nothing, "PP_PSWFC"
     # full_wfc::UN, "PP_FULL_WFC"
-    # rhoatom, "PP_RHOATOM"
+    rhoatom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
+    @extractor begin
+        local_ = parsevec(local_)
+        rhoatom = parsevec(rhoatom)
+    end
 end
 
 function checkmesh(x)
