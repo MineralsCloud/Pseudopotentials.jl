@@ -1,59 +1,65 @@
-using Dates: DateTime
+using AcuteML
 
-using Parameters: @with_kw
+export UPF, PpInfo, PpHeader
 
-@with_kw struct UPF
-    info::UpfInfo
-    header::UpfHeader
-    mesh
-    nlcc::UpfNlcc = nothing
-    local::Vector
-    nonlocal
-    semilocal = nothing
-    pswfc = nothing
-    full_wfc = nothing
-    rhoatom
-    paw = nothing
+@aml mutable struct PpInfo "PP_INFO"
+    content::String, txt""
+    inputfile::UN{String}, "PP_INPUTFILE"
 end
 
-struct UpfInfo
-    content::String
-    inputfile::String
+@aml mutable struct PpHeader "PP_HEADER"
+    generated::String, att"generated"
+    author::String, att"author"
+    date::String, att"date"
+    comment::String, att"comment"
+    element::String, att"element"
+    pseudo_type::String, att"pseudo_type"
+    relativistic::String, att"relativistic"
+    is_ultrasoft::String, att"is_ultrasoft"
+    is_paw::String, att"is_paw"
+    is_coulomb::String, att"is_coulomb"
+    has_so::String, att"has_so"
+    has_wfc::String, att"has_wfc"
+    has_gipaw::String, att"has_gipaw"
+    paw_as_gipaw::String, att"paw_as_gipaw"
+    core_correction::String, att"core_correction"
+    functional::String, att"functional"
+    z_valence::Float64, att"z_valence"
+    total_psenergy::Float64 = 0, att"total_psenergy"
+    wfc_cutoff::Float64 = 0, att"wfc_cutoff"
+    rho_cutoff::Float64 = 0, att"rho_cutoff"
+    l_max::Float64, att"l_max"
+    l_max_rho::Float64, att"l_max_rho"
+    l_local::UN{Int}, att"l_local"
+    mesh_size::UInt, att"mesh_size"
+    number_of_wfc::UInt, att"number_of_wfc"
+    number_of_proj::UInt, att"number_of_proj"
 end
 
-struct UpfHeader
-    generated::String
-    author::Vector{String}
-    date::DateTime
-    comment::String
-    element::String
-    pseudo_type::String
-    relativistic::String
-    is_ultrasoft::Bool
-    is_paw::Bool
-    is_coulomb::Bool
-    has_so::Bool
-    has_wfc::Bool
-    has_gipaw::Bool
-    paw_as_gipaw::Bool
-    core_correction::Bool
-    functional::String
-    z_valence::Float64
-    total_psenergy::Float64
-    wfc_cutoff::Float64
-    rho_cutoff::Float64
-    l_max::Float64
-    l_max_rho::Float64
-    l_local::Float64
-    mesh_size::Int
-    number_of_wfc::Int
-    number_of_proj::Int
+@aml mutable struct PpMesh "PP_MESH"
+    dx::UN{Float64}, att"dx"
+    mesh::UN{Int}, att"mesh"
+    xmin::UN{Float64}, att"xmin"
+    rmax::Float64, att"rmax"
+    zmesh::UN{Float64}, att"zmesh"
+    r::String, "PP_R"
+    rab::String, "PP_RAB"
 end
 
-struct UpfNlcc{T<:AbstractVector}
-    rho_atc::T
+@aml mutable struct UPF doc"UPF"
+    version::VersionNumber, att"version"
+    info::PpInfo, "PP_INFO"
+    header::PpHeader, "PP_HEADER"
+    mesh::PpMesh, "PP_MESH"
+    # nlcc::UN{PpNlcc}, "PP_NLCC"
+    # pp_local::Vector, "PP_LOCAL"
+    # nonlocal, "PP_NONLOCAL"
+    # semilocal::UN, "PP_SEMILOCAL"
+    # pswfc = nothing, "PP_PSWFC"
+    # full_wfc::UN, "PP_FULL_WFC"
+    # rhoatom, "PP_RHOATOM"
+    # paw::UN, "PP_PAW"
 end
 
-struct UpfSemilocal
-    
-end
+Base.read(io::IO, ::Type{UPF}) = read(io, String) |> parsexml |> UPF
+Base.read(filename::AbstractString, ::Type{UPF}) = read(filename, String) |> parsexml |> UPF
