@@ -4,6 +4,7 @@ authors = ["Qi Zhang <singularitti@outlook.com>"]
 version = "0.2.0"
 
 [deps]
+AcuteML = "6b84a0a3-a11a-41fa-a417-e600528de108"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
