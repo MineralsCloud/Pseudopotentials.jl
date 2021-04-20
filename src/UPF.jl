@@ -93,5 +93,4 @@ function checkmesh(x)
     return x.mesh == length(x.r) == length(x.rab) && size(x.r) == size(x.rab)
 end
 
-Base.read(io::IO, ::Type{UPF}) = read(io, String) |> parsexml |> UPF
-Base.read(filename::AbstractString, ::Type{UPF}) = read(filename, String) |> parsexml |> UPF
+Base.parse(::Type{UPF}, str) = UPF(parsexml(str))
