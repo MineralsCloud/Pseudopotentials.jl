@@ -2,12 +2,12 @@ using AcuteML
 
 export UPF, PpInfo, PpHeader
 
-@aml mutable struct PpInfo "PP_INFO"
+@aml struct PpInfo "PP_INFO"
     content::String, txt""
     inputfile::UN{String}, "PP_INPUTFILE"
 end
 
-@aml mutable struct PpHeader "PP_HEADER"
+@aml struct PpHeader "PP_HEADER"
     generated::String, att"generated"
     author::String, att"author"
     date::String, att"date"
@@ -36,7 +36,7 @@ end
     number_of_proj::UInt, att"number_of_proj"
 end
 
-@aml mutable struct PpMesh "PP_MESH"
+@aml struct PpMesh "PP_MESH"
     dx::UN{Float64}, att"dx"
     mesh::UN{Int}, att"mesh"
     xmin::UN{Float64}, att"xmin"
@@ -46,7 +46,7 @@ end
     rab::String, "PP_RAB"
 end
 
-@aml mutable struct UPF doc"UPF"
+@aml struct UPF doc"UPF"
     version::VersionNumber, att"version"
     info::PpInfo, "PP_INFO"
     header::PpHeader, "PP_HEADER"
