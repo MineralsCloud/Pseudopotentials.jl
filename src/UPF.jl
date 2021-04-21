@@ -140,14 +140,12 @@ end
 
 function fixenumeration!(doc, name)
     children = findall("//*[contains(name(), '$name')]", doc)  # See https://stackoverflow.com/a/40124534/3260253
-    if isempty(children)  # No need to change anything
-        return doc
-    else
+    if !isempty(children)  # Need to change something
         for child in children
             setnodename!(child, name)
         end
-        return doc
     end
+    return doc
 end
 
 function Base.parse(::Type{UPF}, str)
