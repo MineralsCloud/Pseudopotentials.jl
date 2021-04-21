@@ -13,7 +13,7 @@ function parsevec(str)
 end
 
 @aml struct Info "PP_INFO"
-    content::String, txt""
+    text::String, txt""
     inputfile::UN{String}, "PP_INPUTFILE"
 end
 
