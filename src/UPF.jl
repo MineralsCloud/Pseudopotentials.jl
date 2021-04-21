@@ -111,12 +111,17 @@ function checkmesh(x)
 end
 
 function fixenumeration(doc, parentname, elementname)
-    parent = only(findall(parentname, root(doc)))
-    children = elements(parent)
-    for child in children
-        setnodename!(child, elementname)
+    parents = findall(parentname, root(doc))
+    if isempty(parents)  # No need to change anything
+        return doc
+    else
+        parent = only(parents)
+        children = elements(parent)
+        for child in children
+            setnodename!(child, elementname)
+        end
+        return doc
     end
-    return doc
 end
 
 function Base.parse(::Type{UPF}, str)
