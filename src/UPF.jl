@@ -1,6 +1,6 @@
 using AcuteML
 
-export UPF
+export UPF, getdata
 
 istrue(str) = occursin(r"t(rue)?"i, str)
 
@@ -78,8 +78,40 @@ end
     text::String, txt""
 end
 
+@aml struct Pswfc "PP_PSWFC"
+    chi::Vector{Chi}, "PP_CHI"
+end
+
 @aml struct Local "PP_LOCAL"
     text::String, txt""
+end
+
+@aml struct Beta "PP_BETA"
+    angular_momentum::Int, att"angular_momentum"
+    index::UN{Int}, att"index"
+    label::UN{String}, att"label"
+    cutoff_radius::UN{Float64}, att"cutoff_radius"
+    cutoff_radius_index::UN{Int}, att"cutoff_radius_index"
+    norm_conserving_radius::UN{Float64}, att"norm_conserving_radius"
+    ultrasoft_cutoff_radius::Float64, att"ultrasoft_cutoff_radius"
+    text::String, txt""
+end
+
+@aml struct Dij "PP_DIJ"
+    columns::UInt, att"columns"
+    size::UInt, att"size"
+    type::String, att"type"
+    text::String, txt""
+end
+
+@aml struct Augmentation "PP_AUGMENTATION"
+    PP_RINNER::UN
+end
+
+@aml struct Nonlocal "PP_NONLOCAL"
+    beta::Vector{Beta}, "PP_BETA"
+    dij::Dij, "PP_DIJ"
+    augmentation::UN{Augmentation}, "PP_AUGMENTATION"
 end
 
 @aml struct RhoAtom "PP_RHOATOM"
@@ -90,31 +122,44 @@ end
     version::VersionNumber, att"version"
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
-    mesh::Mesh, "PP_MESH", checkmesh
+    mesh::Mesh, "PP_MESH", validate
     # nlcc::UN{PpNlcc}, "PP_NLCC"
     loc::Local, "PP_LOCAL"
-    # nonlocal, "PP_NONLOCAL"
+    nonlocal::Nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
-    # pswfc::UN{Vector{Chi}}, "PP_PSWFC"
+    pswfc::Pswfc, "PP_PSWFC"
     # full_wfc::UN, "PP_FULL_WFC"
     rhoatom::RhoAtom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
 end
 
-function checkmesh(x)
-    return x.mesh == length(x.r.data) == length(x.rab.data) &&
-           size(x.r.data) == size(x.rab.data)
+function validate(x::Mesh)
+    r, rab = map(getdata, (x.r, x.rab))
+    return x.mesh == length(r) == length(rab) && size(r) == size(rab)
 end
 
-Base.parse(::Type{UPF}, str) = UPF(parsexml(str))
-
-function Base.getproperty(x::Union{RhoAtom,Local,R,Rab}, name::Symbol)
-    if name == :data
-        return parsevec(x.text)
+function fixenumeration!(doc, name)
+    children = findall("//*[contains(name(), '$name')]", doc)  # See https://stackoverflow.com/a/40124534/3260253
+    if isempty(children)  # No need to change anything
+        return doc
     else
-        return getfield(x, name)
+        for child in children
+            setnodename!(child, name)
+        end
+        return doc
     end
 end
+
+function Base.parse(::Type{UPF}, str)
+    doc = parsexml(str)
+    doc = fixenumeration!(doc, "PP_CHI")
+    doc = fixenumeration!(doc, "PP_BETA")
+    return UPF(doc)
+end
+
+getdata(x::Union{RhoAtom,Local,R,Rab,Chi,Beta}) = parsevec(x.text)
+getdata(x::Dij) = parse(Float64, x.text)
+
 function Base.getproperty(x::Header, name::Symbol)
     if name in (
         :is_ultrasoft,
