@@ -25,24 +25,14 @@ end
     element::String, att"element"
     pseudo_type::String, att"pseudo_type"
     relativistic::String, att"relativistic"
-    is_ultrasoft, att"is_ultrasoft"
-    is_paw, att"is_paw"
-    is_coulomb = false, att"is_coulomb"
-    has_so = false, att"has_so"
-    has_wfc, att"has_wfc"
-    has_gipaw = false, att"has_gipaw"
-    paw_as_gipaw, att"paw_as_gipaw"
-    core_correction, att"core_correction"
-    @extractor begin
-        is_ultrasoft = istrue(is_ultrasoft)
-        is_paw = istrue(is_paw)
-        is_coulomb = istrue(is_coulomb)
-        has_so = istrue(has_so)
-        has_wfc = istrue(has_wfc)
-        has_gipaw = istrue(has_gipaw)
-        paw_as_gipaw = istrue(paw_as_gipaw)
-        core_correction = istrue(core_correction)
-    end
+    is_ultrasoft::String, att"is_ultrasoft"
+    is_paw::String, att"is_paw"
+    is_coulomb::String = ".false.", att"is_coulomb"
+    has_so::String = ".false.", att"has_so"
+    has_wfc::String, att"has_wfc"
+    has_gipaw::String = ".false.", att"has_gipaw"
+    paw_as_gipaw::String, att"paw_as_gipaw"
+    core_correction::String, att"core_correction"
     functional::String, att"functional"
     z_valence::Float64, att"z_valence"
     total_psenergy::Float64 = 0, att"total_psenergy"
@@ -54,6 +44,7 @@ end
     mesh_size::UInt, att"mesh_size"
     number_of_wfc::UInt, att"number_of_wfc"
     number_of_proj::UInt, att"number_of_proj"
+end
 
 @aml struct R "PP_R"
     size::UInt, att"size"
@@ -106,6 +97,22 @@ Base.parse(::Type{UPF}, str) = UPF(parsexml(str))
 function Base.getproperty(x::Union{RhoAtom,Local,R,Rab}, name::Symbol)
     if name == :data
         return parsevec(x.text)
+    else
+        return getfield(x, name)
+    end
+end
+function Base.getproperty(x::Header, name::Symbol)
+    if name in (
+        :is_ultrasoft,
+        :is_paw,
+        :is_coulomb,
+        :has_so,
+        :has_wfc,
+        :has_gipaw,
+        :paw_as_gipaw,
+        :core_correction,
+    )
+        return istrue(getfield(x, name))
     else
         return getfield(x, name)
     end
