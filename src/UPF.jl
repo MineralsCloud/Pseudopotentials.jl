@@ -102,7 +102,8 @@ end
 end
 
 function checkmesh(x)
-    return x.mesh == length(x.r.data) == length(x.rab.data) && size(x.r.data) == size(x.rab.data)
+    return x.mesh == length(x.r.data) == length(x.rab.data) &&
+           size(x.r.data) == size(x.rab.data)
 end
 
 Base.parse(::Type{UPF}, str) = UPF(parsexml(str))
