@@ -110,15 +110,13 @@ function checkmesh(x)
            size(x.r.data) == size(x.rab.data)
 end
 
-function fixenumeration(doc, parentname, elementname)
-    parents = findall(parentname, root(doc))
-    if isempty(parents)  # No need to change anything
+function fixenumeration!(doc, name)
+    children = findall("//*[contains(name(), '$name')]", doc)  # See https://stackoverflow.com/a/40124534/3260253
+    if isempty(children)  # No need to change anything
         return doc
     else
-        parent = only(parents)
-        children = elements(parent)
         for child in children
-            setnodename!(child, elementname)
+            setnodename!(child, name)
         end
         return doc
     end
@@ -126,7 +124,7 @@ end
 
 function Base.parse(::Type{UPF}, str)
     doc = parsexml(str)
-    doc = fixenumeration(doc, "PP_PSWFC", "PP_CHI")
+    doc = fixenumeration!(doc, "PP_CHI")
     return UPF(doc)
 end
 
