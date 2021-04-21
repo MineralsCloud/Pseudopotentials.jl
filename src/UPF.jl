@@ -54,6 +54,15 @@ end
     mesh_size::UInt, att"mesh_size"
     number_of_wfc::UInt, att"number_of_wfc"
     number_of_proj::UInt, att"number_of_proj"
+
+@aml struct R "PP_R"
+    size::UInt, att"size"
+    text::String, txt""
+end
+
+@aml struct Rab "PP_RAB"
+    size::UInt, att"size"
+    text::String, txt""
 end
 
 @aml struct Mesh "PP_MESH"
@@ -62,12 +71,15 @@ end
     xmin::UN{Float64}, att"xmin"
     rmax::Float64, att"rmax"
     zmesh::UN{Float64}, att"zmesh"
-    r, "PP_R"
-    rab, "PP_RAB"
-    @extractor begin
-        r = parsevec(r)
-        rab = parsevec(rab)
-    end
+    r::R, "PP_R"
+    rab::Rab, "PP_RAB"
+end
+@aml struct Local "PP_LOCAL"
+    text::String, txt""
+end
+
+@aml struct RhoAtom "PP_RHOATOM"
+    text::String, txt""
 end
 
 @aml struct UPF doc"UPF"
@@ -76,21 +88,25 @@ end
     header::Header, "PP_HEADER"
     mesh::Mesh, "PP_MESH", checkmesh
     # nlcc::UN{PpNlcc}, "PP_NLCC"
-    local_, "PP_LOCAL"
+    loc::Local, "PP_LOCAL"
     # nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
     # pswfc = nothing, "PP_PSWFC"
     # full_wfc::UN, "PP_FULL_WFC"
-    rhoatom, "PP_RHOATOM"
+    rhoatom::RhoAtom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
-    @extractor begin
-        local_ = parsevec(local_)
-        rhoatom = parsevec(rhoatom)
-    end
 end
 
 function checkmesh(x)
-    return x.mesh == length(x.r) == length(x.rab) && size(x.r) == size(x.rab)
+    return x.mesh == length(x.r.data) == length(x.rab.data) && size(x.r.data) == size(x.rab.data)
 end
 
 Base.parse(::Type{UPF}, str) = UPF(parsexml(str))
+
+function Base.getproperty(x::Union{RhoAtom,Local,R,Rab}, name::Symbol)
+    if name == :data
+        return parsevec(x.text)
+    else
+        return getfield(x, name)
+    end
+end
