@@ -78,6 +78,10 @@ end
     text::String, txt""
 end
 
+@aml struct Pswfc "PP_PSWFC"
+    chi::Vector{Chi}, "PP_CHI"
+end
+
 @aml struct Local "PP_LOCAL"
     text::String, txt""
 end
@@ -95,7 +99,7 @@ end
     loc::Local, "PP_LOCAL"
     # nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
-    # pswfc::UN{Vector{Chi}}, "PP_PSWFC"
+    pswfc::Pswfc, "PP_PSWFC"
     # full_wfc::UN, "PP_FULL_WFC"
     rhoatom::RhoAtom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
@@ -106,9 +110,22 @@ function checkmesh(x)
            size(x.r.data) == size(x.rab.data)
 end
 
-Base.parse(::Type{UPF}, str) = UPF(parsexml(str))
+function fixenumeration(doc, parentname, elementname)
+    parent = only(findall(parentname, root(doc)))
+    children = elements(parent)
+    for child in children
+        setnodename!(child, elementname)
+    end
+    return doc
+end
 
-function Base.getproperty(x::Union{RhoAtom,Local,R,Rab}, name::Symbol)
+function Base.parse(::Type{UPF}, str)
+    doc = parsexml(str)
+    doc = fixenumeration(doc, "PP_PSWFC", "PP_CHI")
+    return UPF(doc)
+end
+
+function Base.getproperty(x::Union{RhoAtom,Local,R,Rab,Chi}, name::Symbol)
     if name == :data
         return parsevec(x.text)
     else
