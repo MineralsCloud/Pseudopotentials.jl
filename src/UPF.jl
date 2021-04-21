@@ -122,7 +122,7 @@ end
     version::VersionNumber, att"version"
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
-    mesh::Mesh, "PP_MESH", checkmesh
+    mesh::Mesh, "PP_MESH", validate
     # nlcc::UN{PpNlcc}, "PP_NLCC"
     loc::Local, "PP_LOCAL"
     nonlocal::Nonlocal, "PP_NONLOCAL"
@@ -133,9 +133,9 @@ end
     # paw::UN, "PP_PAW"
 end
 
-function checkmesh(x)
-    return x.mesh == length(x.r.data) == length(x.rab.data) &&
-           size(x.r.data) == size(x.rab.data)
+function validate(x::Mesh)
+    r, rab = map(getdata, (x.r, x.rab))
+    return x.mesh == length(r) == length(rab) && size(r) == size(rab)
 end
 
 function fixenumeration!(doc, name)
