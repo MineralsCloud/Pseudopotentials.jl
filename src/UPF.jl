@@ -17,7 +17,7 @@ end
     inputfile::UN{String}, "PP_INPUTFILE"
 end
 
-@aml struct Header "PP_HEADER"
+@aml struct Header empty"PP_HEADER"
     generated::String, att"generated"
     author::String, att"author"
     date::String, att"date"
