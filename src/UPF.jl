@@ -65,6 +65,19 @@ end
     r::R, "PP_R"
     rab::Rab, "PP_RAB"
 end
+
+@aml struct Chi "PP_CHI"
+    n::UN{UInt}, att"n"
+    l::UInt, att"l"
+    index::UN{Int}, att"index"
+    label::UN{String}, att"label"
+    occupation::Float64, att"occupation"
+    pseudo_energy::UN{Float64}, att"pseudo_energy"
+    cutoff_radius::UN{Float64}, att"cutoff_radius"
+    ultrasoft_cutoff_radius::UN{Float64}, att"ultrasoft_cutoff_radius"
+    text::String, txt""
+end
+
 @aml struct Local "PP_LOCAL"
     text::String, txt""
 end
@@ -82,7 +95,7 @@ end
     loc::Local, "PP_LOCAL"
     # nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
-    # pswfc = nothing, "PP_PSWFC"
+    # pswfc::UN{Vector{Chi}}, "PP_PSWFC"
     # full_wfc::UN, "PP_FULL_WFC"
     rhoatom::RhoAtom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
