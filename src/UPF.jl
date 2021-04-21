@@ -1,6 +1,6 @@
 using AcuteML
 
-export UPF
+export UPF, getdata
 
 istrue(str) = occursin(r"t(rue)?"i, str)
 
@@ -157,20 +157,9 @@ function Base.parse(::Type{UPF}, str)
     return UPF(doc)
 end
 
-function Base.getproperty(x::Union{RhoAtom,Local,R,Rab,Chi,Beta}, name::Symbol)
-    if name == :data
-        return parsevec(x.text)
-    else
-        return getfield(x, name)
-    end
-end
-function Base.getproperty(x::Dij, name::Symbol)
-    if name == :data
-        return parse(Float64, x.text)
-    else
-        return getfield(x, name)
-    end
-end
+getdata(x::Union{RhoAtom,Local,R,Rab,Chi,Beta}) = parsevec(x.text)
+getdata(x::Dij) = parse(Float64, x.text)
+
 function Base.getproperty(x::Header, name::Symbol)
     if name in (
         :is_ultrasoft,
