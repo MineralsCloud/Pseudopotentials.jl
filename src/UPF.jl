@@ -114,7 +114,7 @@ end
     augmentation::UN{Augmentation}, "PP_AUGMENTATION"
 end
 
-@aml struct RhoAtom "PP_RHOATOM"
+@aml struct Rhoatom "PP_RHOATOM"
     text::String, txt""
 end
 
@@ -129,7 +129,7 @@ end
     # semilocal::UN, "PP_SEMILOCAL"
     pswfc::Pswfc, "PP_PSWFC"
     # full_wfc::UN, "PP_FULL_WFC"
-    rhoatom::RhoAtom, "PP_RHOATOM"
+    rhoatom::Rhoatom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
 end
 
@@ -155,7 +155,7 @@ function Base.parse(::Type{UPF}, str)
     return UPF(doc)
 end
 
-getdata(x::Union{RhoAtom,Local,R,Rab,Chi,Beta}) = parsevec(x.text)
+getdata(x::Union{Rhoatom,Local,R,Rab,Chi,Beta}) = parsevec(x.text)
 getdata(x::Dij) = parse(Float64, x.text)
 
 function Base.getproperty(x::Header, name::Symbol)
