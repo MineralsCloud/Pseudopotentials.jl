@@ -86,6 +86,34 @@ end
     text::String, txt""
 end
 
+@aml struct Beta "PP_BETA"
+    angular_momentum::Int, att"angular_momentum"
+    index::UN{Int}, att"index"
+    label::UN{String}, att"label"
+    cutoff_radius::UN{Float64}, att"cutoff_radius"
+    cutoff_radius_index::UN{Int}, att"cutoff_radius_index"
+    norm_conserving_radius::UN{Float64}, att"norm_conserving_radius"
+    ultrasoft_cutoff_radius::Float64, att"ultrasoft_cutoff_radius"
+    text::String, txt""
+end
+
+@aml struct Dij "PP_DIJ"
+    columns::UInt, att"columns"
+    size::UInt, att"size"
+    type::String, att"type"
+    text::String, txt""
+end
+
+@aml struct Augmentation "PP_AUGMENTATION"
+    PP_RINNER::UN
+end
+
+@aml struct Nonlocal "PP_NONLOCAL"
+    beta::Vector{Beta}, "PP_BETA"
+    dij::Dij, "PP_DIJ"
+    augmentation::UN{Augmentation}, "PP_AUGMENTATION"
+end
+
 @aml struct RhoAtom "PP_RHOATOM"
     text::String, txt""
 end
@@ -97,7 +125,7 @@ end
     mesh::Mesh, "PP_MESH", checkmesh
     # nlcc::UN{PpNlcc}, "PP_NLCC"
     loc::Local, "PP_LOCAL"
-    # nonlocal, "PP_NONLOCAL"
+    nonlocal::Nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
     pswfc::Pswfc, "PP_PSWFC"
     # full_wfc::UN, "PP_FULL_WFC"
@@ -125,12 +153,20 @@ end
 function Base.parse(::Type{UPF}, str)
     doc = parsexml(str)
     doc = fixenumeration!(doc, "PP_CHI")
+    doc = fixenumeration!(doc, "PP_BETA")
     return UPF(doc)
 end
 
-function Base.getproperty(x::Union{RhoAtom,Local,R,Rab,Chi}, name::Symbol)
+function Base.getproperty(x::Union{RhoAtom,Local,R,Rab,Chi,Beta}, name::Symbol)
     if name == :data
         return parsevec(x.text)
+    else
+        return getfield(x, name)
+    end
+end
+function Base.getproperty(x::Dij, name::Symbol)
+    if name == :data
+        return parse(Float64, x.text)
     else
         return getfield(x, name)
     end
