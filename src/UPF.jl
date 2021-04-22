@@ -171,8 +171,7 @@ function Base.parse(::Type{UPF}, str)
     return UPF(doc)
 end
 
-getdata(x::Union{Rhoatom,Local,R,Rab,Chi,Beta}) = parsevec(x.text)
-getdata(x::Dij) = parse(Float64, x.text)
+getdata(x::Union{Rhoatom,Nlcc,Local,R,Rab,Chi,Beta,Dij}) = parsevec(x.text)
 
 function Base.getproperty(x::Header, name::Symbol)
     if name in (
