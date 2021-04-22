@@ -207,10 +207,11 @@ function Base.parse(::Type{UPF}, str)
     fixenumeration!(doc, "PP_CHI")
     fixenumeration!(doc, "PP_BETA")
     fixenumeration!(doc, "PP_AEWFC")
+    fixenumeration!(doc, "PP_QIJL")
     return UPF(doc)
 end
 
-getdata(x::Union{Rhoatom,Nlcc,Local,R,Rab,Chi,Beta,Dij}) = parsevec(x.text)
+getdata(x::Union{Rhoatom,Nlcc,Local,R,Rab,Chi,Beta,Dij,Q,Multipoles,Qijl}) = parsevec(x.text)
 
 function Base.getproperty(x::Header, name::Symbol)
     if name in (
