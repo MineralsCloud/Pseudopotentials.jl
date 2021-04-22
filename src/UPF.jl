@@ -190,11 +190,11 @@ end
     nlcc::UN{Nlcc}, "PP_NLCC"
     loc::Local, "PP_LOCAL"
     nonlocal::Nonlocal, "PP_NONLOCAL"
-    pswfc::Pswfc, "PP_PSWFC"
     semilocal::UN{Semilocal}, "PP_SEMILOCAL"
+    pswfc::UN{Pswfc}, "PP_PSWFC"
     full_wfc::UN{FullWfc}, "PP_FULL_WFC"
     rhoatom::Rhoatom, "PP_RHOATOM"
-    # paw::UN, "PP_PAW"
+    # paw::UN{Paw}, "PP_PAW"
 end
 
 function validate(x::Mesh)
