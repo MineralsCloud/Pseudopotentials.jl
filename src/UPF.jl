@@ -108,8 +108,47 @@ end
     text::String, txt""
 end
 
+@aml struct Q "PP_Q"
+    text::String, txt""
+end
+
+@aml struct Multipoles "PP_MULTIPOLES"
+    text::String, txt""
+end
+
+@aml struct Qfcoeff "PP_QFCOEFF"
+    text::String, txt""
+end
+
+@aml struct Rinner "PP_RINNER"
+    text::String, txt""
+end
+
+@aml struct Qijl "PP_QIJL"
+    angular_momentum::Int, att"angular_momentum"
+    first_index::UN{Int}, att"first_index"
+    second_index::UN{Int}, att"second_index"
+    composite_index::UN{Int}, att"composite_index"
+    is_null::UN{String}, att"is_null"
+    text::String, txt""
+end
+
 @aml struct Augmentation "PP_AUGMENTATION"
-    PP_RINNER::UN
+    q_with_l::String, att"q_with_l"
+    nqf::UN{Int}, att"nqf"
+    nqlc::UN{Int}, att"nqlc"
+    shape::UN{String}, att"shape"
+    iraug::UN{Int}, att"iraug"
+    raug::UN{Float64}, att"raug"
+    augmentation_epsilon::UN{Float64}, att"augmentation_epsilon"
+    cutoff_r::UN{Float64}, att"cutoff_r"
+    cutoff_r_index::UN{Int}, att"cutoff_r_index"
+    l_max_aug::UN{Int}, att"l_max_aug"
+    q::Q, "PP_Q"
+    multipoles::Multipoles, "PP_MULTIPOLES"
+    qfcoeff::UN{Qfcoeff}, "PP_QFCOEFF"
+    rinner::UN{Rinner}, "PP_RINNER"
+    qijl::Vector{Qijl}, "PP_QIJL"
 end
 
 @aml struct Nonlocal "PP_NONLOCAL"
