@@ -82,6 +82,10 @@ end
     chi::Vector{Chi}, "PP_CHI"
 end
 
+@aml struct Nlcc "PP_NLCC"
+    text::String, txt""
+end
+
 @aml struct Local "PP_LOCAL"
     text::String, txt""
 end
@@ -123,7 +127,7 @@ end
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
     mesh::Mesh, "PP_MESH", validate
-    # nlcc::UN{PpNlcc}, "PP_NLCC"
+    nlcc::UN{Nlcc}, "PP_NLCC"
     loc::Local, "PP_LOCAL"
     nonlocal::Nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
