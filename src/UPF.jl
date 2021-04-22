@@ -82,6 +82,20 @@ end
     chi::Vector{Chi}, "PP_CHI"
 end
 
+@aml struct Vnl "PP_VNL"
+    l::String, att"L"
+    j::String, att"J"
+    text::String, txt""
+end
+
+@aml struct Semilocal "PP_SEMILOCAL"
+    chi::Vector{Vnl}, "PP_VNL"
+end
+
+@aml struct Nlcc "PP_NLCC"
+    text::String, txt""
+end
+
 @aml struct Local "PP_LOCAL"
     text::String, txt""
 end
@@ -104,8 +118,47 @@ end
     text::String, txt""
 end
 
+@aml struct Q "PP_Q"
+    text::String, txt""
+end
+
+@aml struct Multipoles "PP_MULTIPOLES"
+    text::String, txt""
+end
+
+@aml struct Qfcoeff "PP_QFCOEFF"
+    text::String, txt""
+end
+
+@aml struct Rinner "PP_RINNER"
+    text::String, txt""
+end
+
+@aml struct Qijl "PP_QIJL"
+    angular_momentum::Int, att"angular_momentum"
+    first_index::UN{Int}, att"first_index"
+    second_index::UN{Int}, att"second_index"
+    composite_index::UN{Int}, att"composite_index"
+    is_null::UN{String}, att"is_null"
+    text::String, txt""
+end
+
 @aml struct Augmentation "PP_AUGMENTATION"
-    PP_RINNER::UN
+    q_with_l::String, att"q_with_l"
+    nqf::UN{Int}, att"nqf"
+    nqlc::UN{Int}, att"nqlc"
+    shape::UN{String}, att"shape"
+    iraug::UN{Int}, att"iraug"
+    raug::UN{Float64}, att"raug"
+    augmentation_epsilon::UN{Float64}, att"augmentation_epsilon"
+    cutoff_r::UN{Float64}, att"cutoff_r"
+    cutoff_r_index::UN{Int}, att"cutoff_r_index"
+    l_max_aug::UN{Int}, att"l_max_aug"
+    q::Q, "PP_Q"
+    multipoles::Multipoles, "PP_MULTIPOLES"
+    qfcoeff::UN{Qfcoeff}, "PP_QFCOEFF"
+    rinner::UN{Rinner}, "PP_RINNER"
+    qijl::Vector{Qijl}, "PP_QIJL"
 end
 
 @aml struct Nonlocal "PP_NONLOCAL"
@@ -114,8 +167,19 @@ end
     augmentation::UN{Augmentation}, "PP_AUGMENTATION"
 end
 
-@aml struct RhoAtom "PP_RHOATOM"
+@aml struct Rhoatom "PP_RHOATOM"
     text::String, txt""
+end
+
+@aml struct Aewfc "PP_AEWFC"
+    l::UInt, att"l"
+    index::UN{Int}, att"index"
+    label::UN{String}, att"label"
+    text::String, txt""
+end
+
+@aml struct FullWfc "PP_FULL_WFC"
+    aewfc::Vector{Aewfc}, "PP_AEWFC"
 end
 
 @aml struct UPF doc"UPF"
@@ -123,14 +187,14 @@ end
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
     mesh::Mesh, "PP_MESH", validate
-    # nlcc::UN{PpNlcc}, "PP_NLCC"
+    nlcc::UN{Nlcc}, "PP_NLCC"
     loc::Local, "PP_LOCAL"
     nonlocal::Nonlocal, "PP_NONLOCAL"
-    # semilocal::UN, "PP_SEMILOCAL"
-    pswfc::Pswfc, "PP_PSWFC"
-    # full_wfc::UN, "PP_FULL_WFC"
-    rhoatom::RhoAtom, "PP_RHOATOM"
-    # paw::UN, "PP_PAW"
+    semilocal::UN{Semilocal}, "PP_SEMILOCAL"
+    pswfc::UN{Pswfc}, "PP_PSWFC"
+    full_wfc::UN{FullWfc}, "PP_FULL_WFC"
+    rhoatom::Rhoatom, "PP_RHOATOM"
+    # paw::UN{Paw}, "PP_PAW"
 end
 
 function validate(x::Mesh)
@@ -140,25 +204,24 @@ end
 
 function fixenumeration!(doc, name)
     children = findall("//*[contains(name(), '$name')]", doc)  # See https://stackoverflow.com/a/40124534/3260253
-    if isempty(children)  # No need to change anything
-        return doc
-    else
+    if !isempty(children)  # Need to change something
         for child in children
             setnodename!(child, name)
         end
-        return doc
     end
+    return doc
 end
 
 function Base.parse(::Type{UPF}, str)
     doc = parsexml(str)
-    doc = fixenumeration!(doc, "PP_CHI")
-    doc = fixenumeration!(doc, "PP_BETA")
+    fixenumeration!(doc, "PP_CHI")
+    fixenumeration!(doc, "PP_BETA")
+    fixenumeration!(doc, "PP_AEWFC")
+    fixenumeration!(doc, "PP_QIJL")
     return UPF(doc)
 end
 
-getdata(x::Union{RhoAtom,Local,R,Rab,Chi,Beta}) = parsevec(x.text)
-getdata(x::Dij) = parse(Float64, x.text)
+getdata(x::Union{Rhoatom,Nlcc,Local,R,Rab,Chi,Beta,Dij,Q,Multipoles,Qijl}) = parsevec(x.text)
 
 function Base.getproperty(x::Header, name::Symbol)
     if name in (
