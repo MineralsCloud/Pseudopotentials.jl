@@ -122,6 +122,17 @@ end
     text::String, txt""
 end
 
+@aml struct Aewfc "PP_AEWFC"
+    l::UInt, att"l"
+    index::UN{Int}, att"index"
+    label::UN{String}, att"label"
+    text::String, txt""
+end
+
+@aml struct FullWfc "PP_FULL_WFC"
+    aewfc::Vector{Aewfc}, "PP_AEWFC"
+end
+
 @aml struct UPF doc"UPF"
     version::VersionNumber, att"version"
     info::Info, "PP_INFO"
@@ -132,7 +143,7 @@ end
     nonlocal::Nonlocal, "PP_NONLOCAL"
     # semilocal::UN, "PP_SEMILOCAL"
     pswfc::Pswfc, "PP_PSWFC"
-    # full_wfc::UN, "PP_FULL_WFC"
+    full_wfc::UN{FullWfc}, "PP_FULL_WFC"
     rhoatom::Rhoatom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
 end
@@ -154,8 +165,9 @@ end
 
 function Base.parse(::Type{UPF}, str)
     doc = parsexml(str)
-    doc = fixenumeration!(doc, "PP_CHI")
-    doc = fixenumeration!(doc, "PP_BETA")
+    fixenumeration!(doc, "PP_CHI")
+    fixenumeration!(doc, "PP_BETA")
+    fixenumeration!(doc, "PP_AEWFC")
     return UPF(doc)
 end
 
