@@ -82,6 +82,16 @@ end
     chi::Vector{Chi}, "PP_CHI"
 end
 
+@aml struct Vnl "PP_VNL"
+    l::String, att"L"
+    j::String, att"J"
+    text::String, txt""
+end
+
+@aml struct Semilocal "PP_SEMILOCAL"
+    chi::Vector{Vnl}, "PP_VNL"
+end
+
 @aml struct Nlcc "PP_NLCC"
     text::String, txt""
 end
@@ -180,8 +190,8 @@ end
     nlcc::UN{Nlcc}, "PP_NLCC"
     loc::Local, "PP_LOCAL"
     nonlocal::Nonlocal, "PP_NONLOCAL"
-    # semilocal::UN, "PP_SEMILOCAL"
     pswfc::Pswfc, "PP_PSWFC"
+    semilocal::UN{Semilocal}, "PP_SEMILOCAL"
     full_wfc::UN{FullWfc}, "PP_FULL_WFC"
     rhoatom::Rhoatom, "PP_RHOATOM"
     # paw::UN, "PP_PAW"
