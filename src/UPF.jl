@@ -155,7 +155,7 @@ end
     cutoff_r_index::UN{Int}, att"cutoff_r_index"
     l_max_aug::UN{Int}, att"l_max_aug"
     q::Q, "PP_Q"
-    multipoles::Multipoles, "PP_MULTIPOLES"
+    multipoles::UN{Multipoles}, "PP_MULTIPOLES"
     qfcoeff::UN{Qfcoeff}, "PP_QFCOEFF"
     rinner::UN{Rinner}, "PP_RINNER"
     qijl::Vector{Qijl}, "PP_QIJL"
