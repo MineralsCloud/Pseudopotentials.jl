@@ -239,3 +239,13 @@ function Base.getproperty(x::Header, name::Symbol)
         return getfield(x, name)
     end
 end
+
+# From https://github.com/mauro3/Parameters.jl/blob/ecbf8df/src/Parameters.jl#L554-L561
+function Base.show(io::IO, x::UPF)
+    if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
+        Base.show_default(IOContext(io, :limit => true), x)
+    else
+        # just dumping seems to give ok output, in particular for big data-sets:
+        dump(IOContext(io, :limit => true), x, maxdepth = 1)
+    end
+end
