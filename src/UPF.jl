@@ -18,28 +18,28 @@ end
 end
 
 @aml struct Header empty"PP_HEADER"
-    generated::String, att"generated"
-    author::String, att"author"
-    date::String, att"date"
-    comment::String, att"comment"
+    generated::UN{String}, att"generated"
+    author::UN{String}, att"author"
+    date::UN{String}, att"date"
+    comment::UN{String}, att"comment"
     element::String, att"element"
     pseudo_type::String, att"pseudo_type"
     relativistic::String, att"relativistic"
     is_ultrasoft::String, att"is_ultrasoft"
     is_paw::String, att"is_paw"
-    is_coulomb::String = ".false.", att"is_coulomb"
-    has_so::String = ".false.", att"has_so"
+    is_coulomb::UN{String} = ".false.", att"is_coulomb"
+    has_so::UN{String} = ".false.", att"has_so"
     has_wfc::String, att"has_wfc"
-    has_gipaw::String = ".false.", att"has_gipaw"
-    paw_as_gipaw::String, att"paw_as_gipaw"
+    has_gipaw::UN{String} = ".false.", att"has_gipaw"
+    paw_as_gipaw::UN{String}, att"paw_as_gipaw"  # Suggested "required" but can be missing
     core_correction::String, att"core_correction"
     functional::String, att"functional"
     z_valence::Float64, att"z_valence"
-    total_psenergy::Float64 = 0, att"total_psenergy"
-    wfc_cutoff::Float64 = 0, att"wfc_cutoff"
-    rho_cutoff::Float64 = 0, att"rho_cutoff"
+    total_psenergy::UN{Float64} = 0, att"total_psenergy"
+    wfc_cutoff::UN{Float64} = 0, att"wfc_cutoff"
+    rho_cutoff::UN{Float64} = 0, att"rho_cutoff"
     l_max::Float64, att"l_max"
-    l_max_rho::Float64, att"l_max_rho"
+    l_max_rho::UN{Float64}, att"l_max_rho"  # Suggested "required" but can be missing
     l_local::UN{Int}, att"l_local"
     mesh_size::UInt, att"mesh_size"
     number_of_wfc::UInt, att"number_of_wfc"
@@ -60,7 +60,7 @@ end
     dx::UN{Float64}, att"dx"
     mesh::UN{Int}, att"mesh"
     xmin::UN{Float64}, att"xmin"
-    rmax::Float64, att"rmax"
+    rmax::UN{Float64}, att"rmax"  # Suggested "required" but can be missing
     zmesh::UN{Float64}, att"zmesh"
     r::R, "PP_R"
     rab::Rab, "PP_RAB"
@@ -107,7 +107,7 @@ end
     cutoff_radius::UN{Float64}, att"cutoff_radius"
     cutoff_radius_index::UN{Int}, att"cutoff_radius_index"
     norm_conserving_radius::UN{Float64}, att"norm_conserving_radius"
-    ultrasoft_cutoff_radius::Float64, att"ultrasoft_cutoff_radius"
+    ultrasoft_cutoff_radius::UN{Float64}, att"ultrasoft_cutoff_radius"  # Suggested "required" but can be missing
     text::String, txt""
 end
 
@@ -155,7 +155,7 @@ end
     cutoff_r_index::UN{Int}, att"cutoff_r_index"
     l_max_aug::UN{Int}, att"l_max_aug"
     q::Q, "PP_Q"
-    multipoles::Multipoles, "PP_MULTIPOLES"
+    multipoles::UN{Multipoles}, "PP_MULTIPOLES"
     qfcoeff::UN{Qfcoeff}, "PP_QFCOEFF"
     rinner::UN{Rinner}, "PP_RINNER"
     qijl::Vector{Qijl}, "PP_QIJL"
@@ -198,8 +198,8 @@ end
 end
 
 function validate(x::Mesh)
-    r, rab = map(getdata, (x.r, x.rab))
-    return x.mesh == length(r) == length(rab) && size(r) == size(rab)
+    r, rab = getdata.((x.r, x.rab))
+    return x.mesh === nothing ? size(r) == size(rab) : x.mesh == length(r) == length(rab)
 end
 
 function fixenumeration!(doc, name)
@@ -237,5 +237,15 @@ function Base.getproperty(x::Header, name::Symbol)
         return istrue(getfield(x, name))
     else
         return getfield(x, name)
+    end
+end
+
+# From https://github.com/mauro3/Parameters.jl/blob/ecbf8df/src/Parameters.jl#L554-L561
+function Base.show(io::IO, x::UPF)
+    if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
+        Base.show_default(IOContext(io, :limit => true), x)
+    else
+        # just dumping seems to give ok output, in particular for big data-sets:
+        dump(IOContext(io, :limit => true), x, maxdepth = 1)
     end
 end
