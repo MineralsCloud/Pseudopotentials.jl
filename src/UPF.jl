@@ -198,8 +198,8 @@ end
 end
 
 function validate(x::Mesh)
-    r, rab = map(getdata, (x.r, x.rab))
-    return x.mesh == length(r) == length(rab) && size(r) == size(rab)
+    r, rab = getdata.((x.r, x.rab))
+    return x.mesh === nothing ? size(r) == size(rab) : x.mesh == length(r) == length(rab)
 end
 
 function fixenumeration!(doc, name)
