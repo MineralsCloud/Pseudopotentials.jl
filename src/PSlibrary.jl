@@ -28,14 +28,7 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export PseudopotentialFile,
-    list_elements, list_potential, download_potential
-
-struct PseudopotentialFile
-    src::String
-    dst::String
-    info::String
-end
+export list_elements, list_potential, download_potential
 
 const Maybe{T} = Union{Nothing,T}
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
