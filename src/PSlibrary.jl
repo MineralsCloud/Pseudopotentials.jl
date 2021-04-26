@@ -32,8 +32,8 @@ export PseudopotentialFile,
     list_elements, list_potential, download_potential
 
 struct PseudopotentialFile
-    name::String
-    source::String
+    src::String
+    dst::String
     info::String
 end
 
