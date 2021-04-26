@@ -29,7 +29,7 @@ using Pseudopotentials:
     HalfCoreHole
 
 export PseudopotentialFile,
-    list_elements, list_potential, download_potential, save_potential
+    list_elements, list_potential, download_potential
 
 struct PseudopotentialFile
     name::String
@@ -311,37 +311,5 @@ function download_potential(element::AbstractString, filedir::AbstractString = "
     return paths
 end
 download_potential(i::Integer, args...) = download_potential(ELEMENTS[i], args...)
-
-"""
-    save_potential(element, file[, db])
-
-Save a `PseudopotentialFile` to the `element`'s list.
-
-# Arguments
-- `element::Union{AbstractString,Integer}`: the element to save pseudopotentials with. The integer corresponding to the element's atomic index.
-- `file::PseudopotentialFile`: the object that stores the information of that file.
-- `db::AbstractString="\$element.jld2"`: the path to the database file.
-
-See also: [`list_potential`](@ref)
-"""
-function save_potential(
-    element::AbstractString,
-    file::PseudopotentialFile,
-    db::AbstractString = "$element.jld2",
-)
-    df = list_potential(element)
-    inferred = analyse_pp_name(file.name)
-    push!(df, [file.name, file.source, inferred..., file.info])
-    @save db df
-    return df
-end
-function save_potential(
-    i::Integer,
-    file::PseudopotentialFile,
-    db::AbstractString = "$(ELEMENTS[i]).jld2",
-)
-    1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return save_potential(ELEMENTS[i], file, db)
-end
 
 end
