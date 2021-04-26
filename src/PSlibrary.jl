@@ -37,9 +37,10 @@ struct PseudopotentialFile
     info::String
 end
 
+const Maybe{T} = Union{Nothing,T}
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
-const AVAILABLE_ELEMENTS = (
+const ELEMENTS = (
     "H",
     "He",
     "Li",
@@ -135,6 +136,33 @@ const AVAILABLE_ELEMENTS = (
     "Np",
     "Pu",
 )
+const PERIODIC_TABLE = DataFrame(
+    element = collect(ELEMENTS),
+    database = fill(
+        DataFrame(
+            name = String[],
+            source = String[],
+            # rel = Maybe{Bool}[],
+            # Nl_state = Maybe{NlState}[],
+            # functional = Maybe{FunctionalType}[],
+            # orbit = Maybe{String}[],
+            # pseudo = Maybe{Pseudization}[],
+            info = Maybe{String}[],
+        ),
+        length(ELEMENTS),
+    ),
+)
+const PERIODIC_TABLE_TEXT = raw"""
+H                                                  He
+Li Be                               B  C  N  O  F  Ne
+Na Mg                               Al Si P  S  Cl Ar
+K  Ca Sc Ti V  Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr
+Rb Sr Y  Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I  Xe
+Cs Ba    Hf Ta W  Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn
+Fr Ra
+      La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
+      Ac Th Pa U  Np Pu
+"""
 const NL_STATE = (starnl = OneCoreHole, starhnl = HalfCoreHole)
 const FUNCTIONAL_TYPE = (
     pz = PerdewZunger,
@@ -156,7 +184,6 @@ const PSEUDIZATION_TYPE = (
     kjpaw = KresseJoubert,
     bpaw = Bloechl,
 )
-const Maybe{T} = Union{Nothing,T}
 
 function analyse_pp_name(name)
     v = Vector{Any}(nothing, 5)
@@ -215,19 +242,8 @@ end
 List all elements that has pseudopotentials available in `PSlibrary`.
 """
 function list_elements()
-    s = raw"""
-    H                                                  He
-    Li Be                               B  C  N  O  F  Ne
-    Na Mg                               Al Si P  S  Cl Ar
-    K  Ca Sc Ti V  Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr
-    Rb Sr Y  Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I  Xe
-    Cs Ba    Hf Ta W  Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn
-    Fr Ra
-          La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
-          Ac Th Pa U  Np Pu
-    """
-    println(s)
-    return pairs(AVAILABLE_ELEMENTS)
+    println(PERIODIC_TABLE_TEXT)
+    return PERIODIC_TABLE
 end
 
 """
@@ -308,7 +324,7 @@ function download_potential(element::AbstractString, filedir::AbstractString = "
     end
     return paths
 end
-download_potential(i::Integer, args...) = download_potential(AVAILABLE_ELEMENTS[i], args...)
+download_potential(i::Integer, args...) = download_potential(ELEMENTS[i], args...)
 
 """
     save_potential(element, file[, db])
@@ -336,10 +352,10 @@ end
 function save_potential(
     i::Integer,
     file::PseudopotentialFile,
-    db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2",
+    db::AbstractString = "$(ELEMENTS[i]).jld2",
 )
     1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return save_potential(AVAILABLE_ELEMENTS[i], file, db)
+    return save_potential(ELEMENTS[i], file, db)
 end
 
 end
