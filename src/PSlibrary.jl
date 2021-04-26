@@ -257,35 +257,21 @@ List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or
 
 See also: [`save_potential`](@ref)
 """
-function list_potential(
-    element::Union{AbstractString,AbstractChar},
-    db::AbstractString = "$element.jld2",
-)
+function list_potential(element::Union{AbstractString,AbstractChar})
     element = element |> string |> lowercase |> uppercasefirst
-    @assert(element ∈ AVAILABLE_ELEMENTS, "element $element is not recognized!")
-    if isfile(db)
-        @load db df  # Load database `db` to variable `df`
-    else
-        df = DataFrame(
-            name = String[],
-            source = String[],
-            # rel = Maybe{Bool}[],
-            # Nl_state = Maybe{NlState}[],
-            # functional = Maybe{FunctionalType}[],
-            # orbit = Maybe{String}[],
-            # pseudo = Maybe{Pseudization}[],
-            info = Maybe{String}[],
-        )
-        map(_parsehtml(lowercase(element))) do meta
-            push!(df, [meta.name, meta.source, meta.metadata])
-        end
-    end
-    @save db df
-    return df
+    @assert element ∈ ELEMENTS "element $element is not recognized!"
+    i = findfirst(ELEMENTS .== element)
+    return list_potential(i)
 end
-function list_potential(i::Integer, db::AbstractString = "$(AVAILABLE_ELEMENTS[i]).jld2")
-    1 <= i <= 94 || error("You can only access element 1 to 94!")
-    return list_potential(AVAILABLE_ELEMENTS[i], db)
+function list_potential(atomic_number::Integer)
+    @assert 1 <= atomic_number <= 94 "atomic number be between 1 to 94!"
+    element = ELEMENTS[atomic_number]
+    df = DataFrame(name = String[], source = String[], info = Maybe{String}[])
+    for meta in _parsehtml(lowercase(element))
+        push!(df, [meta.name, meta.source, meta.metadata])
+    end
+    PERIODIC_TABLE[atomic_number, :database] = df
+    return df
 end
 
 """
