@@ -4,7 +4,6 @@ using DataFrames: DataFrame
 using EzXML: parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
-using UrlDownload: urldownload
 
 using Pseudopotentials:
     FunctionalType,
@@ -280,26 +279,26 @@ function interactive_download(element::AbstractString, filedir::AbstractString =
     while !finished
         printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
-        potential = urldownload(df.source[i], true; parser = String)
-        if isempty(filedir)
-            printstyled(
-                "Enter the file path to save the potential (press enter to skip): ";
-                color = :green,
-            )
-            path = strip(readline())
-        else
-            path = expanduser(joinpath(filedir, df.name[i]))
-        end
-        if isempty(path)
-            path, io = mktemp()
-            write(io, potential)
-        else
-            open(expanduser(path), "w") do io
-                write(io, potential)
-            end
-        end
+        path =
+            if isempty(filedir)
+                printstyled(
+                    "Enter the file path to save the potential (press enter to skip): ";
+                    color = :green,
+                )
+                str = readline()
+                if !isempty(str)
+                    strip(str)
+                else
+                    tempname()
+                end
+            else
+                joinpath(strip(filedir), strip(df.name[i]))
+            end |>
+            expanduser |>
+            abspath  # `abspath` is necessary since the path will depend on where you run it
+        download(df.source[i], path)
         push!(paths, path)
-        finished = (true, false)[request("Finished?", RadioMenu(["yes", "no"]))]
+        finished = request("Finished?", RadioMenu(["yes", "no"])) == 1
     end
     return paths
 end
