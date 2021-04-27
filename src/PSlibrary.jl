@@ -133,7 +133,7 @@ const PERIODIC_TABLE = DataFrame(
     database = fill(
         DataFrame(
             name = String[],
-            source = String[],
+            src = String[],
             # rel = Maybe{Bool}[],
             # Nl_state = Maybe{NlState}[],
             # functional = Maybe{FunctionalType}[],
@@ -223,7 +223,7 @@ function _parsehtml(element)
     return map(findall("//table//a", primates)) do anchor
         (
             name = strip(nodecontent(anchor)),
-            source = UPF_ROOT * anchor["href"],
+            src = UPF_ROOT * anchor["href"],
             metadata = nodecontent(nextelement(anchor)),
         )
     end
@@ -259,9 +259,9 @@ end
 function list_potential(atomic_number::Integer)
     @assert 1 <= atomic_number <= 94 "atomic number be between 1 to 94!"
     element = ELEMENTS[atomic_number]
-    df = DataFrame(name = String[], source = String[], info = Maybe{String}[])
+    df = DataFrame(name = String[], src = String[], info = Maybe{String}[])
     for meta in _parsehtml(lowercase(element))
-        push!(df, [meta.name, meta.source, meta.metadata])
+        push!(df, [meta.name, meta.src, meta.metadata])
     end
     PERIODIC_TABLE[atomic_number, :database] = df
     return df
@@ -297,7 +297,7 @@ function interactive_download(element::AbstractString, filedir::AbstractString =
             end |>
             expanduser |>
             abspath  # `abspath` is necessary since the path will depend on where you run it
-        download(df.source[i], path)
+        download(df.src[i], path)
         push!(paths, path)
         finished = request("Finished?", RadioMenu(["yes", "no"])) == 1
     end
