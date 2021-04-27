@@ -28,7 +28,7 @@ using Pseudopotentials:
     OneCoreHole,
     HalfCoreHole
 
-export list_elements, list_potential, download_potential
+export list_elements, list_potential, interactive_download
 
 const Maybe{T} = Union{Nothing,T}
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
@@ -273,7 +273,7 @@ end
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
-function download_potential(element::AbstractString, filedir::AbstractString = "")
+function interactive_download(element::AbstractString, filedir::AbstractString = "")
     df = list_potential(element)
     display(df)
     paths, finished = String[], false
@@ -303,6 +303,6 @@ function download_potential(element::AbstractString, filedir::AbstractString = "
     end
     return paths
 end
-download_potential(i::Integer, args...) = download_potential(ELEMENTS[i], args...)
+interactive_download(i::Integer, args...) = interactive_download(ELEMENTS[i], args...)
 
 end
