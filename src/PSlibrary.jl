@@ -215,7 +215,8 @@ end
 
 function _parsehtml(element)
     url = LIBRARY_ROOT * element
-    str = urldownload(url, true; parser = String)
+    path = download(url)
+    str = read(path, String)
     doc = parsehtml(str)
     primates = root(doc)
     anchors = findall("//table//a", primates)
