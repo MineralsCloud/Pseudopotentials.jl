@@ -1,7 +1,7 @@
 module PSlibrary
 
 using DataFrames: DataFrame
-using EzXML: parsehtml, root, nextelement, nodecontent
+using AcuteML: parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
 
