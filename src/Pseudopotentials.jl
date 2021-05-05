@@ -103,7 +103,7 @@ abstract type NlState end
 struct OneCoreHole <: NlState end
 struct HalfCoreHole <: NlState end
 
-include("UPF.jl")
+include("UnifiedPseudopotentialFormat.jl")
 include("PSlibrary.jl")
 
 end

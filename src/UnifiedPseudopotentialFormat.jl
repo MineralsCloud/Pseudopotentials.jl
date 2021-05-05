@@ -10,7 +10,7 @@ using AcuteML:
     @empty_str,
     @txt_str
 
-export UPF, getdata
+export UnifiedPseudopotentialFormat, getdata
 
 istrue(str) = occursin(r"t(rue)?"i, str)
 
@@ -195,7 +195,7 @@ end
     aewfc::Vector{Aewfc}, "PP_AEWFC"
 end
 
-@aml struct UPF doc"UPF"
+@aml struct UnifiedPseudopotentialFormat doc"UPF"
     version::VersionNumber, att"version"
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
@@ -225,13 +225,13 @@ function fixenumeration!(doc, name)
     return doc
 end
 
-function Base.parse(::Type{UPF}, str)
+function Base.parse(::Type{UnifiedPseudopotentialFormat}, str)
     doc = parsexml(str)
     fixenumeration!(doc, "PP_CHI")
     fixenumeration!(doc, "PP_BETA")
     fixenumeration!(doc, "PP_AEWFC")
     fixenumeration!(doc, "PP_QIJL")
-    return UPF(doc)
+    return UnifiedPseudopotentialFormat(doc)
 end
 
 getdata(x::Union{Rhoatom,Nlcc,Local,R,Rab,Chi,Beta,Dij,Q,Multipoles,Qijl}) = parsevec(x.text)
@@ -254,7 +254,7 @@ function Base.getproperty(x::Header, name::Symbol)
 end
 
 # From https://github.com/mauro3/Parameters.jl/blob/ecbf8df/src/Parameters.jl#L554-L561
-function Base.show(io::IO, x::UPF)
+function Base.show(io::IO, x::UnifiedPseudopotentialFormat)
     if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
         Base.show_default(IOContext(io, :limit => true), x)
     else
