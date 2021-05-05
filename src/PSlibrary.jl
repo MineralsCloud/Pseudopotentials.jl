@@ -5,28 +5,6 @@ using AcuteML: UN, parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
 
-using Pseudopotentials:
-    FunctionalType,
-    PerdewZunger,
-    VoskoWilkNusair,
-    PerdewBurkeErnzerhof,
-    BeckeLeeYangParr,
-    PerdewWang91,
-    TaoPerdewStaroverovScuseria,
-    Coulomb,
-    Pseudization,
-    AllElectron,
-    MartinsTroullier,
-    BacheletHamannSchlueter,
-    VonBarthCar,
-    Vanderbilt,
-    RappeRabeKaxirasJoannopoulos,
-    KresseJoubert,
-    Bloechl,
-    NlState,
-    OneCoreHole,
-    HalfCoreHole
-
 export list_elements, list_potential, interactive_download
 
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
@@ -154,26 +132,26 @@ Fr Ra
       La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
       Ac Th Pa U  Np Pu
 """
-const NL_STATE = (starnl = OneCoreHole, starhnl = HalfCoreHole)
+const NL_STATE = (starnl = "OneCoreHole", starhnl = "HalfCoreHole")
 const FUNCTIONAL_TYPE = (
-    pz = PerdewZunger,
-    vwn = VoskoWilkNusair,
-    pbe = PerdewBurkeErnzerhof,
-    blyp = BeckeLeeYangParr,
-    pw91 = PerdewWang91,
-    tpss = TaoPerdewStaroverovScuseria,
-    coulomb = Coulomb,
+    pz = "PerdewZunger",
+    vwn = "VoskoWilkNusair",
+    pbe = "PerdewBurkeErnzerhof",
+    blyp = "BeckeLeeYangParr",
+    pw91 = "PerdewWang91",
+    tpss = "TaoPerdewStaroverovScuseria",
+    coulomb = "Coulomb",
 )
 const PSEUDIZATION_TYPE = (
-    ae = AllElectron,
-    mt = MartinsTroullier,
-    bhs = BacheletHamannSchlueter,
-    vbc = VonBarthCar,
-    van = Vanderbilt,
-    rrkj = RappeRabeKaxirasJoannopoulos{:NC},
-    rrkjus = RappeRabeKaxirasJoannopoulos{:US},
-    kjpaw = KresseJoubert,
-    bpaw = Bloechl,
+    ae = "AllElectron",
+    mt = "MartinsTroullier",
+    bhs = "BacheletHamannSchlueter",
+    vbc = "VonBarthCar",
+    van = "Vanderbilt",
+    rrkj = "RappeRabeKaxirasJoannopoulos{:NC}",
+    rrkjus = "RappeRabeKaxirasJoannopoulos{:US}",
+    kjpaw = "KresseJoubert",
+    bpaw = "Bloechl",
 )
 
 function analyse_pp_name(name)
