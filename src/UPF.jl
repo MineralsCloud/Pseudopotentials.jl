@@ -134,6 +134,14 @@ end
     text::String, txt""
 end
 
+@aml struct Qij "PP_QIJ"
+    first_index::UN{Int}, att"first_index"
+    second_index::UN{Int}, att"second_index"
+    composite_index::UN{Int}, att"composite_index"
+    is_null::UN{String}, att"is_null"
+    text::String, txt""
+end
+
 @aml struct Qijl "PP_QIJL"
     angular_momentum::Int, att"angular_momentum"
     first_index::UN{Int}, att"first_index"
