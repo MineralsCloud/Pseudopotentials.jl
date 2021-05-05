@@ -47,12 +47,10 @@ end
 end
 
 @aml struct R "PP_R"
-    size::UInt, att"size"
     text::String, txt""
 end
 
 @aml struct Rab "PP_RAB"
-    size::UInt, att"size"
     text::String, txt""
 end
 
@@ -112,9 +110,6 @@ end
 end
 
 @aml struct Dij "PP_DIJ"
-    columns::UInt, att"columns"
-    size::UInt, att"size"
-    type::String, att"type"
     text::String, txt""
 end
 
