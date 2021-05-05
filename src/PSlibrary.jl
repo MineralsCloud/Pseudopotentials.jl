@@ -1,7 +1,7 @@
 module PSlibrary
 
 using DataFrames: DataFrame
-using AcuteML: parsehtml, root, nextelement, nodecontent
+using AcuteML: UN, parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
 
@@ -29,7 +29,6 @@ using Pseudopotentials:
 
 export list_elements, list_potential, interactive_download
 
-const Maybe{T} = Union{Nothing,T}
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
 const ELEMENTS = (
@@ -134,12 +133,12 @@ const PERIODIC_TABLE = DataFrame(
         DataFrame(
             name = String[],
             src = String[],
-            # rel = Maybe{Bool}[],
-            # Nl_state = Maybe{NlState}[],
-            # functional = Maybe{FunctionalType}[],
-            # orbit = Maybe{String}[],
-            # pseudo = Maybe{Pseudization}[],
-            info = Maybe{String}[],
+            # rel = UN{Bool}[],
+            # Nl_state = UN{NlState}[],
+            # functional = UN{FunctionalType}[],
+            # orbit = UN{String}[],
+            # pseudo = UN{Pseudization}[],
+            info = UN{String}[],
         ),
         length(ELEMENTS),
     ),
@@ -259,7 +258,7 @@ end
 function list_potential(atomic_number::Integer)
     @assert 1 <= atomic_number <= 94 "atomic number be between 1 to 94!"
     element = ELEMENTS[atomic_number]
-    df = DataFrame(name = String[], src = String[], info = Maybe{String}[])
+    df = DataFrame(name = String[], src = String[], info = UN{String}[])
     for meta in _parsehtml(lowercase(element))
         push!(df, [meta.name, meta.src, meta.metadata])
     end
