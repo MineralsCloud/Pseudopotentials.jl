@@ -195,7 +195,7 @@ end
     aewfc::Vector{Aewfc}, "PP_AEWFC"
 end
 
-@aml struct UnifiedPseudopotentialFormat doc"UPF"
+@aml struct UnifiedPseudopotentialFormat <: PseudopotentialFormat doc"UPF"
     version::VersionNumber, att"version"
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
