@@ -1,4 +1,14 @@
-using AcuteML
+using AcuteML:
+    UN,
+    Document,  # Not used, but required
+    Node,  # Not used, but required
+    parsexml,
+    setnodename!,
+    @aml,
+    @att_str,
+    @doc_str,
+    @empty_str,
+    @txt_str
 
 export UPF, getdata
 
