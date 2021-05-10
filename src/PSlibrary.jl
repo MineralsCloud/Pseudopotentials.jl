@@ -235,7 +235,7 @@ function list_potential(atomic_number::Integer)
             [element, meta.name, analyse_pp_name(meta.name)..., meta.metadata, meta.src],
         )
     end
-    return groupby(PERIODIC_TABLE, :element)[(element = element,)]
+    return groupby(unique!(PERIODIC_TABLE), :element)[(element = element,)]
 end
 
 """
