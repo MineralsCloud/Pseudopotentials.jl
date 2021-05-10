@@ -1,6 +1,6 @@
 module PSlibrary
 
-using DataFrames: DataFrame
+using DataFrames: DataFrame, groupby
 using AcuteML: UN, parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
@@ -106,20 +106,15 @@ const ELEMENTS = (
     "Pu",
 )
 const PERIODIC_TABLE = DataFrame(
-    element = collect(ELEMENTS),
-    database = fill(
-        DataFrame(
-            name = String[],
-            src = String[],
-            # rel = UN{Bool}[],
-            # Nl_state = UN{NlState}[],
-            # functional = UN{FunctionalType}[],
-            # orbit = UN{String}[],
-            # pseudo = UN{Pseudization}[],
-            info = UN{String}[],
-        ),
-        length(ELEMENTS),
-    ),
+    element = [],
+    name = String[],
+    rel = UN{Bool}[],
+    Nl_state = UN{String}[],
+    functional = UN{String}[],
+    orbit = UN{String}[],
+    pseudo = UN{String}[],
+    info = UN{String}[],
+    src = String[],
 )
 const PERIODIC_TABLE_TEXT = raw"""
 H                                                  He
@@ -169,7 +164,7 @@ function analyse_pp_name(name)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
         if m !== nothing
-            v[2] = NL_STATE[m[1]]()
+            v[2] = NL_STATE[Symbol(m[1])]
             break
         end
     end
@@ -178,7 +173,7 @@ function analyse_pp_name(name)
         i >= 3 && break
         m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
         if m !== nothing
-            i3, v[3] = i, FUNCTIONAL_TYPE[m[1]]()
+            i3, v[3] = i, FUNCTIONAL_TYPE[Symbol(m[1])]
             break
         end
     end
@@ -186,7 +181,7 @@ function analyse_pp_name(name)
         v[4] = fields[i3+1]
     end
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
-    v[5] = m !== nothing ? PSEUDIZATION_TYPE[m[1]]() : ""
+    v[5] = m !== nothing ? PSEUDIZATION_TYPE[Symbol(m[1])] : ""
     return v
 end
 
@@ -236,12 +231,13 @@ end
 function list_potential(atomic_number::Integer)
     @assert 1 <= atomic_number <= 94 "atomic number be between 1 to 94!"
     element = ELEMENTS[atomic_number]
-    df = DataFrame(name = String[], src = String[], info = UN{String}[])
     for meta in _parsehtml(lowercase(element))
-        push!(df, [meta.name, meta.src, meta.metadata])
+        push!(
+            PERIODIC_TABLE,
+            [element, meta.name, analyse_pp_name(meta.name)..., meta.metadata, meta.src],
+        )
     end
-    PERIODIC_TABLE[atomic_number, :database] = df
-    return df
+    return groupby(PERIODIC_TABLE, :element)[(element = element,)]
 end
 
 """
