@@ -1,6 +1,16 @@
-using AcuteML
+using AcuteML:
+    UN,
+    Document,  # Not used, but required
+    Node,  # Not used, but required
+    parsexml,
+    setnodename!,
+    @aml,
+    @att_str,
+    @doc_str,
+    @empty_str,
+    @txt_str
 
-export UPF, getdata
+export UnifiedPseudopotentialFormat, getdata
 
 istrue(str) = occursin(r"t(rue)?"i, str)
 
@@ -47,12 +57,10 @@ end
 end
 
 @aml struct R "PP_R"
-    size::UInt, att"size"
     text::String, txt""
 end
 
 @aml struct Rab "PP_RAB"
-    size::UInt, att"size"
     text::String, txt""
 end
 
@@ -112,9 +120,6 @@ end
 end
 
 @aml struct Dij "PP_DIJ"
-    columns::UInt, att"columns"
-    size::UInt, att"size"
-    type::String, att"type"
     text::String, txt""
 end
 
@@ -131,6 +136,14 @@ end
 end
 
 @aml struct Rinner "PP_RINNER"
+    text::String, txt""
+end
+
+@aml struct Qij "PP_QIJ"
+    first_index::UN{Int}, att"first_index"
+    second_index::UN{Int}, att"second_index"
+    composite_index::UN{Int}, att"composite_index"
+    is_null::UN{String}, att"is_null"
     text::String, txt""
 end
 
@@ -158,7 +171,7 @@ end
     multipoles::UN{Multipoles}, "PP_MULTIPOLES"
     qfcoeff::UN{Qfcoeff}, "PP_QFCOEFF"
     rinner::UN{Rinner}, "PP_RINNER"
-    qijl::Vector{Qijl}, "PP_QIJL"
+    qijl::Vector{Union{Qijl,Qij}}, "PP_QIJL"
 end
 
 @aml struct Nonlocal "PP_NONLOCAL"
@@ -182,7 +195,7 @@ end
     aewfc::Vector{Aewfc}, "PP_AEWFC"
 end
 
-@aml struct UPF doc"UPF"
+@aml struct UnifiedPseudopotentialFormat <: PseudopotentialFormat doc"UPF"
     version::VersionNumber, att"version"
     info::Info, "PP_INFO"
     header::Header, "PP_HEADER"
@@ -212,13 +225,13 @@ function fixenumeration!(doc, name)
     return doc
 end
 
-function Base.parse(::Type{UPF}, str)
+function Base.parse(::Type{UnifiedPseudopotentialFormat}, str)
     doc = parsexml(str)
     fixenumeration!(doc, "PP_CHI")
     fixenumeration!(doc, "PP_BETA")
     fixenumeration!(doc, "PP_AEWFC")
     fixenumeration!(doc, "PP_QIJL")
-    return UPF(doc)
+    return UnifiedPseudopotentialFormat(doc)
 end
 
 getdata(x::Union{Rhoatom,Nlcc,Local,R,Rab,Chi,Beta,Dij,Q,Multipoles,Qijl}) = parsevec(x.text)
@@ -241,7 +254,7 @@ function Base.getproperty(x::Header, name::Symbol)
 end
 
 # From https://github.com/mauro3/Parameters.jl/blob/ecbf8df/src/Parameters.jl#L554-L561
-function Base.show(io::IO, x::UPF)
+function Base.show(io::IO, x::UnifiedPseudopotentialFormat)
     if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
         Base.show_default(IOContext(io, :limit => true), x)
     else
