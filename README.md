@@ -13,18 +13,21 @@
 [![Coverage](https://codecov.io/gh/MineralsCloud/Pseudopotentials.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/MineralsCloud/Pseudopotentials.jl)
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/organization/repository)
 
-The code is [hosted on GitHub](https://github.com/MineralsCloud/Pseudopotentials.jl),
-with some continuous integration services to test its validity.
+The code is
+[hosted on GitHub](https://github.com/MineralsCloud/Pseudopotentials.jl), with
+some continuous integration services to test its validity.
 
-This repository is created and maintained by [singularitti](https://github.com/singularitti).
-You are very welcome to contribute.
+This repository is created and maintained by
+[singularitti](https://github.com/singularitti). You are very welcome to
+contribute.
 
 ## Compatibility
 
 - [Julia version: `v1.0.0` to `v1.6.2`](https://julialang.org/downloads/)
 - Dependencies:
   - [`AcuteML.jl`](https://github.com/aminya/AcuteML.jl) `v0.8.0` and above
-  - [`DataFrames.jl`](https://github.com/JuliaData/DataFrames.jl) `v0.14.0` and above
+  - [`DataFrames.jl`](https://github.com/JuliaData/DataFrames.jl) `v0.14.0` and
+    above
   - [`JLD2.jl`](https://github.com/JuliaIO/JLD2.jl) `v0.1.0` and above
 - OS: macOS, Linux, Windows, and FreeBSD
 - Architecture: x86, x64, ARM
