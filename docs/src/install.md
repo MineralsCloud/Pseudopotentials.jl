@@ -21,7 +21,7 @@ platform to explain the following steps:
    ```julia
    julia> using Pkg; Pkg.update()
 
-   julia> Pkg.add(PackageSpec(url="https://github.com/MineralsCloud/Pseudopotentials.jl.git"))
+   julia> pkg"add Pseudopotentials"
    ```
 
    and wait for its finish.
