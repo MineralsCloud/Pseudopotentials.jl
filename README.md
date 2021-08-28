@@ -12,6 +12,12 @@
 [![Build Status](https://api.cirrus-ci.com/github/MineralsCloud/Pseudopotentials.jl.svg)](https://cirrus-ci.com/github/MineralsCloud/Pseudopotentials.jl)
 [![Coverage](https://codecov.io/gh/MineralsCloud/Pseudopotentials.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/MineralsCloud/Pseudopotentials.jl)
 
+The code is [hosted on GitHub](https://github.com/MineralsCloud/Pseudopotentials.jl),
+with some continuous integration services to test its validity.
+
+This repository is created and maintained by [singularitti](https://github.com/singularitti).
+You are very welcome to contribute.
+
 ## Compatibility
 
 - [Julia version: `v1.0.0` to `v1.6.2`](https://julialang.org/downloads/)
