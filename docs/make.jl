@@ -15,11 +15,9 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "Manual" => Any[
-            "Installation" => "install.md",
-        ],
-        "API by modules" => Any[
-            "`Pseudopotentials` module" => "api/api.md",
+        "Manual" => ["Installation" => "install.md", "Development" => "develop.md"],
+        "API by modules" => [
+            "`Pseudopotentials` module" => "api/Pseudopotentials.md",
             "`Pseudopotentials.PSlibrary` module" => "api/PSlibrary.md",
         ],
     ],
