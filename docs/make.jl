@@ -1,10 +1,12 @@
 using Pseudopotentials
 using Documenter
 
+DocMeta.setdocmeta!(Pseudopotentials, :DocTestSetup, :(using Pseudopotentials); recursive=true)
+
 makedocs(;
     modules=[Pseudopotentials],
     authors="Qi Zhang <singularitti@outlook.com>",
-    repo="https://github.com/MineralsCloud/Pseudopotentials.jl/blob/{commit}{path}#L{line}",
+    repo="https://github.com/MineralsCloud/Pseudopotentials.jl/blob/{commit}{path}#{line}",
     sitename="Pseudopotentials.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
@@ -13,11 +15,9 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        "Manual" => Any[
-            "Installation" => "install.md",
-        ],
-        "API by modules" => Any[
-            "`Pseudopotentials` module" => "api/api.md",
+        "Manual" => ["Installation" => "install.md", "Development" => "develop.md"],
+        "API by modules" => [
+            "`Pseudopotentials` module" => "api/Pseudopotentials.md",
             "`Pseudopotentials.PSlibrary` module" => "api/PSlibrary.md",
         ],
     ],

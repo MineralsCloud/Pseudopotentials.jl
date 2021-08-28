@@ -219,8 +219,6 @@ List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or
 # Arguments
 - `element::Union{AbstractString,AbstractChar,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
 - `db::AbstractString="\$element.jld2"`: the path to the database file.
-
-See also: [`save_potential`](@ref)
 """
 function list_potential(element::Union{AbstractString,AbstractChar})
     element = element |> string |> lowercase |> uppercasefirst

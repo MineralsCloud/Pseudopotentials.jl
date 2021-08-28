@@ -1,10 +1,18 @@
-## `Pseudopotentials.PSlibrary` module
+```@meta
+CurrentModule = Pseudopotentials.PSlibrary
+```
+
+# `Pseudopotentials.PSlibrary` module
 
 ```@contents
-Pages = ["PSlibrary.md"]
+Pages = ["api/PSlibrary.md"]
 Depth = 3
 ```
 
-```@autodocs
-Modules = [Pseudopotentials.PSlibrary]
+## Public interfaces
+
+```@docs
+list_elements
+list_potential
+interactive_download
 ```
