@@ -115,7 +115,7 @@ const DATABASE = DataFrame(
     pseudo = UN{String}[],
     src = String[],
 )
-const PERIODIC_TABLE_TEXT = raw"""
+const PERIODIC_TABLE = raw"""
 H                                                  He
 Li Be                               B  C  N  O  F  Ne
 Na Mg                               Al Si P  S  Cl Ar
@@ -206,7 +206,7 @@ end
 List all elements that has pseudopotentials available in `PSlibrary`.
 """
 function list_elements()
-    println(PERIODIC_TABLE_TEXT)
+        println(PERIODIC_TABLE)
     return groupby(unique!(DATABASE), :element)
 end
 
