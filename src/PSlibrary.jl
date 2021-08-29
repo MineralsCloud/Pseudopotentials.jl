@@ -220,10 +220,13 @@ List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or
 - `db::AbstractString="\$element.jld2"`: the path to the database file.
 """
 function list_potential(element::Union{AbstractString,AbstractChar})
-    element = element |> string |> lowercase |> uppercasefirst
+    element = lowercase(string(element))
     @assert element in ELEMENTS "element $element is not recognized!"
-    for meta in _parsehtml(lowercase(element))
-        push!(PERIODIC_TABLE, [element, meta.name, analyse_pp_name(meta.name)..., meta.src])
+    for meta in _parsehtml(element)
+        push!(
+            PERIODIC_TABLE,
+            [uppercasefirst(element), meta.name, analyse_pp_name(meta.name)..., meta.src],
+        )
     end
     return groupby(unique!(PERIODIC_TABLE), :element)[(element,)]
 end
