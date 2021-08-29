@@ -238,30 +238,19 @@ end
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
-function interactive_download(element, file = "")
+function interactive_download(element)
     df = list_potential(element)
     display(df)
     paths, finished = String[], false
     while !finished
         printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
-        path =
-            if isempty(file)
-                printstyled(
-                    "Enter the file path to save the potential (press enter to skip): ";
-                    color = :green,
-                )
-                str = readline()
-                if !isempty(str)
-                    strip(str)
-                else
-                    tempname()
-                end
-            else
-                joinpath(strip(file), strip(df.name[i]))
-            end |>
-            expanduser |>
-            abspath  # `abspath` is necessary since the path will depend on where you run it
+        printstyled(
+            "Enter the file path to save the potential (press enter to skip): ";
+            color = :green,
+        )
+        str = readline()
+        path = abspath(expanduser(isempty(str) ? tempname() : strip(str)))  # `abspath` is necessary since the path will depend on where you run it
         download(df.src[i], path)
         push!(paths, path)
         finished = request("Finished?", RadioMenu(["yes", "no"])) == 1
