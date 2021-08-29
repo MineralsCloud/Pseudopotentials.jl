@@ -6,13 +6,11 @@ version = "0.2.0"
 [deps]
 AcuteML = "6b84a0a3-a11a-41fa-a417-e600528de108"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [compat]
 AcuteML = "0.8, 0.9, 0.10, 0.11"
 DataFrames = "0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22, 1"
-JLD2 = "0.1, 0.2, 0.3, 0.4"
 julia = "1"
 
 [extras]
