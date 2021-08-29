@@ -40,7 +40,7 @@ function pseudoformat(data::AbstractString)
     ext = uppercase(splitext(data)[2])
     return if ext == ".UPF"
         UnifiedPseudopotentialFormat
-    elseif ext ∈ (".VDB", ".VAN")
+    elseif ext in (".VDB", ".VAN")
         VanderbiltUltraSoft
     elseif ext == ".RRKJ3"
         AndreaDalCorso

@@ -10,6 +10,8 @@
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/MineralsCloud/Pseudopotentials.jl?svg=true)](https://ci.appveyor.com/project/singularitti/Pseudopotentials-jl)
 [![Build Status](https://cloud.drone.io/api/badges/MineralsCloud/Pseudopotentials.jl/status.svg)](https://cloud.drone.io/MineralsCloud/Pseudopotentials.jl)
 [![Build Status](https://api.cirrus-ci.com/github/MineralsCloud/Pseudopotentials.jl.svg)](https://cirrus-ci.com/github/MineralsCloud/Pseudopotentials.jl)
+[![pipeline status](https://gitlab.com/singularitti/Pseudopotentials.jl/badges/master/pipeline.svg)](https://gitlab.com/singularitti/Pseudopotentials.jl/-/pipelines)
+[![coverage report](https://gitlab.com/singularitti/Pseudopotentials.jl/badges/master/coverage.svg)](https://gitlab.com/singularitti/Pseudopotentials.jl/-/jobs)
 [![Coverage](https://codecov.io/gh/MineralsCloud/Pseudopotentials.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/MineralsCloud/Pseudopotentials.jl)
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/organization/repository)
 
