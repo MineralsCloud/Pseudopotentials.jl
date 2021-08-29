@@ -5,7 +5,7 @@ using AcuteML: UN, parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
 
-export list_elements, list_potential, interactive_download
+export list_elements, list_potentials, interactive_download
 
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
@@ -219,7 +219,7 @@ List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or
 - `element::Union{AbstractString,AbstractChar,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
 - `db::AbstractString="\$element.jld2"`: the path to the database file.
 """
-function list_potential(element::Union{AbstractString,AbstractChar})
+function list_potentials(element::Union{AbstractString,AbstractChar})
     element = lowercase(string(element))
     @assert element in ELEMENTS "element $element is not recognized!"
     for meta in _parsehtml(element)
@@ -230,10 +230,10 @@ function list_potential(element::Union{AbstractString,AbstractChar})
     end
     return groupby(unique!(PERIODIC_TABLE), :element)[(element,)]
 end
-function list_potential(atomic_number::Integer)
+function list_potentials(atomic_number::Integer)
     @assert 1 <= atomic_number <= 94
     element = ELEMENTS[atomic_number]
-    return list_potential(element)
+    return list_potentials(element)
 end
 
 """
@@ -242,7 +242,7 @@ end
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
 function interactive_download(element)
-    df = list_potential(element)
+    df = list_potentials(element)
     display(df)
     paths, finished = String[], false
     while !finished
