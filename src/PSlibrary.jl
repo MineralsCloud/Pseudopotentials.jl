@@ -225,7 +225,7 @@ function list_potential(element::Union{AbstractString,AbstractChar})
     for meta in _parsehtml(lowercase(element))
         push!(PERIODIC_TABLE, [element, meta.name, analyse_pp_name(meta.name)..., meta.src])
     end
-    return groupby(unique!(PERIODIC_TABLE), :element)[(element = element,)]
+    return groupby(unique!(PERIODIC_TABLE), :element)[(element,)]
 end
 function list_potential(atomic_number::Integer)
     @assert 1 <= atomic_number <= 94
