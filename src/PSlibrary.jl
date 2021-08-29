@@ -222,16 +222,15 @@ List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or
 function list_potential(element::Union{AbstractString,AbstractChar})
     element = element |> string |> lowercase |> uppercasefirst
     @assert element ∈ ELEMENTS "element $element is not recognized!"
-    i = findfirst(ELEMENTS .== element)
-    return list_potential(i)
-end
-function list_potential(atomic_number::Integer)
-    @assert 1 <= atomic_number <= 94 "atomic number be between 1 to 94!"
-    element = ELEMENTS[atomic_number]
     for meta in _parsehtml(lowercase(element))
         push!(PERIODIC_TABLE, [element, meta.name, analyse_pp_name(meta.name)..., meta.src])
     end
     return groupby(unique!(PERIODIC_TABLE), :element)[(element = element,)]
+end
+function list_potential(atomic_number::Integer)
+    @assert 1 <= atomic_number <= 94
+    element = ELEMENTS[atomic_number]
+    return list_potential(element)
 end
 
 """
