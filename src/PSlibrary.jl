@@ -239,7 +239,7 @@ end
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
-function interactive_download(element::AbstractString, filedir::AbstractString = "")
+function interactive_download(element, filedir::AbstractString = "")
     df = list_potential(element)
     display(df)
     paths, finished = String[], false
@@ -269,6 +269,5 @@ function interactive_download(element::AbstractString, filedir::AbstractString =
     end
     return paths
 end
-interactive_download(i::Integer, args...) = interactive_download(ELEMENTS[i], args...)
 
 end
