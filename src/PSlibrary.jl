@@ -234,8 +234,7 @@ function list_potential(atomic_number::Integer)
 end
 
 """
-    download_potential(element::AbstractString, filedir::AbstractString = "")
-    download_potential(i::Integer, filedir::AbstractString = "")
+    download_potential(element::Union{AbstractString,Integer}, filedir::AbstractString = "")
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
