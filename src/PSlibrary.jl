@@ -238,7 +238,7 @@ end
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
-function interactive_download(element, filedir::AbstractString = "")
+function interactive_download(element, file = "")
     df = list_potential(element)
     display(df)
     paths, finished = String[], false
@@ -246,7 +246,7 @@ function interactive_download(element, filedir::AbstractString = "")
         printstyled("Enter its index (integer) to download a potential: "; color = :green)
         i = parse(Int, readline())
         path =
-            if isempty(filedir)
+            if isempty(file)
                 printstyled(
                     "Enter the file path to save the potential (press enter to skip): ";
                     color = :green,
@@ -258,7 +258,7 @@ function interactive_download(element, filedir::AbstractString = "")
                     tempname()
                 end
             else
-                joinpath(strip(filedir), strip(df.name[i]))
+                joinpath(strip(file), strip(df.name[i]))
             end |>
             expanduser |>
             abspath  # `abspath` is necessary since the path will depend on where you run it
