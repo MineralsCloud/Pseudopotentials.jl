@@ -2,7 +2,6 @@ module PSlibrary
 
 using DataFrames: DataFrame, groupby
 using AcuteML: UN, parsehtml, root, nextelement, nodecontent
-import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
 
 export list_elements, list_potentials, download_potentials
