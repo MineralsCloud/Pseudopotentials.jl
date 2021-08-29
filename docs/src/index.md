@@ -20,7 +20,6 @@ You are very welcome to contribute.
 - Dependencies:
   - [`AcuteML.jl`](https://github.com/aminya/AcuteML.jl) `v0.8.0` and above
   - [`DataFrames.jl`](https://github.com/JuliaData/DataFrames.jl) `v0.14.0` and above
-  - [`JLD2.jl`](https://github.com/JuliaIO/JLD2.jl) `v0.1.0` and above
 - OS: macOS, Linux, Windows, and FreeBSD
 - Architecture: x86, x64, ARM
 
