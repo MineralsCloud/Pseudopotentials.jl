@@ -5,7 +5,7 @@ using AcuteML: UN, parsehtml, root, nextelement, nodecontent
 import JLD2: @save, @load
 using REPL.TerminalMenus: RadioMenu, request
 
-export list_elements, list_potentials, interactive_download
+export list_elements, list_potentials, download_potentials
 
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
@@ -243,7 +243,7 @@ end
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
-function interactive_download(element)
+function download_potentials(element)
     df = list_potentials(element)
     display(df)
     paths, finished = String[], false
