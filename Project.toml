@@ -1,20 +1,20 @@
 name = "Pseudopotentials"
 uuid = "1b2dc2e6-48aa-4f00-b8f4-19d1a71d7a0e"
 authors = ["Reno <singularitti@outlook.com>"]
-version = "0.2.0"
+version = "0.1.0"
 
 [deps]
 AcuteML = "6b84a0a3-a11a-41fa-a417-e600528de108"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
-
-[compat]
-AcuteML = "0.8, 0.9, 0.10, 0.11"
-DataFrames = "0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22, 1"
-julia = "1"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+AcuteML = "0.8, 0.9, 0.10, 0.11"
+julia = "1"
+DataFrames = "0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22, 1"
 
 [targets]
 test = ["Test"]
