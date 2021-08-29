@@ -207,7 +207,7 @@ List all elements that has pseudopotentials available in `PSlibrary`.
 """
 function list_elements()
     println(PERIODIC_TABLE_TEXT)
-    return PERIODIC_TABLE
+    return groupby(unique!(PERIODIC_TABLE), :element)
 end
 
 """
