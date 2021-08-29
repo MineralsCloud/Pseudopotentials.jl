@@ -105,7 +105,7 @@ const ELEMENTS = (
     "np",
     "pu",
 )
-const PERIODIC_TABLE = DataFrame(
+const DATABASE = DataFrame(
     element = [],
     name = String[],
     rel = UN{Bool}[],
@@ -207,7 +207,7 @@ List all elements that has pseudopotentials available in `PSlibrary`.
 """
 function list_elements()
     println(PERIODIC_TABLE_TEXT)
-    return groupby(unique!(PERIODIC_TABLE), :element)
+    return groupby(unique!(DATABASE), :element)
 end
 
 """
@@ -224,11 +224,11 @@ function list_potentials(element::Union{AbstractString,AbstractChar})
     @assert element in ELEMENTS "element $element is not recognized!"
     for meta in _parsehtml(element)
         push!(
-            PERIODIC_TABLE,
+            DATABASE,
             [uppercasefirst(element), meta.name, analyse_pp_name(meta.name)..., meta.src],
         )
     end
-    return groupby(unique!(PERIODIC_TABLE), :element)[(element,)]
+    return groupby(unique!(DATABASE), :element)[(element,)]
 end
 function list_potentials(atomic_number::Integer)
     @assert 1 <= atomic_number <= 94
