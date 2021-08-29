@@ -1,7 +1,7 @@
 name = "Pseudopotentials"
 uuid = "1b2dc2e6-48aa-4f00-b8f4-19d1a71d7a0e"
 authors = ["Reno <singularitti@outlook.com>"]
-version = "0.1.0"
+version = "0.1.1-DEV"
 
 [deps]
 AcuteML = "6b84a0a3-a11a-41fa-a417-e600528de108"
