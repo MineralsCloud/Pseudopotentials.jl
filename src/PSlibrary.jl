@@ -221,7 +221,7 @@ List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or
 """
 function list_potential(element::Union{AbstractString,AbstractChar})
     element = element |> string |> lowercase |> uppercasefirst
-    @assert element ∈ ELEMENTS "element $element is not recognized!"
+    @assert element in ELEMENTS "element $element is not recognized!"
     for meta in _parsehtml(lowercase(element))
         push!(PERIODIC_TABLE, [element, meta.name, analyse_pp_name(meta.name)..., meta.src])
     end
