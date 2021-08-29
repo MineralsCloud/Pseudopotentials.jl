@@ -192,7 +192,7 @@ function _parsehtml(element)
     doc = parsehtml(str)
     primates = root(doc)
     anchors = findall("//table//a", primates)
-    return map(findall("//table//a", primates)) do anchor
+    return map(anchors) do anchor
         (
             name = strip(nodecontent(anchor)),
             src = UPF_ROOT * anchor["href"],
