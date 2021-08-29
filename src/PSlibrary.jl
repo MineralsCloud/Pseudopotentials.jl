@@ -230,7 +230,7 @@ function list_potentials(element::Union{AbstractString,AbstractChar})
             [uppercasefirst(element), meta.name, analyse_pp_name(meta.name)..., meta.src],
         )
     end
-    return groupby(unique!(DATABASE), :element)[(element,)]
+    return list_elements(false)[(uppercasefirst(element),)]
 end
 function list_potentials(atomic_number::Integer)
     @assert 1 <= atomic_number <= 94
