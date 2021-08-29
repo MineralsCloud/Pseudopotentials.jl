@@ -13,6 +13,6 @@ Depth = 3
 
 ```@docs
 list_elements
-list_potential
-interactive_download
+list_potentials
+download_potentials
 ```

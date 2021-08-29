@@ -201,9 +201,9 @@ function _parsehtml(element)
 end
 
 """
-    list_elements()
+    list_elements(pt=true)
 
-List all elements that has pseudopotentials available in `PSlibrary`.
+List all elements that has pseudopotentials available in `PSlibrary`. Print the periodic table if `pt` is `true`.
 """
 function list_elements(pt = true)
     if pt
@@ -213,13 +213,9 @@ function list_elements(pt = true)
 end
 
 """
-    list_potential(element[, db])
+    list_potentials(element::Union{AbstractString,AbstractChar,Integer})
 
 List all pseudopotentials in `PSlibrary` for a specific element (abbreviation or index).
-
-# Arguments
-- `element::Union{AbstractString,AbstractChar,Integer}`: the element to find pseudopotentials with. The integer corresponding to the element's atomic index.
-- `db::AbstractString="\$element.jld2"`: the path to the database file.
 """
 function list_potentials(element::Union{AbstractString,AbstractChar})
     element = lowercase(string(element))
@@ -239,7 +235,7 @@ function list_potentials(atomic_number::Integer)
 end
 
 """
-    download_potential(element::Union{AbstractString,Integer}, filedir::AbstractString = "")
+    download_potential(element::Union{AbstractString,AbstractChar,Integer})
 
 Download one or multiple pseudopotentials from `PSlibrary` for a specific element.
 """
