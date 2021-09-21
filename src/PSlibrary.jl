@@ -19,6 +19,19 @@ struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
 struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
 struct Coulomb <: ExchangeCorrelationFunctional end
 
+abstract type Pseudization end
+abstract type NormConserving <: Pseudization end
+abstract type Ultrasoft <: Pseudization end
+abstract type AllElectron <: Pseudization end
+abstract type ProjectorAugmentedWaves <: AllElectron end
+struct KresseJoubert <: ProjectorAugmentedWaves end
+struct Bloechl <: ProjectorAugmentedWaves end
+struct TroullierMartins <: NormConserving end
+struct BacheletHamannSchlueter <: Pseudization end
+struct VonBarthCar <: Pseudization end
+struct Vanderbilt <: Ultrasoft end
+struct RappeRabeKaxirasJoannopoulos <: NormConserving end
+
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
 const ELEMENTS = (
@@ -139,17 +152,6 @@ Fr Ra
       Ac Th Pa U  Np Pu
 """
 const NL_STATE = (starnl = "OneCoreHole", starhnl = "HalfCoreHole")
-const PSEUDIZATION_TYPE = (
-    ae = "AllElectron",
-    mt = "MartinsTroullier",
-    bhs = "BacheletHamannSchlueter",
-    vbc = "VonBarthCar",
-    van = "Vanderbilt",
-    rrkj = "RappeRabeKaxirasJoannopoulos{:NC}",
-    rrkjus = "RappeRabeKaxirasJoannopoulos{:US}",
-    kjpaw = "KresseJoubert",
-    bpaw = "Bloechl",
-)
 
 function analyse_pp_name(name)
     v = Vector{Any}(nothing, 5)
