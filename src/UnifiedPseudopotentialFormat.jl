@@ -10,7 +10,7 @@ using AcuteML:
     @empty_str,
     @txt_str
 
-export UnifiedPseudopotentialFormat, getdata
+export UnifiedPseudopotentialFormat, UPF, getdata
 
 istrue(str) = occursin(r"t(rue)?"i, str)
 
@@ -209,6 +209,8 @@ end
     rhoatom::Rhoatom, "PP_RHOATOM"
     # paw::UN{Paw}, "PP_PAW"
 end
+
+const UPF = UnifiedPseudopotentialFormat
 
 function validate(x::Mesh)
     r, rab = getdata.((x.r, x.rab))
