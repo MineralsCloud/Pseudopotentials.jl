@@ -234,6 +234,16 @@ function Base.parse(::Type{UnifiedPseudopotentialFormat}, str)
     return UnifiedPseudopotentialFormat(doc)
 end
 
+# Idea from https://github.com/JuliaData/CSV.jl/blob/c3af297/src/CSV.jl#L64-L69
+function Base.read(io::IO, ::Type{UnifiedPseudopotentialFormat})
+    str = read(io, String)
+    return parse(UnifiedPseudopotentialFormat, str)
+end
+function Base.read(filename::AbstractString, ::Type{UnifiedPseudopotentialFormat})
+    str = read(filename, String)
+    return parse(UnifiedPseudopotentialFormat, str)
+end
+
 getdata(x::Union{Rhoatom,Nlcc,Local,R,Rab,Chi,Beta,Dij,Q,Multipoles,Qijl}) = parsevec(x.text)
 
 function Base.getproperty(x::Header, name::Symbol)
