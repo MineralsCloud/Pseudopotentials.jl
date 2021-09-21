@@ -6,6 +6,19 @@ using REPL.TerminalMenus: RadioMenu, request
 
 export list_elements, list_potentials, download_potentials
 
+abstract type ExchangeCorrelationFunctional end
+abstract type LocalDensityApproximationFunctional <: ExchangeCorrelationFunctional end
+abstract type GeneralizedGradientApproximationFunctional <: ExchangeCorrelationFunctional end
+abstract type MetaGGAFunctional <: ExchangeCorrelationFunctional end
+abstract type HybridFunctional <: ExchangeCorrelationFunctional end
+struct PerdewZunger <: LocalDensityApproximationFunctional end
+struct VoskoWilkNusair <: LocalDensityApproximationFunctional end
+struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximationFunctional end
+struct BeckeLeeYangParr <: HybridFunctional end
+struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
+struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
+struct Coulomb <: ExchangeCorrelationFunctional end
+
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
 const ELEMENTS = (
@@ -126,15 +139,6 @@ Fr Ra
       Ac Th Pa U  Np Pu
 """
 const NL_STATE = (starnl = "OneCoreHole", starhnl = "HalfCoreHole")
-const FUNCTIONAL_TYPE = (
-    pz = "PerdewZunger",
-    vwn = "VoskoWilkNusair",
-    pbe = "PerdewBurkeErnzerhof",
-    blyp = "BeckeLeeYangParr",
-    pw91 = "PerdewWang91",
-    tpss = "TaoPerdewStaroverovScuseria",
-    coulomb = "Coulomb",
-)
 const PSEUDIZATION_TYPE = (
     ae = "AllElectron",
     mt = "MartinsTroullier",
