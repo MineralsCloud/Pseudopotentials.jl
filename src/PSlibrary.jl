@@ -137,7 +137,7 @@ const DATABASE = DataFrame(
     Nl_state = UN{String}[],
     functional = UN{ExchangeCorrelationFunctional}[],
     orbit = UN{String}[],
-    pseudo = UN{String}[],
+    pseudization = UN{Pseudization}[],
     src = String[],
 )
 const PERIODIC_TABLE = raw"""
