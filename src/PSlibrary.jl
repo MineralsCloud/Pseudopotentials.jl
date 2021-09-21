@@ -201,7 +201,25 @@ function analyse_pp_name(name)
         v[4] = fields[i3+1]
     end
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
-    v[5] = m !== nothing ? PSEUDIZATION_TYPE[Symbol(m[1])] : ""
+    type = m[1]
+    pseudization = if type == "ae"
+        AllElectron()
+    elseif type == "mt"
+        TroullierMartins()
+    elseif type == "bhs"
+        BacheletHamannSchlueter()
+    elseif type == "vbc"
+        VonBarthCar()
+    elseif type == "van"
+        Vanderbilt()
+    elseif type in ("rrkjus", "rrkj")
+        RappeRabeKaxirasJoannopoulos()
+    elseif type == "kjpaw"
+        KresseJoubert()
+    elseif type == "bpaw"
+        Bloechl()
+    end
+    v[5] = m !== nothing ? pseudization : nothing
     return v
 end
 
