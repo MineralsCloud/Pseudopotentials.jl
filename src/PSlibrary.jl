@@ -175,7 +175,23 @@ function analyse_pp_name(name)
         i >= 3 && break
         m = match(r"(pz|vwn|pbe|blyp|pw91|tpss|coulomb)", x)
         if m !== nothing
-            i3, v[3] = i, FUNCTIONAL_TYPE[Symbol(m[1])]
+            type = m[1]
+            functional = if type == "pz"
+                PerdewZunger()
+            elseif type == "vwn"
+                VoskoWilkNusair()
+            elseif type == "pbe"
+                PerdewBurkeErnzerhof()
+            elseif type == "blyp"
+                BeckeLeeYangParr()
+            elseif type == "pw91"
+                PerdewWang91()
+            elseif type == "tpss"
+                TaoPerdewStaroverovScuseria()
+            elseif type == "coulomb"
+                Coulomb()
+            end
+            i3, v[3] = i, functional
             break
         end
     end
