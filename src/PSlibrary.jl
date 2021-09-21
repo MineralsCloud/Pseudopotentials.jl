@@ -169,7 +169,7 @@ function analyse_pp_name(name)
     i3 = 0
     for (i, x) in enumerate(fields)
         i >= 3 && break
-        m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
+        m = match(r"(pz|vwn|pbe|blyp|pw91|tpss|coulomb)", x)
         if m !== nothing
             i3, v[3] = i, FUNCTIONAL_TYPE[Symbol(m[1])]
             break
