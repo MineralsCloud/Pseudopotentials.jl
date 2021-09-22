@@ -159,7 +159,7 @@ Fr Ra
 
 mutable struct PseudopotentialName
     element::String
-    rel::UN{Bool}
+    rel::Bool
     corehole::UN{CoreHoleEffect}
     functional::ExchangeCorrelationFunctional
     orbit::UN{String}
@@ -168,37 +168,21 @@ mutable struct PseudopotentialName
     PseudopotentialName() = new()
 end
 
+const PSEUDOPOTENTIAL_NAME =
+    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(_.*)?"i
+
 function Base.parse(::Type{PseudopotentialName}, name)
+    prefix, extension = splitext(name)
+    @assert uppercase(extension) == ".UPF"
     pp = PseudopotentialName()
-    prefix = lowercase(splitext(name)[1])
-    if length(split(prefix, "."; limit = 2)) >= 2
-        pp.element, middle = split(prefix, "."; limit = 2)
-    else
-        return pp
-    end
-    fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
-    @assert 1 <= length(fields) <= 5
-    pp.rel = occursin("rel", fields[1]) ? true : false
-    for (i, x) in enumerate(fields)
-        i >= 2 && break
-        m = match(r"(starnl|starhnl)", x)
+    data = split(prefix, '.'; limit = 2)
+    if length(data) == 2
+        pp.element, description = data
+        m = match(PSEUDOPOTENTIAL_NAME, description)
         if m !== nothing
-            type = m[1]
-            pp.corehole = if type == "starnl"
-                HalfCoreHole()
-            else  # type == "starhnl"
-                FullCoreHole()
-            end
-            break
-        end
-    end
-    i3 = 0
-    for (i, x) in enumerate(fields)
-        i >= 3 && break
-        m = match(r"(pz|vwn|pbe|blyp|pw91|tpss|coulomb)", x)
-        if m !== nothing
-            type = m[1]
-            functional = if type == "pz"
+            pp.rel = m[1] !== nothing ? true : false
+            type = m[3]
+            pp.functional = if type == "pz"
                 PerdewZunger()
             elseif type == "vwn"
                 VoskoWilkNusair()
@@ -213,35 +197,36 @@ function Base.parse(::Type{PseudopotentialName}, name)
             elseif type == "coulomb"
                 Coulomb()
             end
-            i3, pp.functional = i, functional
-            break
+            type = m[5]
+            pp.pseudization = if type == "ae"
+                AllElectron()
+            elseif type == "mt"
+                TroullierMartins()
+            elseif type == "bhs"
+                BacheletHamannSchlüter()
+            elseif type == "vbc"
+                VonBarthCar()
+            elseif type == "van"
+                Vanderbilt()
+            elseif type == "rrkj"
+                RappeRabeKaxirasJoannopoulos()
+            elseif type == "rrkjus"
+                RappeRabeKaxirasJoannopoulosUltrasoft()
+            elseif type == "kjpaw"
+                KresseJoubert()
+            elseif type == "bpaw"
+                Blöchl()
+            end
+        else
         end
+        return pp
+    else
+        throw(
+            Meta.ParseError(
+                "parsing failed! The file name `$name` does not follow QE's naming convention!",
+            ),
+        )
     end
-    if i3 != 0 && length(fields) - i3 == 2
-        pp[4] = fields[i3+1]
-    end
-    m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
-    type = m[1]
-    pp.pseudization = if type == "ae"
-        AllElectron()
-    elseif type == "mt"
-        TroullierMartins()
-    elseif type == "bhs"
-        BacheletHamannSchlüter()
-    elseif type == "vbc"
-        VonBarthCar()
-    elseif type == "van"
-        Vanderbilt()
-    elseif type == "rrkj"
-        RappeRabeKaxirasJoannopoulos()
-    elseif type == "rrkjus"
-        RappeRabeKaxirasJoannopoulosUltrasoft()
-    elseif type == "kjpaw"
-        KresseJoubert()
-    elseif type == "bpaw"
-        Blöchl()
-    end
-    return pp
 end
 
 function _parsehtml(element)
@@ -283,7 +268,12 @@ function list_potentials(element::Union{AbstractString,AbstractChar})
     for meta in _parsehtml(element)
         push!(
             DATABASE,
-            [uppercasefirst(element), meta.name, analyse_pp_name(meta.name)..., meta.src],
+            [
+                uppercasefirst(element),
+                meta.name,
+                fieldvalues(parse(PseudopotentialName, meta.name))...,
+                meta.src,
+            ],
         )
     end
     return list_elements(false)[(uppercasefirst(element),)]
@@ -318,5 +308,7 @@ function download_potentials(element)
     end
     return paths
 end
+
+fieldvalues(x::PseudopotentialName) = (getfield(x, i) for i in 1:nfields(x))
 
 end
