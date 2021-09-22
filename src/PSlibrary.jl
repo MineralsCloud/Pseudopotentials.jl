@@ -152,8 +152,9 @@ const DATABASE = DataFrame(
     rel = UN{Bool}[],
     corehole = UN{CoreHoleEffect}[],
     functional = UN{ExchangeCorrelationFunctional}[],
-    orbit = UN{String}[],
+    corevalence = UN{Vector{<:CoreValenceInteraction}}[],
     pseudization = UN{Pseudization}[],
+    free = String[],
     src = String[],
 )
 const PERIODIC_TABLE = raw"""
@@ -288,7 +289,7 @@ function list_potentials(element::Union{AbstractString,AbstractChar})
             [
                 uppercasefirst(element),
                 meta.name,
-                fieldvalues(parse(PseudopotentialName, meta.name))...,
+                fieldvalues(parse(PseudopotentialName, meta.name))[2:end]...,
                 meta.src,
             ],
         )
@@ -326,6 +327,6 @@ function download_potentials(element)
     return paths
 end
 
-fieldvalues(x::PseudopotentialName) = (getfield(x, i) for i in 1:nfields(x))
+fieldvalues(x::PseudopotentialName) = collect(getfield(x, i) for i in 1:nfields(x))
 
 end
