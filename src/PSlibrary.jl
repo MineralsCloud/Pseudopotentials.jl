@@ -358,6 +358,18 @@ end
 
 fieldvalues(x::PseudopotentialName) = collect(getfield(x, i) for i in 1:nfields(x))
 
+# From https://github.com/mauro3/Parameters.jl/blob/ecbf8df/src/Parameters.jl#L554-L561
+function Base.show(
+    io::IO,
+    x::Union{ExchangeCorrelationFunctional,Pseudization,CoreValenceInteraction},
+)
+    if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
+        Base.show_default(IOContext(io, :limit => true), x)
+    else
+        print(IOContext(io, :limit => true), string(x))
+    end
+end
+
 Base.string(x::ExchangeCorrelationFunctional) = string(typeof(x)) * "()"
 Base.string(x::PerdewBurkeErnzerhof) = "PBE()"
 Base.string(x::PerdewBurkeErnzerhofRevisedForSolids) = "PBEsol()"
