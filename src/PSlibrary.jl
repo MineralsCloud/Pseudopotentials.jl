@@ -172,7 +172,12 @@ function analyse_pp_name(name)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
         if m !== nothing
-            v[2] = NL_STATE[Symbol(m[1])]
+            type = m[1]
+            v[2] = if type == "starnl"
+                HalfCoreHole()
+            else  # type == "starhnl"
+                FullCoreHole()
+            end
             break
         end
     end
