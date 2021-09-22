@@ -181,7 +181,7 @@ Fr Ra
 end
 
 const PSEUDOPOTENTIAL_NAME =
-    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(?:_(.*))?"i
+    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|pbesol|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(?:_(.*))?"i
 
 function Base.parse(::Type{PseudopotentialName}, name)
     prefix, extension = splitext(name)
@@ -197,6 +197,7 @@ function Base.parse(::Type{PseudopotentialName}, name)
                 "pz" => PerdewZunger()
                 "vwn" => VoskoWilkNusair()
                 "pbe" => PerdewBurkeErnzerhof()
+                "pbesol" => PerdewBurkeErnzerhofRevisedForSolids()
                 "blyp" => BeckeLeeYangParr()
                 "pw91" => PerdewWang91()
                 "tpss" => TaoPerdewStaroverovScuseria()
