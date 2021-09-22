@@ -157,6 +157,17 @@ Fr Ra
       Ac Th Pa U  Np Pu
 """
 
+mutable struct PseudopotentialName
+    element::String
+    rel::UN{Bool}
+    corehole::UN{CoreHoleEffect}
+    functional::ExchangeCorrelationFunctional
+    orbit::UN{String}
+    pseudization::Pseudization
+    free::String
+    PseudopotentialName() = new()
+end
+
 function analyse_pp_name(name)
     v = Vector{Any}(nothing, 5)
     prefix = lowercase(splitext(name)[1])
