@@ -2,6 +2,7 @@ module PSlibrary
 
 using DataFrames: DataFrame, groupby
 using AcuteML: UN, parsehtml, root, nextelement, nodecontent
+using Parameters: @with_kw
 using REPL.TerminalMenus: RadioMenu, request
 
 export list_elements, list_potentials, download_potentials
@@ -166,15 +167,14 @@ Fr Ra
       Ac Th Pa U  Np Pu
 """
 
-mutable struct PseudopotentialName
+@with_kw mutable struct PseudopotentialName
     element::String
     rel::Bool
-    corehole::UN{CoreHoleEffect}
+    corehole::UN{CoreHoleEffect} = nothing
     functional::ExchangeCorrelationFunctional
-    orbit::UN{String}
+    corevalence::UN{Vector{<:CoreValenceInteraction}} = nothing
     pseudization::Pseudization
-    free::String
-    PseudopotentialName() = new()
+    free::String = ""
 end
 
 const PSEUDOPOTENTIAL_NAME =
