@@ -27,7 +27,7 @@ abstract type ProjectorAugmentedWaves <: AllElectron end
 struct KresseJoubert <: ProjectorAugmentedWaves end
 struct Blöchl <: ProjectorAugmentedWaves end
 struct TroullierMartins <: NormConserving end
-struct BacheletHamannSchlüter <: Pseudization end
+struct BacheletHamannSchlüter <: NormConserving end
 struct VonBarthCar <: Pseudization end
 struct Vanderbilt <: Ultrasoft end
 struct RappeRabeKaxirasJoannopoulos <: NormConserving end
