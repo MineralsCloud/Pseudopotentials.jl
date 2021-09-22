@@ -31,6 +31,7 @@ struct BacheletHamannSchlüter <: Pseudization end
 struct VonBarthCar <: Pseudization end
 struct Vanderbilt <: Ultrasoft end
 struct RappeRabeKaxirasJoannopoulos <: NormConserving end
+struct RappeRabeKaxirasJoannopoulosUltrasoft <: Ultrasoft end
 
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
@@ -212,8 +213,10 @@ function analyse_pp_name(name)
         VonBarthCar()
     elseif type == "van"
         Vanderbilt()
-    elseif type in ("rrkjus", "rrkj")
+    elseif type == "rrkj"
         RappeRabeKaxirasJoannopoulos()
+    elseif type == "rrkjus"
+        RappeRabeKaxirasJoannopoulosUltrasoft()
     elseif type == "kjpaw"
         KresseJoubert()
     elseif type == "bpaw"
