@@ -25,9 +25,9 @@ abstract type Ultrasoft <: Pseudization end
 abstract type AllElectron <: Pseudization end
 abstract type ProjectorAugmentedWaves <: AllElectron end
 struct KresseJoubert <: ProjectorAugmentedWaves end
-struct Bloechl <: ProjectorAugmentedWaves end
+struct Blöchl <: ProjectorAugmentedWaves end
 struct TroullierMartins <: NormConserving end
-struct BacheletHamannSchlueter <: Pseudization end
+struct BacheletHamannSchlüter <: Pseudization end
 struct VonBarthCar <: Pseudization end
 struct Vanderbilt <: Ultrasoft end
 struct RappeRabeKaxirasJoannopoulos <: NormConserving end
@@ -207,7 +207,7 @@ function analyse_pp_name(name)
     elseif type == "mt"
         TroullierMartins()
     elseif type == "bhs"
-        BacheletHamannSchlueter()
+        BacheletHamannSchlüter()
     elseif type == "vbc"
         VonBarthCar()
     elseif type == "van"
@@ -217,7 +217,7 @@ function analyse_pp_name(name)
     elseif type == "kjpaw"
         KresseJoubert()
     elseif type == "bpaw"
-        Bloechl()
+        Blöchl()
     end
     v[5] = m !== nothing ? pseudization : nothing
     return v
