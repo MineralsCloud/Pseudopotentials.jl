@@ -168,23 +168,23 @@ mutable struct PseudopotentialName
     PseudopotentialName() = new()
 end
 
-function analyse_pp_name(name)
-    v = Vector{Any}(nothing, 5)
+function Base.parse(::Type{PseudopotentialName}, name)
+    pp = PseudopotentialName()
     prefix = lowercase(splitext(name)[1])
     if length(split(prefix, "."; limit = 2)) >= 2
-        element, middle = split(prefix, "."; limit = 2)
+        pp.element, middle = split(prefix, "."; limit = 2)
     else
-        return v
+        return pp
     end
     fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
     @assert 1 <= length(fields) <= 5
-    v[1] = occursin("rel", fields[1]) ? true : false
+    pp.rel = occursin("rel", fields[1]) ? true : false
     for (i, x) in enumerate(fields)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
         if m !== nothing
             type = m[1]
-            v[2] = if type == "starnl"
+            pp.corehole = if type == "starnl"
                 HalfCoreHole()
             else  # type == "starhnl"
                 FullCoreHole()
@@ -213,16 +213,16 @@ function analyse_pp_name(name)
             elseif type == "coulomb"
                 Coulomb()
             end
-            i3, v[3] = i, functional
+            i3, pp.functional = i, functional
             break
         end
     end
     if i3 != 0 && length(fields) - i3 == 2
-        v[4] = fields[i3+1]
+        pp[4] = fields[i3+1]
     end
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
     type = m[1]
-    pseudization = if type == "ae"
+    pp.pseudization = if type == "ae"
         AllElectron()
     elseif type == "mt"
         TroullierMartins()
@@ -241,8 +241,7 @@ function analyse_pp_name(name)
     elseif type == "bpaw"
         Blöchl()
     end
-    v[5] = m !== nothing ? pseudization : nothing
-    return v
+    return pp
 end
 
 function _parsehtml(element)
