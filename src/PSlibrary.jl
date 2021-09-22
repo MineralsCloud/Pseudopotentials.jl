@@ -16,6 +16,7 @@ abstract type HybridFunctional <: ExchangeCorrelationFunctional end
 struct PerdewZunger <: LocalDensityApproximationFunctional end
 struct VoskoWilkNusair <: LocalDensityApproximationFunctional end
 struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximationFunctional end
+struct PerdewBurkeErnzerhofRevisedForSolids <: GeneralizedGradientApproximationFunctional end
 struct BeckeLeeYangParr <: HybridFunctional end
 struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
 struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
