@@ -2,8 +2,29 @@ module PSlibrary
 
 using DataFrames: DataFrame, groupby
 using AcuteML: UN, parsehtml, root, nextelement, nodecontent
+using MLStyle: @match
+using Parameters: @with_kw
 using REPL.TerminalMenus: RadioMenu, request
 
+export PerdewZunger,
+    VoskoWilkNusair,
+    PBE,
+    PBEsol,
+    BLYP,
+    PerdewWang91,
+    TPSS,
+    Coulomb,
+    KresseJoubert,
+    Blöchl,
+    TroullierMartins,
+    BHS,
+    VonBarthCar,
+    Vanderbilt,
+    RRKJ,
+    RRKJUs,
+    SemicoreValence,
+    CoreValence,
+    NLCC
 export list_elements, list_potentials, download_potentials
 
 abstract type ExchangeCorrelationFunctional end
@@ -14,10 +35,15 @@ abstract type HybridFunctional <: ExchangeCorrelationFunctional end
 struct PerdewZunger <: LocalDensityApproximationFunctional end
 struct VoskoWilkNusair <: LocalDensityApproximationFunctional end
 struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximationFunctional end
+struct PerdewBurkeErnzerhofRevisedForSolids <: GeneralizedGradientApproximationFunctional end
 struct BeckeLeeYangParr <: HybridFunctional end
 struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
 struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
 struct Coulomb <: ExchangeCorrelationFunctional end
+const PBE = PerdewBurkeErnzerhof
+const PBEsol = PerdewBurkeErnzerhofRevisedForSolids
+const BLYP = BeckeLeeYangParr
+const TPSS = TaoPerdewStaroverovScuseria
 
 abstract type Pseudization end
 abstract type NormConserving <: Pseudization end
@@ -32,10 +58,23 @@ struct VonBarthCar <: NormConserving end
 struct Vanderbilt <: Ultrasoft end
 struct RappeRabeKaxirasJoannopoulos <: NormConserving end
 struct RappeRabeKaxirasJoannopoulosUltrasoft <: Ultrasoft end
+const BHS = BacheletHamannSchlüter
+const RRKJ = RappeRabeKaxirasJoannopoulos
+const RRKJUs = RappeRabeKaxirasJoannopoulosUltrasoft
 
 abstract type CoreHoleEffect end
 struct HalfCoreHole <: CoreHoleEffect end
 struct FullCoreHole <: CoreHoleEffect end
+
+abstract type CoreValenceInteraction end
+struct SemicoreValence <: CoreValenceInteraction
+    orbital::Symbol
+end
+struct CoreValence <: CoreValenceInteraction
+    orbital::Symbol
+end
+struct NonLinearCoreCorrection <: CoreValenceInteraction end
+const NLCC = NonLinearCoreCorrection
 
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
@@ -141,8 +180,9 @@ const DATABASE = DataFrame(
     rel = UN{Bool}[],
     corehole = UN{CoreHoleEffect}[],
     functional = UN{ExchangeCorrelationFunctional}[],
-    orbit = UN{String}[],
+    corevalence = UN{Vector{<:CoreValenceInteraction}}[],
     pseudization = UN{Pseudization}[],
+    free = String[],
     src = String[],
 )
 const PERIODIC_TABLE = raw"""
@@ -157,81 +197,83 @@ Fr Ra
       Ac Th Pa U  Np Pu
 """
 
-function analyse_pp_name(name)
-    v = Vector{Any}(nothing, 5)
-    prefix = lowercase(splitext(name)[1])
-    if length(split(prefix, "."; limit = 2)) >= 2
-        element, middle = split(prefix, "."; limit = 2)
+@with_kw mutable struct PseudopotentialName
+    element::String
+    rel::Bool
+    corehole::UN{CoreHoleEffect} = nothing
+    functional::ExchangeCorrelationFunctional
+    corevalence::UN{Vector{<:CoreValenceInteraction}} = nothing
+    pseudization::Pseudization
+    free::String = ""
+end
+
+const PSEUDOPOTENTIAL_NAME =
+    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|pbesol|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(?:_(.*))?"i
+
+function Base.parse(::Type{PseudopotentialName}, name)
+    prefix, extension = splitext(name)
+    @assert uppercase(extension) == ".UPF"
+    data = split(prefix, '.'; limit = 2)
+    if length(data) == 2
+        element, description = data
+        m = match(PSEUDOPOTENTIAL_NAME, description)
+        if m !== nothing
+            rel = m[1] !== nothing ? true : false
+            corehole = m[2] !== nothing ? nothing : nothing
+            functional = @match m[3] begin
+                "pz" => PerdewZunger()
+                "vwn" => VoskoWilkNusair()
+                "pbe" => PerdewBurkeErnzerhof()
+                "pbesol" => PerdewBurkeErnzerhofRevisedForSolids()
+                "blyp" => BeckeLeeYangParr()
+                "pw91" => PerdewWang91()
+                "tpss" => TaoPerdewStaroverovScuseria()
+                "coulomb" => Coulomb()
+            end
+            corevalence = if m[4] !== nothing
+                map(collect(m[4])) do c
+                    @match c begin
+                        's' || 'p' || 'd' => SemicoreValence(Symbol(c))
+                        'f' => CoreValence(Symbol(c))
+                        'n' => NonLinearCoreCorrection()
+                    end
+                end
+            end
+            pseudization = @match m[5] begin
+                "ae" => AllElectron()
+                "mt" => TroullierMartins()
+                "bhs" => BacheletHamannSchlüter()
+                "vbc" => VonBarthCar()
+                "van" => Vanderbilt()
+                "rrkj" => RappeRabeKaxirasJoannopoulos()
+                "rrkjus" => RappeRabeKaxirasJoannopoulosUltrasoft()
+                "kjpaw" => KresseJoubert()
+                "bpaw" => Blöchl()
+            end
+            free = m[6]
+        else
+            throw(
+                Meta.ParseError(
+                    "parsing failed! The file name `$name` does not follow QE's naming convention!",
+                ),
+            )
+        end
+        return PseudopotentialName(
+            element,
+            rel,
+            corehole,
+            functional,
+            corevalence,
+            pseudization,
+            free,
+        )
     else
-        return v
+        throw(
+            Meta.ParseError(
+                "parsing failed! The file name `$name` does not follow QE's naming convention!",
+            ),
+        )
     end
-    fields = split(split(middle, "_"; limit = 2)[1], "-")  # Ignore the free field
-    @assert 1 <= length(fields) <= 5
-    v[1] = occursin("rel", fields[1]) ? true : false
-    for (i, x) in enumerate(fields)
-        i >= 2 && break
-        m = match(r"(starnl|starhnl)", x)
-        if m !== nothing
-            type = m[1]
-            v[2] = if type == "starnl"
-                HalfCoreHole()
-            else  # type == "starhnl"
-                FullCoreHole()
-            end
-            break
-        end
-    end
-    i3 = 0
-    for (i, x) in enumerate(fields)
-        i >= 3 && break
-        m = match(r"(pz|vwn|pbe|blyp|pw91|tpss|coulomb)", x)
-        if m !== nothing
-            type = m[1]
-            functional = if type == "pz"
-                PerdewZunger()
-            elseif type == "vwn"
-                VoskoWilkNusair()
-            elseif type == "pbe"
-                PerdewBurkeErnzerhof()
-            elseif type == "blyp"
-                BeckeLeeYangParr()
-            elseif type == "pw91"
-                PerdewWang91()
-            elseif type == "tpss"
-                TaoPerdewStaroverovScuseria()
-            elseif type == "coulomb"
-                Coulomb()
-            end
-            i3, v[3] = i, functional
-            break
-        end
-    end
-    if i3 != 0 && length(fields) - i3 == 2
-        v[4] = fields[i3+1]
-    end
-    m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
-    type = m[1]
-    pseudization = if type == "ae"
-        AllElectron()
-    elseif type == "mt"
-        TroullierMartins()
-    elseif type == "bhs"
-        BacheletHamannSchlüter()
-    elseif type == "vbc"
-        VonBarthCar()
-    elseif type == "van"
-        Vanderbilt()
-    elseif type == "rrkj"
-        RappeRabeKaxirasJoannopoulos()
-    elseif type == "rrkjus"
-        RappeRabeKaxirasJoannopoulosUltrasoft()
-    elseif type == "kjpaw"
-        KresseJoubert()
-    elseif type == "bpaw"
-        Blöchl()
-    end
-    v[5] = m !== nothing ? pseudization : nothing
-    return v
 end
 
 function _parsehtml(element)
@@ -273,7 +315,12 @@ function list_potentials(element::Union{AbstractString,AbstractChar})
     for meta in _parsehtml(element)
         push!(
             DATABASE,
-            [uppercasefirst(element), meta.name, analyse_pp_name(meta.name)..., meta.src],
+            [
+                uppercasefirst(element),
+                meta.name,
+                fieldvalues(parse(PseudopotentialName, meta.name))[2:end]...,
+                meta.src,
+            ],
         )
     end
     return list_elements(false)[(uppercasefirst(element),)]
@@ -308,5 +355,32 @@ function download_potentials(element)
     end
     return paths
 end
+
+fieldvalues(x::PseudopotentialName) = collect(getfield(x, i) for i in 1:nfields(x))
+
+# From https://github.com/mauro3/Parameters.jl/blob/ecbf8df/src/Parameters.jl#L554-L561
+function Base.show(
+    io::IO,
+    x::Union{ExchangeCorrelationFunctional,Pseudization,CoreValenceInteraction},
+)
+    if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
+        Base.show_default(IOContext(io, :limit => true), x)
+    else
+        print(IOContext(io, :limit => true), string(x))
+    end
+end
+
+Base.string(x::ExchangeCorrelationFunctional) = string(typeof(x)) * "()"
+Base.string(x::PerdewBurkeErnzerhof) = "PBE()"
+Base.string(x::PerdewBurkeErnzerhofRevisedForSolids) = "PBEsol()"
+Base.string(x::BeckeLeeYangParr) = "BLYP()"
+Base.string(x::TaoPerdewStaroverovScuseria) = "TPSS()"
+Base.string(x::Pseudization) = string(typeof(x)) * "()"
+Base.string(x::TroullierMartins) = "TM()"
+Base.string(x::BacheletHamannSchlüter) = "BHS()"
+Base.string(x::RappeRabeKaxirasJoannopoulos) = "RRKJ()"
+Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs()"
+Base.string(x::Union{SemicoreValence,CoreValence}) = string(x.orbital)
+Base.string(x::NonLinearCoreCorrection) = "NLCC()"
 
 end
