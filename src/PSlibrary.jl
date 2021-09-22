@@ -33,6 +33,10 @@ struct Vanderbilt <: Ultrasoft end
 struct RappeRabeKaxirasJoannopoulos <: NormConserving end
 struct RappeRabeKaxirasJoannopoulosUltrasoft <: Ultrasoft end
 
+abstract type CoreHoleEffect end
+struct HalfCoreHole <: CoreHoleEffect end
+struct FullCoreHole <: CoreHoleEffect end
+
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
 const ELEMENTS = (
@@ -135,7 +139,7 @@ const DATABASE = DataFrame(
     element = [],
     name = String[],
     rel = UN{Bool}[],
-    Nl_state = UN{String}[],
+    corehole = UN{CoreHoleEffect}[],
     functional = UN{ExchangeCorrelationFunctional}[],
     orbit = UN{String}[],
     pseudization = UN{Pseudization}[],
@@ -152,7 +156,6 @@ Fr Ra
       La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
       Ac Th Pa U  Np Pu
 """
-const NL_STATE = (starnl = "OneCoreHole", starhnl = "HalfCoreHole")
 
 function analyse_pp_name(name)
     v = Vector{Any}(nothing, 5)
