@@ -6,6 +6,25 @@ using MLStyle: @match
 using Parameters: @with_kw
 using REPL.TerminalMenus: RadioMenu, request
 
+export PerdewZunger,
+    VoskoWilkNusair,
+    PBE,
+    PBEsol,
+    BLYP,
+    PerdewWang91,
+    TPSS,
+    Coulomb,
+    KresseJoubert,
+    Blöchl,
+    TroullierMartins,
+    BHS,
+    VonBarthCar,
+    Vanderbilt,
+    RRKJ,
+    RRKJUs,
+    SemicoreValence,
+    CoreValence,
+    NLCC
 export list_elements, list_potentials, download_potentials
 
 abstract type ExchangeCorrelationFunctional end
@@ -21,6 +40,10 @@ struct BeckeLeeYangParr <: HybridFunctional end
 struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
 struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
 struct Coulomb <: ExchangeCorrelationFunctional end
+const PBE = PerdewBurkeErnzerhof
+const PBEsol = PerdewBurkeErnzerhofRevisedForSolids
+const BLYP = BeckeLeeYangParr
+const TPSS = TaoPerdewStaroverovScuseria
 
 abstract type Pseudization end
 abstract type NormConserving <: Pseudization end
@@ -35,6 +58,9 @@ struct VonBarthCar <: NormConserving end
 struct Vanderbilt <: Ultrasoft end
 struct RappeRabeKaxirasJoannopoulos <: NormConserving end
 struct RappeRabeKaxirasJoannopoulosUltrasoft <: Ultrasoft end
+const BHS = BacheletHamannSchlüter
+const RRKJ = RappeRabeKaxirasJoannopoulos
+const RRKJUs = RappeRabeKaxirasJoannopoulosUltrasoft
 
 abstract type CoreHoleEffect end
 struct HalfCoreHole <: CoreHoleEffect end
@@ -48,6 +74,7 @@ struct CoreValence <: CoreValenceInteraction
     orbital::Symbol
 end
 struct NonLinearCoreCorrection <: CoreValenceInteraction end
+const NLCC = NonLinearCoreCorrection
 
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
