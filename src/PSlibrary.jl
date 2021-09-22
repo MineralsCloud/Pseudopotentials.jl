@@ -358,4 +358,17 @@ end
 
 fieldvalues(x::PseudopotentialName) = collect(getfield(x, i) for i in 1:nfields(x))
 
+Base.string(x::ExchangeCorrelationFunctional) = string(typeof(x)) * "()"
+Base.string(x::PerdewBurkeErnzerhof) = "PBE()"
+Base.string(x::PerdewBurkeErnzerhofRevisedForSolids) = "PBEsol()"
+Base.string(x::BeckeLeeYangParr) = "BLYP()"
+Base.string(x::TaoPerdewStaroverovScuseria) = "TPSS()"
+Base.string(x::Pseudization) = string(typeof(x)) * "()"
+Base.string(x::TroullierMartins) = "TM()"
+Base.string(x::BacheletHamannSchlüter) = "BHS()"
+Base.string(x::RappeRabeKaxirasJoannopoulos) = "RRKJ()"
+Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs()"
+Base.string(x::Union{SemicoreValence,CoreValence}) = string(x.orbital)
+Base.string(x::NonLinearCoreCorrection) = "NLCC()"
+
 end
