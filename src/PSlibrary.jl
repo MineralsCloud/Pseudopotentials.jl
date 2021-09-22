@@ -6,6 +6,37 @@ using REPL.TerminalMenus: RadioMenu, request
 
 export list_elements, list_potentials, download_potentials
 
+abstract type ExchangeCorrelationFunctional end
+abstract type LocalDensityApproximationFunctional <: ExchangeCorrelationFunctional end
+abstract type GeneralizedGradientApproximationFunctional <: ExchangeCorrelationFunctional end
+abstract type MetaGGAFunctional <: ExchangeCorrelationFunctional end
+abstract type HybridFunctional <: ExchangeCorrelationFunctional end
+struct PerdewZunger <: LocalDensityApproximationFunctional end
+struct VoskoWilkNusair <: LocalDensityApproximationFunctional end
+struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximationFunctional end
+struct BeckeLeeYangParr <: HybridFunctional end
+struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
+struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
+struct Coulomb <: ExchangeCorrelationFunctional end
+
+abstract type Pseudization end
+abstract type NormConserving <: Pseudization end
+abstract type Ultrasoft <: Pseudization end
+abstract type AllElectron <: Pseudization end
+abstract type ProjectorAugmentedWaves <: AllElectron end
+struct KresseJoubert <: ProjectorAugmentedWaves end
+struct Blöchl <: ProjectorAugmentedWaves end
+struct TroullierMartins <: NormConserving end
+struct BacheletHamannSchlüter <: NormConserving end
+struct VonBarthCar <: NormConserving end
+struct Vanderbilt <: Ultrasoft end
+struct RappeRabeKaxirasJoannopoulos <: NormConserving end
+struct RappeRabeKaxirasJoannopoulosUltrasoft <: Ultrasoft end
+
+abstract type CoreHoleEffect end
+struct HalfCoreHole <: CoreHoleEffect end
+struct FullCoreHole <: CoreHoleEffect end
+
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
 const ELEMENTS = (
@@ -108,10 +139,10 @@ const DATABASE = DataFrame(
     element = [],
     name = String[],
     rel = UN{Bool}[],
-    Nl_state = UN{String}[],
-    functional = UN{String}[],
+    corehole = UN{CoreHoleEffect}[],
+    functional = UN{ExchangeCorrelationFunctional}[],
     orbit = UN{String}[],
-    pseudo = UN{String}[],
+    pseudization = UN{Pseudization}[],
     src = String[],
 )
 const PERIODIC_TABLE = raw"""
@@ -125,27 +156,6 @@ Fr Ra
       La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
       Ac Th Pa U  Np Pu
 """
-const NL_STATE = (starnl = "OneCoreHole", starhnl = "HalfCoreHole")
-const FUNCTIONAL_TYPE = (
-    pz = "PerdewZunger",
-    vwn = "VoskoWilkNusair",
-    pbe = "PerdewBurkeErnzerhof",
-    blyp = "BeckeLeeYangParr",
-    pw91 = "PerdewWang91",
-    tpss = "TaoPerdewStaroverovScuseria",
-    coulomb = "Coulomb",
-)
-const PSEUDIZATION_TYPE = (
-    ae = "AllElectron",
-    mt = "MartinsTroullier",
-    bhs = "BacheletHamannSchlueter",
-    vbc = "VonBarthCar",
-    van = "Vanderbilt",
-    rrkj = "RappeRabeKaxirasJoannopoulos{:NC}",
-    rrkjus = "RappeRabeKaxirasJoannopoulos{:US}",
-    kjpaw = "KresseJoubert",
-    bpaw = "Bloechl",
-)
 
 function analyse_pp_name(name)
     v = Vector{Any}(nothing, 5)
@@ -162,16 +172,37 @@ function analyse_pp_name(name)
         i >= 2 && break
         m = match(r"(starnl|starhnl)", x)
         if m !== nothing
-            v[2] = NL_STATE[Symbol(m[1])]
+            type = m[1]
+            v[2] = if type == "starnl"
+                HalfCoreHole()
+            else  # type == "starhnl"
+                FullCoreHole()
+            end
             break
         end
     end
     i3 = 0
     for (i, x) in enumerate(fields)
         i >= 3 && break
-        m = match(r"(pz|vwm|pbe|blyp|pw91|tpss|coulomb)", x)
+        m = match(r"(pz|vwn|pbe|blyp|pw91|tpss|coulomb)", x)
         if m !== nothing
-            i3, v[3] = i, FUNCTIONAL_TYPE[Symbol(m[1])]
+            type = m[1]
+            functional = if type == "pz"
+                PerdewZunger()
+            elseif type == "vwn"
+                VoskoWilkNusair()
+            elseif type == "pbe"
+                PerdewBurkeErnzerhof()
+            elseif type == "blyp"
+                BeckeLeeYangParr()
+            elseif type == "pw91"
+                PerdewWang91()
+            elseif type == "tpss"
+                TaoPerdewStaroverovScuseria()
+            elseif type == "coulomb"
+                Coulomb()
+            end
+            i3, v[3] = i, functional
             break
         end
     end
@@ -179,7 +210,27 @@ function analyse_pp_name(name)
         v[4] = fields[i3+1]
     end
     m = match(r"(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)", fields[end])
-    v[5] = m !== nothing ? PSEUDIZATION_TYPE[Symbol(m[1])] : ""
+    type = m[1]
+    pseudization = if type == "ae"
+        AllElectron()
+    elseif type == "mt"
+        TroullierMartins()
+    elseif type == "bhs"
+        BacheletHamannSchlüter()
+    elseif type == "vbc"
+        VonBarthCar()
+    elseif type == "van"
+        Vanderbilt()
+    elseif type == "rrkj"
+        RappeRabeKaxirasJoannopoulos()
+    elseif type == "rrkjus"
+        RappeRabeKaxirasJoannopoulosUltrasoft()
+    elseif type == "kjpaw"
+        KresseJoubert()
+    elseif type == "bpaw"
+        Blöchl()
+    end
+    v[5] = m !== nothing ? pseudization : nothing
     return v
 end
 
