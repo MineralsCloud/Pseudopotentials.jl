@@ -37,6 +37,15 @@ abstract type CoreHoleEffect end
 struct HalfCoreHole <: CoreHoleEffect end
 struct FullCoreHole <: CoreHoleEffect end
 
+abstract type CoreValenceInteraction end
+struct SemicoreValence <: CoreValenceInteraction
+    orbital::Symbol
+end
+struct CoreValence <: CoreValenceInteraction
+    orbital::Symbol
+end
+struct NonLinearCoreCorrection <: CoreValenceInteraction end
+
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
 const ELEMENTS = (
