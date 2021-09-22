@@ -28,7 +28,7 @@ struct KresseJoubert <: ProjectorAugmentedWaves end
 struct Blöchl <: ProjectorAugmentedWaves end
 struct TroullierMartins <: NormConserving end
 struct BacheletHamannSchlüter <: NormConserving end
-struct VonBarthCar <: Pseudization end
+struct VonBarthCar <: NormConserving end
 struct Vanderbilt <: Ultrasoft end
 struct RappeRabeKaxirasJoannopoulos <: NormConserving end
 struct RappeRabeKaxirasJoannopoulosUltrasoft <: Ultrasoft end
