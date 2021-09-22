@@ -2,6 +2,7 @@ module PSlibrary
 
 using DataFrames: DataFrame, groupby
 using AcuteML: UN, parsehtml, root, nextelement, nodecontent
+using MLStyle: @match
 using Parameters: @with_kw
 using REPL.TerminalMenus: RadioMenu, request
 
@@ -178,57 +179,64 @@ Fr Ra
 end
 
 const PSEUDOPOTENTIAL_NAME =
-    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(_.*)?"i
+    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(?:_(.*))?"i
 
 function Base.parse(::Type{PseudopotentialName}, name)
     prefix, extension = splitext(name)
     @assert uppercase(extension) == ".UPF"
-    pp = PseudopotentialName()
     data = split(prefix, '.'; limit = 2)
     if length(data) == 2
-        pp.element, description = data
+        element, description = data
         m = match(PSEUDOPOTENTIAL_NAME, description)
         if m !== nothing
-            pp.rel = m[1] !== nothing ? true : false
-            type = m[3]
-            pp.functional = if type == "pz"
-                PerdewZunger()
-            elseif type == "vwn"
-                VoskoWilkNusair()
-            elseif type == "pbe"
-                PerdewBurkeErnzerhof()
-            elseif type == "blyp"
-                BeckeLeeYangParr()
-            elseif type == "pw91"
-                PerdewWang91()
-            elseif type == "tpss"
-                TaoPerdewStaroverovScuseria()
-            elseif type == "coulomb"
-                Coulomb()
+            rel = m[1] !== nothing ? true : false
+            corehole = m[2] !== nothing ? nothing : nothing
+            functional = @match m[3] begin
+                "pz" => PerdewZunger()
+                "vwn" => VoskoWilkNusair()
+                "pbe" => PerdewBurkeErnzerhof()
+                "blyp" => BeckeLeeYangParr()
+                "pw91" => PerdewWang91()
+                "tpss" => TaoPerdewStaroverovScuseria()
+                "coulomb" => Coulomb()
             end
-            type = m[5]
-            pp.pseudization = if type == "ae"
-                AllElectron()
-            elseif type == "mt"
-                TroullierMartins()
-            elseif type == "bhs"
-                BacheletHamannSchlüter()
-            elseif type == "vbc"
-                VonBarthCar()
-            elseif type == "van"
-                Vanderbilt()
-            elseif type == "rrkj"
-                RappeRabeKaxirasJoannopoulos()
-            elseif type == "rrkjus"
-                RappeRabeKaxirasJoannopoulosUltrasoft()
-            elseif type == "kjpaw"
-                KresseJoubert()
-            elseif type == "bpaw"
-                Blöchl()
+            corevalence = if m[4] !== nothing
+                map(collect(m[4])) do c
+                    @match c begin
+                        's' || 'p' || 'd' => SemicoreValence(Symbol(c))
+                        'f' => CoreValence(Symbol(c))
+                        'n' => NonLinearCoreCorrection()
+                    end
+                end
             end
+            pseudization = @match m[5] begin
+                "ae" => AllElectron()
+                "mt" => TroullierMartins()
+                "bhs" => BacheletHamannSchlüter()
+                "vbc" => VonBarthCar()
+                "van" => Vanderbilt()
+                "rrkj" => RappeRabeKaxirasJoannopoulos()
+                "rrkjus" => RappeRabeKaxirasJoannopoulosUltrasoft()
+                "kjpaw" => KresseJoubert()
+                "bpaw" => Blöchl()
+            end
+            free = m[6]
         else
+            throw(
+                Meta.ParseError(
+                    "parsing failed! The file name `$name` does not follow QE's naming convention!",
+                ),
+            )
         end
-        return pp
+        return PseudopotentialName(
+            element,
+            rel,
+            corehole,
+            functional,
+            corevalence,
+            pseudization,
+            free,
+        )
     else
         throw(
             Meta.ParseError(
