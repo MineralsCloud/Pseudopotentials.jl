@@ -84,6 +84,16 @@ end
 struct NonLinearCoreCorrection <: CoreValenceInteraction end
 const NLCC = NonLinearCoreCorrection
 
+@with_kw mutable struct PseudopotentialName
+    element::String
+    rel::Bool
+    corehole::UN{CoreHoleEffect} = nothing
+    functional::ExchangeCorrelationFunctional
+    corevalence::UN{Vector{<:CoreValenceInteraction}} = nothing
+    pseudization::Pseudization
+    free::String = ""
+end
+
 const LIBRARY_ROOT = "https://www.quantum-espresso.org/pseudopotentials/ps-library/"
 const UPF_ROOT = "https://www.quantum-espresso.org"
 const ELEMENTS = (
@@ -204,17 +214,6 @@ Fr Ra
       La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu
       Ac Th Pa U  Np Pu
 """
-
-@with_kw mutable struct PseudopotentialName
-    element::String
-    rel::Bool
-    corehole::UN{CoreHoleEffect} = nothing
-    functional::ExchangeCorrelationFunctional
-    corevalence::UN{Vector{<:CoreValenceInteraction}} = nothing
-    pseudization::Pseudization
-    free::String = ""
-end
-
 const PSEUDOPOTENTIAL_NAME =
     r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|pbesol|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(?:_(.*))?"i
 
