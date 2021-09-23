@@ -355,7 +355,7 @@ function download_potentials(element)
     return paths
 end
 
-fieldvalues(x::PseudopotentialName) = collect(getfield(x, i) for i in 1:nfields(x))
+fieldvalues(x::PseudopotentialName) = (getfield(x, i) for i in 1:nfields(x))
 
 # From https://github.com/mauro3/Parameters.jl/blob/ecbf8df/src/Parameters.jl#L554-L561
 function Base.show(
