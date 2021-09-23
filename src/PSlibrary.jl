@@ -381,5 +381,45 @@ Base.string(x::RappeRabeKaxirasJoannopoulos) = "RRKJ()"
 Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs()"
 Base.string(x::Union{SemicoreValence,CoreValence}) = string(x.orbital)
 Base.string(x::NonLinearCoreCorrection) = "NLCC()"
+function Base.string(x::PseudopotentialName)
+    arr = String[]
+    if x.rel
+        push!(arr, "rel")
+    end
+    if x.corehole !== nothing
+        push!(arr, string(x.corehole))
+    end
+    push!(arr, @match x.functional begin
+        ::PerdewZunger => "pz"
+        ::VoskoWilkNusair => "vwn"
+        ::PerdewBurkeErnzerhof => "pbe"
+        ::PerdewBurkeErnzerhofRevisedForSolids => "pbesol"
+        ::BeckeLeeYangParr => "blyp"
+        ::PerdewWang91 => "pw91"
+        ::TaoPerdewStaroverovScuseria => "tpss"
+        ::Coulomb => "coulomb"
+    end)
+    if x.corevalence !== nothing
+        push!(arr, join(map(x.corevalence) do c
+            @match c begin
+                c::Union{SemicoreValence,CoreValence} => string(c.orbital)
+                ::NonLinearCoreCorrection => 'n'
+            end
+        end))
+    end
+    push!(arr, @match x.pseudization begin
+        ::AllElectron => "ae"
+        ::TroullierMartins => "mt"
+        ::BacheletHamannSchlüter => "bhs"
+        ::VonBarthCar => "vbc"
+        ::Vanderbilt => "van"
+        ::RappeRabeKaxirasJoannopoulos => "rrkj"
+        ::RappeRabeKaxirasJoannopoulosUltrasoft => "rrkjus"
+        ::KresseJoubert => "kjpaw"
+        ::Blöchl => "bpaw"
+    end)
+    prefix = x.element * '.' * join(arr, '-') * '_' * x.free
+    return prefix * ".UPF"
+end
 
 end
