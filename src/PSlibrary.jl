@@ -408,7 +408,6 @@ function Base.string(x::PseudopotentialName)
         end))
     end
     push!(arr, @match x.pseudization begin
-        ::AllElectron => "ae"
         ::TroullierMartins => "mt"
         ::BacheletHamannSchlüter => "bhs"
         ::VonBarthCar => "vbc"
@@ -417,6 +416,7 @@ function Base.string(x::PseudopotentialName)
         ::RappeRabeKaxirasJoannopoulosUltrasoft => "rrkjus"
         ::KresseJoubert => "kjpaw"
         ::Blöchl => "bpaw"
+        ::AllElectron => "ae"
     end)
     prefix = x.element * '.' * join(arr, '-') * '_' * x.free
     return prefix * ".UPF"
