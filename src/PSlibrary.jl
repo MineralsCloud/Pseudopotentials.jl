@@ -194,7 +194,6 @@ const ELEMENTS = (
 )
 const DATABASE = DataFrame(
     element = [],
-    name = String[],
     rel = UN{Bool}[],
     corehole = UN{CoreHoleEffect}[],
     functional = UN{ExchangeCorrelationFunctional}[],
@@ -320,15 +319,8 @@ function list_potentials(element::Union{AbstractString,AbstractChar})
     element = lowercase(string(element))
     @assert element in ELEMENTS "element $element is not recognized!"
     for meta in _parsehtml(element)
-        push!(
-            DATABASE,
-            [
-                uppercasefirst(element),
-                meta.name,
-                fieldvalues(parse(PseudopotentialName, meta.name))[2:end]...,
-                meta.src,
-            ],
-        )
+        parsed = parse(PseudopotentialName, meta.name)
+        push!(DATABASE, [fieldvalues(parsed)..., meta.src])
     end
     return list_elements(false)[(uppercasefirst(element),)]
 end
