@@ -18,7 +18,6 @@ makedocs(;
         "Manual" => ["Installation" => "install.md", "Development" => "develop.md"],
         "API by modules" => [
             "`Pseudopotentials` module" => "api/Pseudopotentials.md",
-            "`Pseudopotentials.PSlibrary` module" => "api/PSlibrary.md",
         ],
     ],
 )
