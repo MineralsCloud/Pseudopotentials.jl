@@ -49,7 +49,6 @@ function pseudoformat(data::AbstractString)
     end
 end
 
-include("UnifiedPseudopotentialFormat.jl")
 include("PSlibrary.jl")
 
 end
