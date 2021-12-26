@@ -29,6 +29,7 @@ export PerdewZunger,
     RRKJ,
     RappeRabeKaxirasJoannopoulosUltrasoft,
     RRKJUs,
+    CoreValenceInteraction,
     SemicoreValence,
     CoreValence,
     NonLinearCoreCorrection,
@@ -347,7 +348,7 @@ function download_potentials(element)
         i = parse(Int, readline())
         printstyled(
             "Enter the file path to save the potential (press enter to skip): ";
-            color = :green,
+            color = :green
         )
         str = readline()
         path = abspath(expanduser(isempty(str) ? tempname() : strip(str)))  # `abspath` is necessary since the path will depend on where you run it
