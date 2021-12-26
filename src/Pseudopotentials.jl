@@ -30,6 +30,13 @@ export PerdewZunger,
     NLCC
 
 """
+    Pseudopotential
+
+Represent a pseudopotential file.
+"""
+abstract type Pseudopotential end
+
+"""
     PseudopotentialFormat
 
 Represent all possible pseudopotential file formats.
