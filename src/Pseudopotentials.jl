@@ -82,9 +82,9 @@ const BHS = BacheletHamannSchlüter
 const RRKJ = RappeRabeKaxirasJoannopoulos
 const RRKJUs = RappeRabeKaxirasJoannopoulosUltrasoft
 
-abstract type CoreHoleEffect end
-struct HalfCoreHole <: CoreHoleEffect end
-struct FullCoreHole <: CoreHoleEffect end
+struct CoreHole
+    half::Bool
+end
 
 abstract type CoreValenceInteraction end
 struct SemicoreValence <: CoreValenceInteraction
