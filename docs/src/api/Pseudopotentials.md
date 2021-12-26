@@ -12,6 +12,7 @@ Depth = 3
 ## Public interfaces
 
 ```@docs
+Pseudopotential
 PseudopotentialFormat
 ExchangeCorrelationFunctional
 Pseudization
