@@ -32,10 +32,16 @@ export PerdewZunger,
 
 """
     PseudopotentialFormat
+
 Represent all possible pseudopotential file formats.
 """
 abstract type PseudopotentialFormat end
 
+"""
+    ExchangeCorrelationFunctional
+
+Represent exchange-correlation functional types.
+"""
 abstract type ExchangeCorrelationFunctional end
 abstract type LocalDensityApproximation <: ExchangeCorrelationFunctional end
 abstract type GeneralizedGradientApproximation <: ExchangeCorrelationFunctional end
@@ -54,6 +60,11 @@ const PBEsol = PerdewBurkeErnzerhofRevisedForSolids
 const BLYP = BeckeLeeYangParr
 const TPSS = TaoPerdewStaroverovScuseria
 
+"""
+    Pseudization
+
+Represent the pseudization types.
+"""
 abstract type Pseudization end
 abstract type NormConserving <: Pseudization end
 abstract type Ultrasoft <: Pseudization end
