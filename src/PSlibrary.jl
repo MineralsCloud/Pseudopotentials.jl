@@ -38,17 +38,17 @@ export PerdewZunger,
 export list_elements, list_potentials, download_potentials
 
 abstract type ExchangeCorrelationFunctional end
-abstract type LocalDensityApproximationFunctional <: ExchangeCorrelationFunctional end
-abstract type GeneralizedGradientApproximationFunctional <: ExchangeCorrelationFunctional end
-abstract type MetaGGAFunctional <: ExchangeCorrelationFunctional end
-abstract type HybridFunctional <: ExchangeCorrelationFunctional end
-struct PerdewZunger <: LocalDensityApproximationFunctional end
-struct VoskoWilkNusair <: LocalDensityApproximationFunctional end
-struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximationFunctional end
-struct PerdewBurkeErnzerhofRevisedForSolids <: GeneralizedGradientApproximationFunctional end
-struct BeckeLeeYangParr <: HybridFunctional end
-struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
-struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
+abstract type LocalDensityApproximation <: ExchangeCorrelationFunctional end
+abstract type GeneralizedGradientApproximation <: ExchangeCorrelationFunctional end
+abstract type MetaGGA <: ExchangeCorrelationFunctional end
+abstract type Hybrid <: ExchangeCorrelationFunctional end
+struct PerdewZunger <: LocalDensityApproximation end
+struct VoskoWilkNusair <: LocalDensityApproximation end
+struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximation end
+struct PerdewBurkeErnzerhofRevisedForSolids <: GeneralizedGradientApproximation end
+struct BeckeLeeYangParr <: Hybrid end
+struct PerdewWang91 <: GeneralizedGradientApproximation end
+struct TaoPerdewStaroverovScuseria <: MetaGGA end
 struct Coulomb <: ExchangeCorrelationFunctional end
 const PBE = PerdewBurkeErnzerhof
 const PBEsol = PerdewBurkeErnzerhofRevisedForSolids
@@ -89,7 +89,7 @@ const NLCC = NonLinearCoreCorrection
 
 @with_kw mutable struct PseudopotentialName
     element::String
-    rel::Bool
+    fullrelativistic::Bool
     corehole::UN{CoreHoleEffect} = nothing
     functional::ExchangeCorrelationFunctional
     corevalence::UN{Vector{<:CoreValenceInteraction}} = nothing
@@ -197,7 +197,7 @@ const ELEMENTS = (
 )
 const DATABASE = DataFrame(
     element = [],
-    rel = UN{Bool}[],
+    fullrelativistic = Bool[],
     corehole = UN{CoreHoleEffect}[],
     functional = UN{ExchangeCorrelationFunctional}[],
     corevalence = UN{Vector{<:CoreValenceInteraction}}[],
@@ -227,7 +227,7 @@ function Base.parse(::Type{PseudopotentialName}, name)
         element, description = data
         m = match(PSEUDOPOTENTIAL_NAME, description)
         if m !== nothing
-            rel = m[1] !== nothing ? true : false
+            fullrelativistic = m[1] !== nothing ? true : false
             corehole = m[2] !== nothing ? nothing : nothing
             functional = @match m[3] begin
                 "pz" => PerdewZunger()
@@ -270,7 +270,7 @@ function Base.parse(::Type{PseudopotentialName}, name)
         end
         return PseudopotentialName(
             element,
-            rel,
+            fullrelativistic,
             corehole,
             functional,
             corevalence,
@@ -385,7 +385,7 @@ Base.string(x::NonLinearCoreCorrection) = "NLCC"
 Base.string(x::LinearCoreCorrection) = "LCC"
 function Base.string(x::PseudopotentialName)
     arr = String[]
-    if x.rel
+    if x.fullrelativistic
         push!(arr, "rel")
     end
     if x.corehole !== nothing
