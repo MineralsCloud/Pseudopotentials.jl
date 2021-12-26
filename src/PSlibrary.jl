@@ -29,10 +29,12 @@ export PerdewZunger,
     RRKJ,
     RappeRabeKaxirasJoannopoulosUltrasoft,
     RRKJUs,
+    CoreValenceInteraction,
     SemicoreValence,
     CoreValence,
     NonLinearCoreCorrection,
-    NLCC
+    NLCC,
+    LinearCoreCorrection
 export list_elements, list_potentials, download_potentials
 
 abstract type ExchangeCorrelationFunctional end
@@ -76,12 +78,13 @@ struct FullCoreHole <: CoreHoleEffect end
 
 abstract type CoreValenceInteraction end
 struct SemicoreValence <: CoreValenceInteraction
-    orbital::Symbol
+    orbital::Char
 end
 struct CoreValence <: CoreValenceInteraction
-    orbital::Symbol
+    orbital::Char
 end
 struct NonLinearCoreCorrection <: CoreValenceInteraction end
+struct LinearCoreCorrection <: CoreValenceInteraction end
 const NLCC = NonLinearCoreCorrection
 
 @with_kw mutable struct PseudopotentialName
@@ -214,7 +217,7 @@ Fr Ra
       Ac Th Pa U  Np Pu
 """
 const PSEUDOPOTENTIAL_NAME =
-    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|pbesol|blyp|pw91|tpss|coulomb)-)(?:([spdfn]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(?:_(.*))?"i
+    r"(?:(rel)-)?([^-]*-)?(?:(pz|vwn|pbe|pbesol|blyp|pw91|tpss|coulomb)-)(?:([spdfnl]*)-)?(ae|mt|bhs|vbc|van|rrkjus|rrkj|kjpaw|bpaw)(?:_(.*))?"i  # spdfnl?
 
 function Base.parse(::Type{PseudopotentialName}, name)
     prefix, extension = splitext(name)
@@ -239,9 +242,10 @@ function Base.parse(::Type{PseudopotentialName}, name)
             corevalence = if m[4] !== nothing
                 map(collect(m[4])) do c
                     @match c begin
-                        's' || 'p' || 'd' => SemicoreValence(Symbol(c))
-                        'f' => CoreValence(Symbol(c))
+                        's' || 'p' || 'd' => SemicoreValence(c)
+                        'f' => CoreValence('f')
                         'n' => NonLinearCoreCorrection()
+                        'l' => LinearCoreCorrection()
                     end
                 end
             end
@@ -344,7 +348,7 @@ function download_potentials(element)
         i = parse(Int, readline())
         printstyled(
             "Enter the file path to save the potential (press enter to skip): ";
-            color = :green,
+            color = :green
         )
         str = readline()
         path = abspath(expanduser(isempty(str) ? tempname() : strip(str)))  # `abspath` is necessary since the path will depend on where you run it
@@ -362,25 +366,23 @@ function Base.show(
     io::IO,
     x::Union{ExchangeCorrelationFunctional,Pseudization,CoreValenceInteraction},
 )
-    if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
-        Base.show_default(IOContext(io, :limit => true), x)
-    else
-        print(IOContext(io, :limit => true), string(x))
-    end
+    print(IOContext(io, :limit => true), string(x))
 end
 
-Base.string(x::ExchangeCorrelationFunctional) = string(typeof(x)) * "()"
-Base.string(x::PerdewBurkeErnzerhof) = "PBE()"
-Base.string(x::PerdewBurkeErnzerhofRevisedForSolids) = "PBEsol()"
-Base.string(x::BeckeLeeYangParr) = "BLYP()"
-Base.string(x::TaoPerdewStaroverovScuseria) = "TPSS()"
-Base.string(x::Pseudization) = string(typeof(x)) * "()"
-Base.string(x::TroullierMartins) = "TM()"
-Base.string(x::BacheletHamannSchlüter) = "BHS()"
-Base.string(x::RappeRabeKaxirasJoannopoulos) = "RRKJ()"
-Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs()"
-Base.string(x::Union{SemicoreValence,CoreValence}) = string(x.orbital)
-Base.string(x::NonLinearCoreCorrection) = "NLCC()"
+Base.string(x::ExchangeCorrelationFunctional) = string(typeof(x))
+Base.string(x::PerdewBurkeErnzerhof) = "PBE"
+Base.string(x::PerdewBurkeErnzerhofRevisedForSolids) = "PBEsol"
+Base.string(x::BeckeLeeYangParr) = "BLYP"
+Base.string(x::TaoPerdewStaroverovScuseria) = "TPSS"
+Base.string(x::Pseudization) = string(typeof(x))
+Base.string(x::TroullierMartins) = "TM"
+Base.string(x::BacheletHamannSchlüter) = "BHS"
+Base.string(x::RappeRabeKaxirasJoannopoulos) = "RRKJ"
+Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs"
+Base.string(x::SemicoreValence) = "Semicore($(x.orbital))"
+Base.string(x::CoreValence) = "Core($(x.orbital))"
+Base.string(x::NonLinearCoreCorrection) = "NLCC"
+Base.string(x::LinearCoreCorrection) = "LCC"
 function Base.string(x::PseudopotentialName)
     arr = String[]
     if x.rel
