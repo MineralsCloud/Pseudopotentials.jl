@@ -23,9 +23,9 @@ export PerdewZunger,
     RRKJ,
     RappeRabeKaxirasJoannopoulosUltrasoft,
     RRKJUs,
-    CoreValenceInteraction,
-    SemicoreValence,
-    CoreValence,
+    ValenceCoreState,
+    SemicoreState,
+    CoreState,
     NonLinearCoreCorrection,
     NLCC,
     LinearCoreCorrection
@@ -86,20 +86,19 @@ struct CoreHole
     half::Bool
 end
 
-abstract type CoreValenceInteraction end
-struct SemicoreValence <: CoreValenceInteraction
+abstract type ValenceCoreState end
+struct SemicoreState <: ValenceCoreState
     orbital::Char
 end
-struct CoreValence <: CoreValenceInteraction
+struct CoreState <: ValenceCoreState
     orbital::Char
 end
-struct NonLinearCoreCorrection <: CoreValenceInteraction end
-struct LinearCoreCorrection <: CoreValenceInteraction end
+struct NonLinearCoreCorrection <: ValenceCoreState end
 const NLCC = NonLinearCoreCorrection
 
 function Base.show(
     io::IO,
-    x::Union{ExchangeCorrelationFunctional,Pseudization,CoreValenceInteraction},
+    x::Union{ExchangeCorrelationFunctional,Pseudization,ValenceCoreState},
 )
     print(IOContext(io, :limit => true), string(x))
 end
@@ -114,8 +113,8 @@ Base.string(x::TroullierMartins) = "TM"
 Base.string(x::BacheletHamannSchlüter) = "BHS"
 Base.string(x::RappeRabeKaxirasJoannopoulos) = "RRKJ"
 Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs"
-Base.string(x::SemicoreValence) = "Semicore($(x.orbital))"
-Base.string(x::CoreValence) = "Core($(x.orbital))"
+Base.string(x::SemicoreState) = "Semicore($(x.orbital))"
+Base.string(x::CoreState) = "Core($(x.orbital))"
 Base.string(x::NonLinearCoreCorrection) = "NLCC"
 Base.string(x::LinearCoreCorrection) = "LCC"
 
