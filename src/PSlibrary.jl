@@ -38,17 +38,17 @@ export PerdewZunger,
 export list_elements, list_potentials, download_potentials
 
 abstract type ExchangeCorrelationFunctional end
-abstract type LocalDensityApproximationFunctional <: ExchangeCorrelationFunctional end
-abstract type GeneralizedGradientApproximationFunctional <: ExchangeCorrelationFunctional end
-abstract type MetaGGAFunctional <: ExchangeCorrelationFunctional end
-abstract type HybridFunctional <: ExchangeCorrelationFunctional end
-struct PerdewZunger <: LocalDensityApproximationFunctional end
-struct VoskoWilkNusair <: LocalDensityApproximationFunctional end
-struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximationFunctional end
-struct PerdewBurkeErnzerhofRevisedForSolids <: GeneralizedGradientApproximationFunctional end
-struct BeckeLeeYangParr <: HybridFunctional end
-struct PerdewWang91 <: GeneralizedGradientApproximationFunctional end
-struct TaoPerdewStaroverovScuseria <: MetaGGAFunctional end
+abstract type LocalDensityApproximation <: ExchangeCorrelationFunctional end
+abstract type GeneralizedGradientApproximation <: ExchangeCorrelationFunctional end
+abstract type MetaGGA <: ExchangeCorrelationFunctional end
+abstract type Hybrid <: ExchangeCorrelationFunctional end
+struct PerdewZunger <: LocalDensityApproximation end
+struct VoskoWilkNusair <: LocalDensityApproximation end
+struct PerdewBurkeErnzerhof <: GeneralizedGradientApproximation end
+struct PerdewBurkeErnzerhofRevisedForSolids <: GeneralizedGradientApproximation end
+struct BeckeLeeYangParr <: Hybrid end
+struct PerdewWang91 <: GeneralizedGradientApproximation end
+struct TaoPerdewStaroverovScuseria <: MetaGGA end
 struct Coulomb <: ExchangeCorrelationFunctional end
 const PBE = PerdewBurkeErnzerhof
 const PBEsol = PerdewBurkeErnzerhofRevisedForSolids
