@@ -86,6 +86,28 @@ struct NonLinearCoreCorrection <: CoreValenceInteraction end
 struct LinearCoreCorrection <: CoreValenceInteraction end
 const NLCC = NonLinearCoreCorrection
 
+function Base.show(
+    io::IO,
+    x::Union{ExchangeCorrelationFunctional,Pseudization,CoreValenceInteraction},
+)
+    print(IOContext(io, :limit => true), string(x))
+end
+
+Base.string(x::ExchangeCorrelationFunctional) = string(typeof(x))
+Base.string(x::PerdewBurkeErnzerhof) = "PBE"
+Base.string(x::PerdewBurkeErnzerhofRevisedForSolids) = "PBEsol"
+Base.string(x::BeckeLeeYangParr) = "BLYP"
+Base.string(x::TaoPerdewStaroverovScuseria) = "TPSS"
+Base.string(x::Pseudization) = string(typeof(x))
+Base.string(x::TroullierMartins) = "TM"
+Base.string(x::BacheletHamannSchlüter) = "BHS"
+Base.string(x::RappeRabeKaxirasJoannopoulos) = "RRKJ"
+Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs"
+Base.string(x::SemicoreValence) = "Semicore($(x.orbital))"
+Base.string(x::CoreValence) = "Core($(x.orbital))"
+Base.string(x::NonLinearCoreCorrection) = "NLCC"
+Base.string(x::LinearCoreCorrection) = "LCC"
+
 include("PSlibrary.jl")
 
 end
