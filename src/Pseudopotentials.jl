@@ -27,8 +27,7 @@ export PerdewZunger,
     SemicoreState,
     CoreState,
     NonLinearCoreCorrection,
-    NLCC,
-    LinearCoreCorrection
+    NLCC
 
 """
     PseudopotentialFormat
@@ -116,6 +115,5 @@ Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs"
 Base.string(x::SemicoreState) = "Semicore($(x.orbital))"
 Base.string(x::CoreState) = "Core($(x.orbital))"
 Base.string(x::NonLinearCoreCorrection) = "NLCC"
-Base.string(x::LinearCoreCorrection) = "LCC"
 
 end
