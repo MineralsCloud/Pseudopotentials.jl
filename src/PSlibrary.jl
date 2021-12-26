@@ -76,10 +76,10 @@ struct FullCoreHole <: CoreHoleEffect end
 
 abstract type CoreValenceInteraction end
 struct SemicoreValence <: CoreValenceInteraction
-    orbital::Symbol
+    orbital::Char
 end
 struct CoreValence <: CoreValenceInteraction
-    orbital::Symbol
+    orbital::Char
 end
 struct NonLinearCoreCorrection <: CoreValenceInteraction end
 const NLCC = NonLinearCoreCorrection
