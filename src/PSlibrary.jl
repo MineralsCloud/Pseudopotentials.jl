@@ -365,11 +365,7 @@ function Base.show(
     io::IO,
     x::Union{ExchangeCorrelationFunctional,Pseudization,CoreValenceInteraction},
 )
-    if get(io, :compact, false) || get(io, :typeinfo, nothing) == typeof(x)
-        Base.show_default(IOContext(io, :limit => true), x)
-    else
-        print(IOContext(io, :limit => true), string(x))
-    end
+    print(IOContext(io, :limit => true), string(x))
 end
 
 Base.string(x::ExchangeCorrelationFunctional) = string(typeof(x)) * "()"
