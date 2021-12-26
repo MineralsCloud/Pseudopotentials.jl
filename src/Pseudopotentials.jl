@@ -39,7 +39,16 @@ abstract type Pseudopotential end
 """
     PseudopotentialFormat
 
-Represent all possible pseudopotential file formats.
+Represent all possible pseudopotential data formats.
+
+There are different standards for pseudopotential data formats, such as
+- [PAW-XML](https://esl.cecam.org/data/paw-xml/),
+- [PSML](https://esl.cecam.org/data/psml/),
+- [FDF](https://esl.cecam.org/data/fdf/),
+- [ESCDF](https://esl.cecam.org/data/escdf/),
+- [UPF](https://esl.cecam.org/data/upf/),
+- [ETSF_IO](https://esl.cecam.org/data/etsf_io/),
+- [Libxc IDs](https://esl.cecam.org/data/libxc/).
 """
 abstract type PseudopotentialFormat end
 
