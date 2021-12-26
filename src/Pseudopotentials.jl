@@ -108,6 +108,4 @@ Base.string(x::CoreValence) = "Core($(x.orbital))"
 Base.string(x::NonLinearCoreCorrection) = "NLCC"
 Base.string(x::LinearCoreCorrection) = "LCC"
 
-include("PSlibrary.jl")
-
 end
