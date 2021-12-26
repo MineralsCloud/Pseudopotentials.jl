@@ -197,7 +197,7 @@ const ELEMENTS = (
 )
 const DATABASE = DataFrame(
     element = [],
-    rel = UN{Bool}[],
+    fullrelativistic = Bool[],
     corehole = UN{CoreHoleEffect}[],
     functional = UN{ExchangeCorrelationFunctional}[],
     corevalence = UN{Vector{<:CoreValenceInteraction}}[],
@@ -227,7 +227,7 @@ function Base.parse(::Type{PseudopotentialName}, name)
         element, description = data
         m = match(PSEUDOPOTENTIAL_NAME, description)
         if m !== nothing
-            rel = m[1] !== nothing ? true : false
+            fullrelativistic = m[1] !== nothing ? true : false
             corehole = m[2] !== nothing ? nothing : nothing
             functional = @match m[3] begin
                 "pz" => PerdewZunger()
@@ -270,7 +270,7 @@ function Base.parse(::Type{PseudopotentialName}, name)
         end
         return PseudopotentialName(
             element,
-            rel,
+            fullrelativistic,
             corehole,
             functional,
             corevalence,
