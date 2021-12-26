@@ -89,7 +89,7 @@ const NLCC = NonLinearCoreCorrection
 
 @with_kw mutable struct PseudopotentialName
     element::String
-    rel::Bool
+    fullrelativistic::Bool
     corehole::UN{CoreHoleEffect} = nothing
     functional::ExchangeCorrelationFunctional
     corevalence::UN{Vector{<:CoreValenceInteraction}} = nothing
@@ -385,7 +385,7 @@ Base.string(x::NonLinearCoreCorrection) = "NLCC"
 Base.string(x::LinearCoreCorrection) = "LCC"
 function Base.string(x::PseudopotentialName)
     arr = String[]
-    if x.rel
+    if x.fullrelativistic
         push!(arr, "rel")
     end
     if x.corehole !== nothing
