@@ -32,7 +32,8 @@ export PerdewZunger,
     SemicoreValence,
     CoreValence,
     NonLinearCoreCorrection,
-    NLCC
+    NLCC,
+    LinearCoreCorrection
 export list_elements, list_potentials, download_potentials
 
 abstract type ExchangeCorrelationFunctional end
@@ -82,6 +83,7 @@ struct CoreValence <: CoreValenceInteraction
     orbital::Char
 end
 struct NonLinearCoreCorrection <: CoreValenceInteraction end
+struct LinearCoreCorrection <: CoreValenceInteraction end
 const NLCC = NonLinearCoreCorrection
 
 @with_kw mutable struct PseudopotentialName
@@ -239,9 +241,10 @@ function Base.parse(::Type{PseudopotentialName}, name)
             corevalence = if m[4] !== nothing
                 map(collect(m[4])) do c
                     @match c begin
-                        's' || 'p' || 'd' => SemicoreValence(Symbol(c))
-                        'f' => CoreValence(Symbol(c))
+                        's' || 'p' || 'd' => SemicoreValence(c)
+                        'f' => CoreValence('f')
                         'n' => NonLinearCoreCorrection()
+                        'l' => LinearCoreCorrection()
                     end
                 end
             end
