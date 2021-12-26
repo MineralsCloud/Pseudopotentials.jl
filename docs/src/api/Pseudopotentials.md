@@ -12,5 +12,4 @@ Depth = 3
 ## Public interfaces
 
 ```@docs
-pseudoformat
 ```
