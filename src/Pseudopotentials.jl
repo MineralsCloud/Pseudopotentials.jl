@@ -32,7 +32,7 @@ export PerdewZunger,
 """
     Pseudopotential
 
-Represent a pseudopotential file.
+Represent any pseudopotential file.
 """
 abstract type Pseudopotential end
 
