@@ -13,7 +13,6 @@ Depth = 3
 
 ```@docs
 Pseudopotential
-PseudopotentialFormat
 ExchangeCorrelationFunctional
 Pseudization
 ```
