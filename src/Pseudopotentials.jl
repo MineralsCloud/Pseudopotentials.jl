@@ -28,6 +28,7 @@ export PerdewZunger,
     CoreState,
     NonLinearCoreCorrection,
     NLCC
+export download_potential
 
 """
     Pseudopotential
@@ -115,5 +116,7 @@ Base.string(x::RappeRabeKaxirasJoannopoulosUltrasoft) = "RRKJUs"
 Base.string(x::SemicoreState) = "Semicore($(x.orbital))"
 Base.string(x::CoreState) = "Core($(x.orbital))"
 Base.string(x::NonLinearCoreCorrection) = "NLCC"
+
+function download_potential end
 
 end
