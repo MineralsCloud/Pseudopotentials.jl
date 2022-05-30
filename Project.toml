@@ -1,7 +1,7 @@
 name = "Pseudopotentials"
 uuid = "1b2dc2e6-48aa-4f00-b8f4-19d1a71d7a0e"
 authors = ["Reno <singularitti@outlook.com>"]
-version = "0.8.0"
+version = "0.8.1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
